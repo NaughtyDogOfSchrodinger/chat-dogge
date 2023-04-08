@@ -58,6 +58,7 @@ specifiers:
   react-i18next: ^12.2.0
   react-use-measure: ^2.1.1
   react-wrap-balancer: ^0.4.0
+  solid-js: ^1.7.3
   superjson: 1.9.1
   tailwind-merge: ^1.10.0
   tailwindcss: ^3.2.4
@@ -104,6 +105,7 @@ dependencies:
   react-i18next: 12.2.0_ifcy7d6sq4oet2tbyvl27swb2m
   react-use-measure: 2.1.1_biqbaboplfbrettd7655fr4n2y
   react-wrap-balancer: registry.npmmirror.com/react-wrap-balancer/0.4.0_react@18.2.0
+  solid-js: registry.npmmirror.com/solid-js/1.7.3
   superjson: 1.9.1
   tailwind-merge: 1.10.0
   zod: 3.21.0
@@ -4033,6 +4035,12 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  registry.npmmirror.com/csstype/3.1.1:
+    resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/csstype/-/csstype-3.1.1.tgz}
+    name: csstype
+    version: 3.1.1
+    dev: false
+
   registry.npmmirror.com/detect-node-es/1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/detect-node-es/-/detect-node-es-1.1.0.tgz}
     name: detect-node-es
@@ -4216,6 +4224,22 @@ packages:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz}
     name: regenerator-runtime
     version: 0.13.11
+
+  registry.npmmirror.com/seroval/0.5.1:
+    resolution: {integrity: sha512-ZfhQVB59hmIauJG5Ydynupy8KHyr5imGNtdDhbZG68Ufh1Ynkv9KOYOAABf71oVbQxJ8VkWnMHAjEHE7fWkH5g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/seroval/-/seroval-0.5.1.tgz}
+    name: seroval
+    version: 0.5.1
+    engines: {node: '>=10'}
+    dev: false
+
+  registry.npmmirror.com/solid-js/1.7.3:
+    resolution: {integrity: sha512-4hwaF/zV/xbNeBBIYDyu3dcReOZBECbO//mrra6GqOrKy4Soyo+fnKjpZSa0nODm6j1aL0iQRh/7ofYowH+jzw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/solid-js/-/solid-js-1.7.3.tgz}
+    name: solid-js
+    version: 1.7.3
+    dependencies:
+      csstype: registry.npmmirror.com/csstype/3.1.1
+      seroval: registry.npmmirror.com/seroval/0.5.1
+    dev: false
 
   registry.npmmirror.com/sugar-high/0.4.6:
     resolution: {integrity: sha512-V/5BlmDTQ0YCD6o+xumBpOBP8CWDqVDA8Pt7W/i8QzkwFnYwBxX9T4a8XRmay7ulnnCj/5rX3f845tbkXU1lIw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/sugar-high/-/sugar-high-0.4.6.tgz}

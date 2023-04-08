@@ -69,23 +69,12 @@ const useHeaders = () => {
   const HEADER_LINKS: Array<{ href: string; label: string; target?: string }> =
     useMemo(
       () => [
-        // {
-        //   href: 'https://github.com/futantan/OpenGpt',
-        //   label: '⭐️ Star on GitHub',
-        //   target: '_blank',
-        // },
-        { href: '/usage', label: t('💸 Usage') },
-        // {
-        //   href: 'https://l5oj8ohzdp.feishu.cn/share/base/form/shrcnqfgna9DRRNsEy3rRaqiJCf',
-        //   label: '🔥 ' + t('give_feedack'),
-        //   target: '_blank',
-        // },
         {
           href: 'https://chat.chatdogge.xyz/',
-          label: '🤖️ prompt机器人',
+          label: t('🤖️ prompt机器人'),
         },
       ],
-      []
+      [t]
     )
   return HEADER_LINKS
 }

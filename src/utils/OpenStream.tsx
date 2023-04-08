@@ -40,11 +40,14 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
     requestHeaders['OpenAI-Organization'] = process.env.OPENAI_API_ORG
   }
 
-  const res = await fetch('https://closeai.deno.dev/v1/chat/completions', {
-    headers: requestHeaders,
-    method: 'POST',
-    body: JSON.stringify(payload),
-  })
+  const res = await fetch(
+    `https://${process.env.BASE_URL}/v1/chat/completions`,
+    {
+      headers: requestHeaders,
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }
+  )
 
   const stream = new ReadableStream({
     async start(controller) {
