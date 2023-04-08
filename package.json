@@ -50,6 +50,7 @@
     "react-i18next": "^12.2.0",
     "react-use-measure": "^2.1.1",
     "react-wrap-balancer": "^0.4.0",
+    "solid-js": "^1.7.3",
     "superjson": "1.9.1",
     "tailwind-merge": "^1.10.0",
     "zod": "^3.20.6"

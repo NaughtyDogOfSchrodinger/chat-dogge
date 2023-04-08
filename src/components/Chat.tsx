@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { Button } from './ChatButton'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
-import { AppConfig } from 'next/dist/build/utils'
-import { PageProps } from '@/pages/app/[id]'
 import { loadLicenseKey } from '@/utils/localData'
+import { ChatProps } from '@/utils/constants'
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
 
@@ -16,17 +15,22 @@ export const initialMessages: ChatGPTMessage[] = [
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage }: any) => (
+export const InputMessage = ({
+  input,
+  setInput,
+  sendMessage,
+  getValues,
+  keydown,
+}: any) => (
   <div className="clear-both mt-6 flex">
     <input
       type="text"
       aria-label="chat input"
-      required
       className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 sm:text-sm"
       value={input}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          sendMessage(input)
+        if (e.key === 'Enter' && keydown) {
+          sendMessage(input, getValues)
           setInput('')
         }
       }}
@@ -38,30 +42,17 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
       type="submit"
       className="ml-4 flex-none"
       onClick={() => {
-        sendMessage(input)
+        sendMessage(input, getValues)
         setInput('')
       }}
     >
-      Say
+      发送
     </Button>
   </div>
 )
 
-export function Chat(props: PageProps) {
-  const prompts: ChatGPTMessage[] =
-    props.appConfig == null
-      ? []
-      : [
-          {
-            role: 'system',
-            content: props.appConfig.prompt,
-          },
-          {
-            role: 'user',
-            content: props.appConfig.demoInput,
-          },
-        ]
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(prompts)
+export function Chat(props: ChatProps) {
+  const [messages, setMessages] = useState<ChatGPTMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
@@ -75,7 +66,9 @@ export function Chat(props: PageProps) {
   }, [cookie, setCookie])
 
   // send message to API /api/chat endpoint
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message: string, callback: any) => {
+    const system = await callback()
+    console.log(`message: ${message}, system: ${system}`)
     setLoading(true)
     const newMessages = [
       ...messages,
@@ -83,7 +76,10 @@ export function Chat(props: PageProps) {
     ]
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
-
+    const addSystem = [
+      { role: 'system', content: system } as ChatGPTMessage,
+      ...last10messages,
+    ]
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
@@ -91,7 +87,7 @@ export function Chat(props: PageProps) {
       },
       body: JSON.stringify({
         userKey: loadLicenseKey(),
-        messages: last10messages,
+        messages: addSystem,
         user: cookie[COOKIE_NAME],
       }),
     })
@@ -137,15 +133,12 @@ export function Chat(props: PageProps) {
 
       {loading && <LoadingChatLine />}
 
-      {messages.length < 2 && (
-        <span className="clear-both mx-auto flex flex-grow text-gray-600">
-          Type a message to start the conversation
-        </span>
-      )}
       <InputMessage
         input={input}
         setInput={setInput}
         sendMessage={sendMessage}
+        getValues={props.callback}
+        keyDown={props.keyDown}
       />
     </div>
   )

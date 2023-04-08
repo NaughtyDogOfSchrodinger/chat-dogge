@@ -1,7 +1,6 @@
 import AppList from '@/components/AppList'
 import AppListLoading from '@/components/AppListLoading'
 import { Button } from '@/components/Button'
-import { CallToAction } from '@/components/CallToAction'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
@@ -72,7 +71,6 @@ const Home = () => {
               <AppListLoading />
             </div>
           </div>
-          <CallToAction />
         </main>
         <Footer />
       </>

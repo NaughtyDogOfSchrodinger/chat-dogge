@@ -70,7 +70,6 @@ model OpenGptApp {
     description  String
     icon         String // for example emoji
     hint         String?
-    demoInput    String  @db.VarChar(1000)
     prompt       String  @db.VarChar(10000)
     usedCount    BigInt  @default(1)
     paidUseCount BigInt  @default(1)

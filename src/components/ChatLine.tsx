@@ -16,11 +16,6 @@ export const LoadingChatLine = () => (
   <div className="flex min-w-full animate-pulse px-4 py-5 sm:px-6">
     <div className="flex flex-grow space-x-3">
       <div className="min-w-0 flex-1">
-        <p className="font-large text-xxl text-gray-900">
-          <a href="#" className="hover:underline">
-            AI
-          </a>
-        </p>
         <div className="space-y-4 pt-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2 h-2 rounded bg-zinc-500"></div>
@@ -37,8 +32,7 @@ export const LoadingChatLine = () => (
 const convertNewLines = (text: string) =>
   text.split('\n').map((line, i) => (
     <span key={i}>
-      {line}
-      <br />
+      {line} <br />
     </span>
   ))
 
@@ -54,27 +48,15 @@ export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
         role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both'
       }
     >
-      <BalancerWrapper>
-        <div className="float-right mb-5 rounded-lg bg-white px-4 py-5 shadow-lg ring-1 ring-zinc-100 sm:px-6">
-          <div className="flex space-x-3">
-            <div className="flex-1 gap-4">
-              {/*<p className="font-large text-xxl text-gray-900">*/}
-              {/*<a href="#" className="hover:underline">*/}
-              {/*  {role == 'assistant' ? 'AI' : 'You'}*/}
-              {/*</a>*/}
-              {/*</p>*/}
-              <p
-                className={clsx(
-                  'text ',
-                  role == 'assistant' ? 'font- font-semibold ' : 'text-gray-400'
-                )}
-              >
-                {formatteMessage}
-              </p>
-            </div>
+      <div className="float-right mb-5 rounded-lg bg-white px-2 py-2 shadow-lg ring-1 ring-zinc-100 sm:px-4">
+        <div className="flex space-x-3">
+          <div className="flex-1 gap-4">
+            <p className={clsx('text font-normal')}>
+              <BalancerWrapper>{formatteMessage}</BalancerWrapper>
+            </p>
           </div>
         </div>
-      </BalancerWrapper>
+      </div>
     </div>
   )
 }
