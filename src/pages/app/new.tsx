@@ -21,6 +21,7 @@ type Inputs = RouterInputs['app']['create']
 
 const NewApp = () => {
   const router = useRouter()
+  // @ts-ignore
   const { t } = useTranslation('common')
 
   const {
@@ -43,11 +44,7 @@ const NewApp = () => {
   const { isLoading: isCreating } = mutation
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    if (!isDev) {
-      toast(t('test_before_submit'), { icon: '🙇' })
-    } else {
-      mutation.mutate(data)
-    }
+    mutation.mutate(data)
   }
 
   return (
