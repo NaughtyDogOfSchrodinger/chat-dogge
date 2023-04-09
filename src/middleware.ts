@@ -20,14 +20,14 @@ export default async function middleware(
   request: NextRequest,
   event: NextFetchEvent
 ): Promise<Response | undefined> {
-  const { userKey } = (await request.json()) as GenerateApiInput
+  const { isLogin } = (await request.json()) as GenerateApiInput
 
-  if (userKey) {
-    console.log('user is using license key')
-    const { isValid } = await validateLicenseKey(userKey)
-    if (!isValid) {
-      return runOutOfRatelimit(439)
-    }
+  if (isLogin) {
+    console.log('user is login')
+    // const { isValid } = await validateLicenseKey(userKey)
+    // if (!isValid) {
+    //   return runOutOfRatelimit(439)
+    // }
     return NextResponse.next()
   }
 

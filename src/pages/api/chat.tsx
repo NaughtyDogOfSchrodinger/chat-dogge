@@ -1,5 +1,6 @@
 import { type ChatGPTMessage } from '../../components/ChatLine'
 import { OpenAIStream, OpenAIStreamPayload } from '../../utils/OpenStream'
+import { HOST_URL } from '@/utils/hostUrl'
 
 // break the app if the API key is missing
 if (!process.env.OPENAI_API_KEY) {
@@ -15,7 +16,6 @@ const handler = async (req: Request): Promise<Response> => {
 
   const messages: ChatGPTMessage[] = []
   messages.push(...body?.messages)
-
   const payload: OpenAIStreamPayload = {
     model: 'gpt-3.5-turbo',
     messages: messages,
@@ -30,8 +30,21 @@ const handler = async (req: Request): Promise<Response> => {
     user: body?.user,
     n: 1,
   }
-
-  const stream = await OpenAIStream(payload)
-  return new Response(stream)
+  return await fetch(`${HOST_URL}/api/user?id=${payload.user}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  })
+    .then((res) => res.json())
+    .then(async (data) => {
+      console.log(`left token: ${data.tokenCount}`)
+      if (data.tokenCount > 0) {
+        const stream = await OpenAIStream(payload, body?.isLogin)
+        return new Response(stream)
+      } else {
+        return new Response(undefined, { status: 439 })
+      }
+    })
 }
 export default handler

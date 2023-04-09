@@ -1,4 +1,4 @@
-import { RATE_LIMIT_COUNT } from '@/utils/constants'
+import { FREE_TOKEN_COUNT, RATE_LIMIT_COUNT } from '@/utils/constants'
 import { useEffect, useMemo, useState } from 'react'
 
 import { LicenseForm } from '@/components/LicenseForm'
@@ -17,7 +17,7 @@ export const Purchase = () => {
   const { t } = useTranslation('common')
 
   const includedFeatures = useMemo(() => {
-    return [t('feature_1'), t('feature_2'), t('feature_3')]
+    return [t('feature_1'), t('feature_2')]
   }, [t])
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export const Purchase = () => {
           <p className="mt-6 text-lg leading-8 text-gray-600">
             {t('please_buy', {
               rateLimitCount: RATE_LIMIT_COUNT,
+              freeTokenCount: FREE_TOKEN_COUNT,
             })}
           </p>
         </div>
