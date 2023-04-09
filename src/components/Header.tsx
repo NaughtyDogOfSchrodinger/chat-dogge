@@ -69,12 +69,12 @@ const useHeaders = () => {
   const HEADER_LINKS: Array<{ href: string; label: string; target?: string }> =
     useMemo(
       () => [
-        {
-          href: 'https://chat.chatdogge.xyz/',
-          label: t('🤖️ prompt机器人'),
-        },
+        // {
+        //   href: 'https://chat.chatdogge.xyz/',
+        //   label: t('🤖️ prompt机器人'),
+        // },
       ],
-      [t]
+      []
     )
   return HEADER_LINKS
 }
