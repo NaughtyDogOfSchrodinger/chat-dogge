@@ -1,5 +1,6 @@
 import { openGptAppRouter } from '@/server/api/routers/openGptApp'
 import { createTRPCRouter } from '@/server/api/trpc'
+import { userRouter } from '@/server/api/routers/user'
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { createTRPCRouter } from '@/server/api/trpc'
  */
 export const appRouter = createTRPCRouter({
   app: openGptAppRouter,
+  user: userRouter,
 })
 
 // export type definition of API

@@ -4,16 +4,12 @@ import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
 import { loadLicenseKey } from '@/utils/localData'
 import { ChatProps } from '@/utils/constants'
+import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import { useSession } from 'next-auth/react'
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
-
-// default first message to display in UI (not necessary to define the prompt)
-export const initialMessages: ChatGPTMessage[] = [
-  {
-    role: 'assistant',
-    content: 'Hi! I am a friendly AI assistant. Ask me anything!',
-  },
-]
 
 export const InputMessage = ({
   input,
@@ -52,18 +48,25 @@ export const InputMessage = ({
 )
 
 export function Chat(props: ChatProps) {
+  const router = useRouter()
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const { data: session } = useSession()
+
   const [messages, setMessages] = useState<ChatGPTMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
 
   useEffect(() => {
-    if (!cookie[COOKIE_NAME]) {
+    if (session) {
+      setCookie(COOKIE_NAME, session?.user.id)
+    } else if (!cookie[COOKIE_NAME]) {
       // generate a semi random short id
-      const randomId = Math.random().toString(36).substring(7)
-      setCookie(COOKIE_NAME, randomId)
+      const id = Math.random().toString(36).substring(7)
+      setCookie(COOKIE_NAME, id)
     }
-  }, [cookie, setCookie])
+  }, [cookie, session, setCookie])
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string, callback: any) => {
@@ -80,7 +83,7 @@ export function Chat(props: ChatProps) {
       { role: 'system', content: system } as ChatGPTMessage,
       ...last10messages,
     ]
-    const response = await fetch('/api/chat', {
+    const response = await fetch(`/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -89,13 +92,21 @@ export function Chat(props: ChatProps) {
         userKey: loadLicenseKey(),
         messages: addSystem,
         user: cookie[COOKIE_NAME],
+        isLogin: !!session,
       }),
     })
 
-    console.log('Edge function returned.')
-
     if (!response.ok) {
-      throw new Error(response.statusText)
+      if (response.status === 429) {
+        toast(t('runout_today'), { icon: '🔴' })
+        router.push('/usage')
+        return
+      } else if (response.status === 439) {
+        toast(t('license_wrong'), { icon: '🔴' })
+        router.push('/usage')
+      } else {
+        throw new Error(response.statusText)
+      }
     }
 
     // This data is a ReadableStream
@@ -107,16 +118,15 @@ export function Chat(props: ChatProps) {
     const reader = data.getReader()
     const decoder = new TextDecoder()
     let done = false
-
+    let count = 0
     let lastMessage = ''
-
     while (!done) {
       const { value, done: doneReading } = await reader.read()
       done = doneReading
       const chunkValue = decoder.decode(value)
 
       lastMessage = lastMessage + chunkValue
-
+      count++
       setMessages([
         ...newMessages,
         { role: 'assistant', content: lastMessage } as ChatGPTMessage,

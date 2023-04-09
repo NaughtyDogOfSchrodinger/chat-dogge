@@ -48,6 +48,7 @@
     "react-hook-form": "^7.43.4",
     "react-hot-toast": "^2.4.0",
     "react-i18next": "^12.2.0",
+    "react-modal": "^3.16.1",
     "react-use-measure": "^2.1.1",
     "react-wrap-balancer": "^0.4.0",
     "solid-js": "^1.7.3",

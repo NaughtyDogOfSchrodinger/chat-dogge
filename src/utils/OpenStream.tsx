@@ -3,6 +3,8 @@ import {
   ParsedEvent,
   ReconnectInterval,
 } from 'eventsource-parser'
+import { MAX_TOKENS } from '@/utils/constants'
+import { HOST_URL } from '@/utils/hostUrl'
 
 export type ChatGPTAgent = 'user' | 'system' | 'assistant'
 
@@ -25,7 +27,10 @@ export interface OpenAIStreamPayload {
   n: number
 }
 
-export async function OpenAIStream(payload: OpenAIStreamPayload) {
+export async function OpenAIStream(
+  payload: OpenAIStreamPayload,
+  isLogin: boolean
+) {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
@@ -39,36 +44,55 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
   if (process.env.OPENAI_API_ORG) {
     requestHeaders['OpenAI-Organization'] = process.env.OPENAI_API_ORG
   }
-
+  //todo has paid
+  const isUsingLicense = true
   const res = await fetch(
     `https://${process.env.BASE_URL}/v1/chat/completions`,
     {
       headers: requestHeaders,
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...payload,
+        max_tokens: isLogin ? MAX_TOKENS * 2 : MAX_TOKENS,
+      }),
     }
   )
-
-  const stream = new ReadableStream({
+  return new ReadableStream({
     async start(controller) {
       // callback
-      function onParse(event: ParsedEvent | ReconnectInterval) {
+      async function onParse(event: ParsedEvent | ReconnectInterval) {
         if (event.type === 'event') {
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
           if (data === '[DONE]') {
             console.log('DONE')
             controller.close()
+            await fetch(`${HOST_URL}/api/cost`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              method: 'POST',
+              body: JSON.stringify({
+                userId: payload.user,
+                count: counter,
+              }),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(`left token: ${data.tokenCount}`)
+              })
             return
           }
           try {
             const json = JSON.parse(data)
             const text = json.choices[0].delta?.content || ''
+
             if (counter < 2 && (text.match(/\n/) || []).length) {
               // this is a prefix character (i.e., "\n\n"), do nothing
               return
             }
             const queue = encoder.encode(text)
+
             controller.enqueue(queue)
             counter++
           } catch (e) {
@@ -86,6 +110,4 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
       }
     },
   })
-
-  return stream
 }

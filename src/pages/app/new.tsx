@@ -2,25 +2,24 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { Button } from '@/components/Button'
 import { EmojiField } from '@/components/EmojiField'
 import Layout from '@/components/Layout'
-import { useGenerateResult } from '@/hooks/useGenerateResult'
 import { createAppSchema } from '@/server/api/schema'
 import { api, type RouterInputs } from '@/utils/api'
-import { isDev } from '@/utils/isDev'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Chat } from '@/components/Chat'
+import { useSession } from 'next-auth/react'
 
 type Inputs = RouterInputs['app']['create']
 
 const NewApp = () => {
   const router = useRouter()
+  const { data: session } = useSession()
+  const { id } = session?.user || {}
   // @ts-ignore
   const { t } = useTranslation('common')
 
@@ -31,7 +30,6 @@ const NewApp = () => {
     getValues,
     formState: { errors },
   } = useForm<Inputs>({ resolver: zodResolver(createAppSchema) })
-
   const mutation = api.app.create.useMutation({
     onSuccess: (data, variables, context) => {
       router.push(`/app/${data.id}`)
@@ -65,6 +63,11 @@ const NewApp = () => {
                   <div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
                     <div className="grid grid-cols-3 gap-6">
                       <div className="col-span-3 sm:col-span-2">
+                        <input
+                          hidden={true}
+                          defaultValue={id}
+                          {...register('userId')}
+                        />
                         <label className="block text-sm font-medium leading-6 text-gray-900">
                           {t('icon')}
                         </label>

@@ -1,5 +1,6 @@
 export const MAX_TOKENS = 1024
-export const RATE_LIMIT_COUNT = 10
+export const RATE_LIMIT_COUNT = 20
+export const FREE_TOKEN_COUNT = 10000
 
 export const PURCHASE_URL = process.env.NEXT_PUBLIC_PURCHASE_URL
 

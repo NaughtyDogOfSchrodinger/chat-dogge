@@ -152,7 +152,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-x-5 md:gap-x-8">
-            <LanguageSelector />
+            {/*<LanguageSelector />*/}
             <div>
               <AnimatePresence>
                 {!session && status !== 'loading' ? (
