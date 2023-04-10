@@ -50,6 +50,7 @@ specifiers:
   next-auth: ^4.19.0
   next-i18next: ^13.2.2
   next-seo: ^5.15.0
+  nodemailer: ^6.9.1
   postcss: ^8.4.14
   prettier: ^2.8.1
   prettier-plugin-tailwindcss: ^0.2.1
@@ -104,9 +105,10 @@ dependencies:
   i18next: 22.4.12
   lucide-react: registry.npmmirror.com/lucide-react/0.130.1_react@18.2.0
   next: 13.2.3_biqbaboplfbrettd7655fr4n2y
-  next-auth: 4.20.1_nvzgbose6yf6w7ijjprgspqefi
+  next-auth: 4.20.1_nqfews3zxntugbnfuqgpde23my
   next-i18next: 13.2.2_gtdq33avmqkptzy234jk4g42qu
   next-seo: 5.15.0_nvzgbose6yf6w7ijjprgspqefi
+  nodemailer: registry.npmmirror.com/nodemailer/6.9.1
   ramda: 0.28.0
   react: 18.2.0
   react-cookie: 4.1.1_react@18.2.0
@@ -246,7 +248,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 4.11.0_prisma@4.11.0
-      next-auth: 4.20.1_nvzgbose6yf6w7ijjprgspqefi
+      next-auth: 4.20.1_nqfews3zxntugbnfuqgpde23my
     dev: false
 
   /@next/env/13.2.3:
@@ -2334,7 +2336,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-auth/4.20.1_nvzgbose6yf6w7ijjprgspqefi:
+  /next-auth/4.20.1_nqfews3zxntugbnfuqgpde23my:
     resolution: {integrity: sha512-ZcTUN4qzzZ/zJYgOW0hMXccpheWtAol8QOMdMts+LYRcsPGsqf2hEityyaKyECQVw1cWInb9dF3wYwI5GZdEmQ==}
     peerDependencies:
       next: ^12.2.5 || ^13
@@ -2350,6 +2352,7 @@ packages:
       cookie: 0.5.0
       jose: 4.13.1
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
+      nodemailer: registry.npmmirror.com/nodemailer/6.9.1
       oauth: 0.9.15
       openid-client: 5.4.0
       preact: 10.13.0
@@ -6223,6 +6226,13 @@ packages:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/minimist/-/minimist-1.2.8.tgz}
     name: minimist
     version: 1.2.8
+    dev: false
+
+  registry.npmmirror.com/nodemailer/6.9.1:
+    resolution: {integrity: sha512-qHw7dOiU5UKNnQpXktdgQ1d3OFgRAekuvbJLcdG5dnEo/GtcTHRYM7+UfJARdOFU9WUQO8OiIamgWPmiSFHYAA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nodemailer/-/nodemailer-6.9.1.tgz}
+    name: nodemailer
+    version: 6.9.1
+    engines: {node: '>=6.0.0'}
     dev: false
 
   registry.npmmirror.com/normalize-path/3.0.0:

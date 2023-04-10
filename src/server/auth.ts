@@ -5,6 +5,7 @@ import {
   type NextAuthOptions,
 } from 'next-auth'
 import GithubProvider from 'next-auth/providers/github'
+import EmailProvider from 'next-auth/providers/email'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
@@ -50,6 +51,17 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: env.GITHUB_ID,
       clientSecret: env.GITHUB_SECRET,
+    }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
     }),
   ],
 }

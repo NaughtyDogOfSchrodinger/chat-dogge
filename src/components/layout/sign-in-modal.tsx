@@ -1,7 +1,7 @@
 import Modal from '@/components/share/modal'
 import { signIn } from 'next-auth/react'
-import { useState, Dispatch, SetStateAction, useCallback, useMemo } from 'react'
-import { LoadingDots, Github } from '@/components/share/icons'
+import React, { useState, Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import { LoadingDots, Github, LoadingCircle } from "@/components/share/icons";
 import Image from 'next/image'
 
 const SignInModal = ({
@@ -12,6 +12,33 @@ const SignInModal = ({
   setShowSignInModal: Dispatch<SetStateAction<boolean>>
 }) => {
   const [signInClicked, setSignInClicked] = useState(false)
+  const [emailSignInClicked, setEmailSignInClicked] = useState(false)
+  const [email, setEmail] = useState('')
+  const [ph, setPh] = useState('邮箱地址')
+  const [isValidEmail, setIsValidEmail] = useState(true)
+
+  const handleInputChange = (event: any) => {
+    setEmail(event.target.value)
+    setIsValidEmail(validateEmail(event.target.value))
+  }
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(email)
+  }
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault()
+    if (isValidEmail) {
+      setEmailSignInClicked(true)
+      signIn('email', { email })
+      setPh('')
+      setEmail('')
+    } else {
+      setEmail('')
+      setPh('请输入正确的邮箱地址')
+    }
+  }
 
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
@@ -26,6 +53,42 @@ const SignInModal = ({
               height={20}
             />
           </a>
+
+          <form onSubmit={handleSubmit} className="input-group relative w-full">
+            <input
+              type="text"
+              placeholder={ph}
+              className={`${
+                isValidEmail ? '' : 'border-red-500'
+              } input-bordered input w-full rounded-md border`}
+              value={email}
+              onChange={handleInputChange}
+            />
+            <button
+              type="submit"
+              disabled={emailSignInClicked}
+              className={`${
+                emailSignInClicked
+                  ? 'cursor-not-allowed border-gray-200 bg-gray-100'
+                  : 'border bg-black text-white hover:bg-white hover:text-black'
+              } btn-square btn`}
+            >
+              {emailSignInClicked ? (
+                <LoadingCircle />
+              ) : (
+                <>
+                  {/*<Image*/}
+                  {/*  src="/favicon.svg"*/}
+                  {/*  alt="Logo"*/}
+                  {/*  className="h-5 w-5"*/}
+                  {/*  width={20}*/}
+                  {/*  height={20}*/}
+                  {/*/>*/}
+                  send
+                </>
+              )}
+            </button>
+          </form>
           {/*<h3 className="font-display text-2xl font-bold">Sign In</h3>*/}
           {/*<p className="text-sm text-gray-500">*/}
           {/*  This is strictly for demo purposes - only your email and profile*/}
