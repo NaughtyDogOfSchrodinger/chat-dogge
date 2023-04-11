@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import Image from 'next/image'
-import Link from "next/link";
+import Link from 'next/link'
 
 const Test = () => {
-  const [sliderValue, setSliderValue] = useState(50);
+  const [sliderValue, setSliderValue] = useState(50)
 
   function handleSliderChange(event: any) {
     setSliderValue(event.target.value)
