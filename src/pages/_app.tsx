@@ -10,6 +10,7 @@ import { DEFAULT_SEO_CONFIG } from '@/utils/seoConfig'
 import { Toaster } from 'react-hot-toast'
 import { appWithTranslation } from 'next-i18next'
 import { SessionProvider } from 'next-auth/react'
+import Layout from '@/components/layout/Layout'
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -20,7 +21,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Analytics />
       <DefaultSeo {...DEFAULT_SEO_CONFIG} />
       <SessionProvider session={session}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SessionProvider>
       <Toaster
         position="top-center"
