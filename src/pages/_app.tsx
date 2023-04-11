@@ -18,7 +18,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Analytics />
-      {/* <SessionProvider session={session}> */}
       <DefaultSeo {...DEFAULT_SEO_CONFIG} />
       <SessionProvider session={session}>
         <Component {...pageProps} />
@@ -28,7 +27,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
         reverseOrder={false}
         toastOptions={{ duration: 2000 }}
       />
-      {/* </SessionProvider> */}
     </>
   )
 }

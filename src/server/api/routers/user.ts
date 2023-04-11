@@ -6,8 +6,6 @@ import {
 import { prisma } from '@/server/db'
 import { z } from 'zod'
 import { updateToken } from '@/server/api/schema'
-import { sendMessageToDiscord } from '@/utils/sendMessageToDiscord'
-import { revalidateHome } from '@/utils/revalidateHome'
 
 export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx }) => {

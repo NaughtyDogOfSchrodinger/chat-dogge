@@ -1,5 +1,5 @@
-import { type ChatGPTMessage } from '../../components/ChatLine'
-import { OpenAIStream, OpenAIStreamPayload } from '../../utils/OpenStream'
+import { type ChatGPTMessage } from '@/components/chat/ChatLine'
+import { OpenAIStream, OpenAIStreamPayload } from '@/utils/OpenStream'
 import { HOST_URL } from '@/utils/hostUrl'
 
 // break the app if the API key is missing

@@ -1,6 +1,5 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
-import Layout from '@/components/Layout'
-import { useGenerateResult } from '@/hooks/useGenerateResult'
+import Layout from '@/components/layout/Layout'
 import { appRouter } from '@/server/api/root'
 import { prisma } from '@/server/db'
 import type {
@@ -9,10 +8,9 @@ import type {
   InferGetServerSidePropsType,
 } from 'next'
 import { NextSeo } from 'next-seo'
-import { useRef, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Chat } from '@/components/Chat'
+import { Chat } from '@/components/chat/Chat'
 
 type AppConfig = {
   id: string
