@@ -2,7 +2,7 @@ import { Popover, Transition, Menu } from '@headlessui/react'
 
 import clsx from 'clsx'
 import Link from 'next/link'
-import { Fragment, useMemo, useState } from 'react'
+import { Dispatch, Fragment, SetStateAction, useMemo, useState } from 'react'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/layout/Logo'
 import { NavLink } from '@/components/layout/NavLink'
@@ -130,8 +130,9 @@ function MobileNavigation() {
 }
 
 export function Header() {
-  const { userInfo } = useUserStore()
   const { SignInModal, setShowSignInModal } = useSignInModal()
+
+  const { userInfo } = useUserStore()
   // @ts-ignore
   const HEADER_LINKS = useHeaders()
 

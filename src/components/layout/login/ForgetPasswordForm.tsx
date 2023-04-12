@@ -8,14 +8,14 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { PageTypeEnum } from '../../../constants/user'
+import { PageTypeEnum } from '@/constants/user'
 import { postFindPassword } from '@/api/user'
 import { useSendCode } from '@/hooks/useSendCode'
 import type { ResLogin } from '@/api/response/user'
-import { useScreen } from '@/hooks/useScreen'
 import { LoadingCircle } from '@/components/share/icons'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
+import { EMAIL_REG } from '@/constants/common'
 
 interface Props {
   setPageType: Dispatch<`${PageTypeEnum}`>
@@ -71,7 +71,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
       }
       setRequesting(false)
     },
-    [loginSuccess, toast]
+    [loginSuccess, setPageType]
   )
 
   return (
@@ -92,8 +92,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             {...register('email', {
               required: '邮箱不能为空',
               pattern: {
-                value:
-                  /^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/,
+                value: EMAIL_REG,
                 message: '邮箱错误',
               },
             })}
@@ -116,7 +115,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             />
             <button
               onClick={onclickSendCode}
-              disabled={codeCountDown > 0}
+              disabled={codeSending || codeCountDown > 0}
               className="w-15 btn rounded-md border-2 border-gray-200 focus:outline-none"
             >
               {codeSending ? <LoadingCircle /> : <>{sendCodeText}</>}

@@ -15,6 +15,7 @@ import type { ResLogin } from '@/api/response/user'
 import { toast } from 'react-hot-toast'
 import { LoadingCircle } from '@/components/share/icons'
 import Image from 'next/image'
+import { EMAIL_REG } from '@/constants/common'
 
 interface Props {
   loginSuccess: (e: ResLogin) => void
@@ -70,7 +71,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
       }
       setRequesting(false)
     },
-    [loginSuccess, toast]
+    [loginSuccess, setPageType]
   )
 
   return (
@@ -91,8 +92,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             {...register('email', {
               required: '邮箱不能为空',
               pattern: {
-                value:
-                  /^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/,
+                value: EMAIL_REG,
                 message: '邮箱错误',
               },
             })}
@@ -115,7 +115,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             ></input>
             <button
               onClick={onclickSendCode}
-              disabled={codeCountDown > 0}
+              disabled={codeSending || codeCountDown > 0}
               className="w-15 btn rounded-md border-2 border-gray-200   focus:outline-none"
             >
               {codeSending ? <LoadingCircle /> : <>{sendCodeText}</>}

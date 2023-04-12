@@ -14,6 +14,7 @@ import type { ResLogin } from '@/api/response/user'
 import { LoadingDots } from '@/components/share/icons'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
+import { EMAIL_REG } from '@/constants/common'
 
 interface Props {
   setPageType: Dispatch<`${PageTypeEnum}`>
@@ -71,8 +72,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
             {...register('email', {
               required: '邮箱不能为空',
               pattern: {
-                value:
-                  /^[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/,
+                value: EMAIL_REG,
                 message: '邮箱错误',
               },
             })}
@@ -120,6 +120,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           </span>
         </label>
         <button
+          disabled={requesting}
           className={`${
             requesting ? 'cursor-not-allowed ' : 'border'
           } btn flex h-10 w-full items-center justify-center space-x-3 rounded-md border border-gray-200 text-sm shadow-sm transition-all duration-75 focus:outline-none`}

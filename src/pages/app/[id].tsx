@@ -78,31 +78,29 @@ const OpenGptApp = (
         ]}
       />
 
-      <Layout>
-        <Breadcrumb pages={[]} />
-        <div className="mx-auto flex max-w-3xl flex-col items-center justify-center py-2">
-          <main className="mt-12 flex w-full flex-1 flex-col items-center justify-center px-4 text-center sm:mt-20">
-            <h1 className="max-w-[708px] text-2xl font-bold text-slate-900 sm:text-4xl">
-              {name}
-            </h1>
-            <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
-              {prompt}
-            </p>
-            <div className="w-full max-w-xl">
-              <section className="flex flex-col gap-3 ">
-                <div className="lg:w-6/1 ">
-                  <Chat
-                    keyDown={true}
-                    callback={async () => {
-                      return prompt
-                    }}
-                  />
-                </div>
-              </section>
-            </div>
-          </main>
-        </div>
-      </Layout>
+      <Breadcrumb pages={[]} />
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center py-2">
+        <main className="mt-12 flex w-full flex-1 flex-col items-center justify-center px-4 text-center sm:mt-20">
+          <h1 className="max-w-[708px] text-2xl font-bold text-slate-900 sm:text-4xl">
+            {name}
+          </h1>
+          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
+            {prompt}
+          </p>
+          <div className="w-full max-w-xl">
+            <section className="flex flex-col gap-3 ">
+              <div className="lg:w-6/1 ">
+                <Chat
+                  keyDown={true}
+                  callback={async () => {
+                    return prompt
+                  }}
+                />
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
     </>
   )
 }

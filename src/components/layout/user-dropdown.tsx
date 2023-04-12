@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { FADE_IN_ANIMATION_SETTINGS } from '@/utils/constants'
 import { useUserStore } from '@/store/user'
 import Link from 'next/link'
+import { clearToken } from '@/utils/user'
 
 export default function UserDropdown() {
   const { userInfo, clearUserInfo, clearMyModels } = useUserStore()
@@ -33,6 +34,7 @@ export default function UserDropdown() {
               onClick={() => {
                 clearUserInfo()
                 clearMyModels()
+                clearToken()
               }}
             >
               <LogOut className="h-4 w-4" />
