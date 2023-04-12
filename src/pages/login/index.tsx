@@ -24,7 +24,7 @@ const Login = () => {
   const loginSuccess = useCallback(
     (res: ResLogin) => {
       setUserInfo(res.user, res.token)
-      router.push('/model/list')
+      // router.push('/model/list')
     },
     [router, setUserInfo]
   )
@@ -45,23 +45,11 @@ const Login = () => {
     // router.prefetch('/model/list')
   }, [router])
 
-  const [showSignInModal, setShowSignInModal] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(true)
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
       <div className="container card mx-auto w-96 bg-[#f0f2f5] text-neutral-content">
         <div className="card-body items-center text-center">
-          {/*      {isPc && (*/}
-          {/*        <Image*/}
-          {/*src={"/icon/loginLeft.svg"}*/}
-          {/*order={pageType === PageTypeEnum.login ? 0 : 2}*/}
-
-          {/*w="0"*/}
-          {/*height={"100%"}*/}
-          {/*maxH={"450px"}*/}
-          {/*alt=""*/}
-          {/*/>*/}
-          {/*      )}*/}
-
           <div className="card-body items-center text-center text-black">
             <DynamicComponent type={pageType} />
           </div>

@@ -29,7 +29,6 @@ interface LoginFormType {
 
 const LoginForm = ({ setPageType, loginSuccess }: Props) => {
   const { toast } = useToast()
-  const { mediaLgMd } = useScreen()
   const {
     register,
     handleSubmit,
