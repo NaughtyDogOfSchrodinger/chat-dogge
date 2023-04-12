@@ -30,7 +30,7 @@ const template = (code: string, expire_min: string, action: string) => {
   <p>如果您没有进行此操作，请忽略此邮件。</p>
   <p>祝您使用愉快！</p>
   <p style="margin-top: 50px;">ChatDogge 团队</p>
-  <p style="margin-top: 50px;">Copyright © 2023 - All right reserved by <a href="https://naughtydogofschrodinger.github.io/">NaughtyDog</a> Industries Ltd</p>
+  <p style="margin-top: 50px;">Copyright © 2023 - All right reserved by <a href="https://blog.chatdogge.xyz/">NaughtyDog</a> Industries Ltd</p>
 
 </div>
 <div>
