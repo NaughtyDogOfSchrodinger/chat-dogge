@@ -32,7 +32,7 @@ export default function Modal({
   const { isMobile, isDesktop } = useWindowSize()
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {showModal && (
         <>
           {isMobile && <Leaflet setShow={setShowModal}>{children}</Leaflet>}

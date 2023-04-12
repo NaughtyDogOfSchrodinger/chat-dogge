@@ -8,30 +8,27 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { PageTypeEnum } from '../../../constants/user'
-import { postFindPassword } from '@/api/user'
+import { PageTypeEnum } from '@/constants/user'
+import { postRegister } from '@/api/user'
 import { useSendCode } from '@/hooks/useSendCode'
 import type { ResLogin } from '@/api/response/user'
-import { useScreen } from '@/hooks/useScreen'
-import { useToast } from '@/hooks/useToast'
+import { toast } from 'react-hot-toast'
 import { LoadingCircle } from '@/components/share/icons'
 import Image from 'next/image'
 
 interface Props {
-  setPageType: Dispatch<`${PageTypeEnum}`>
   loginSuccess: (e: ResLogin) => void
+  setPageType: Dispatch<`${PageTypeEnum}`>
 }
 
 interface RegisterType {
   email: string
-  code: string
   password: string
   password2: string
+  code: string
 }
 
 const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
-  const { toast } = useToast()
-  const { mediaLgMd } = useScreen()
   const {
     register,
     handleSubmit,
@@ -49,32 +46,27 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
     if (!check) return
     sendCode({
       email: getValues('email'),
-      type: 'findPassword',
+      type: 'register',
     })
   }, [getValues, sendCode, trigger])
 
   const [requesting, setRequesting] = useState(false)
 
-  const onclickFindPassword = useCallback(
-    async ({ email, code, password }: RegisterType) => {
+  const onclickRegister = useCallback(
+    async ({ email, password, code }: RegisterType) => {
       setRequesting(true)
       try {
         loginSuccess(
-          await postFindPassword({
+          await postRegister({
             email,
             code,
             password,
           })
         )
-        toast({
-          title: `密码已找回`,
-          status: 'success',
-        })
+        setPageType('login')
+        toast('注册成功', { icon: `✅` })
       } catch (error: any) {
-        toast({
-          title: error.message || '修改密码异常',
-          status: 'error',
-        })
+        toast(error.message || '注册异常', { icon: `🔴` })
       }
       setRequesting(false)
     },
@@ -90,12 +82,12 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
         width={20}
         height={20}
       />
-      <form onSubmit={handleSubmit(onclickFindPassword)}>
+      <form onSubmit={handleSubmit(onclickRegister)}>
         <FormControl mt={8} isInvalid={!!errors.email}>
           <input
             type="text"
-            placeholder="邮箱"
             className="input-bordered input w-full"
+            placeholder="邮箱"
             {...register('email', {
               required: '邮箱不能为空',
               pattern: {
@@ -104,31 +96,29 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
                 message: '邮箱错误',
               },
             })}
-          />
+          ></input>
           <FormErrorMessage position={'absolute'} fontSize="xs" textColor="red">
             {!!errors.email && errors.email.message}
           </FormErrorMessage>
         </FormControl>
         <label className="label" />
 
-        <FormControl mt={8} isInvalid={!!errors.code}>
+        <FormControl mt={8} isInvalid={!!errors.email}>
           <div className="flex-col2 flex">
             <input
               type="text"
+              className="input-bordered input w-full"
               placeholder="验证码"
-              className="input-bordered input  rounded-md border "
               {...register('code', {
                 required: '验证码不能为空',
               })}
-            />
+            ></input>
             <button
-              type="submit"
+              onClick={onclickSendCode}
               disabled={codeCountDown > 0}
-              className={`${
-                !onclickSendCode ? 'cursor-not-allowed ' : 'border'
-              } btn h-10  rounded-md  border border-gray-200   focus:outline-none`}
+              className="w-15 btn rounded-md border-2 border-gray-200   focus:outline-none"
             >
-              {!onclickSendCode ? <LoadingCircle /> : <>{sendCodeText}</>}
+              {codeSending ? <LoadingCircle /> : <>{sendCodeText}</>}
             </button>
           </div>
 
@@ -136,14 +126,13 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             {!!errors.code && errors.code.message}
           </FormErrorMessage>
         </FormControl>
-
         <label className="label" />
 
         <FormControl mt={8} isInvalid={!!errors.password}>
           <input
-            className="input-bordered input w-full rounded-md border"
             type={'password'}
-            placeholder="新密码"
+            placeholder="密码"
+            className="input-bordered input w-full"
             {...register('password', {
               required: '密码不能为空',
               minLength: {
@@ -166,7 +155,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           <input
             type={'password'}
             placeholder="确认密码"
-            className="input-bordered input w-full rounded-md border"
+            className="input-bordered input w-full"
             {...register('password2', {
               validate: (val) =>
                 getValues('password') === val ? true : '两次密码不一致',
@@ -176,13 +165,14 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             {!!errors.password2 && errors.password2.message}
           </FormErrorMessage>
         </FormControl>
+
         <label className="label">
           <span className="label-text"></span>
           <span
             className="label-text hover:underline"
             onClick={() => setPageType('login')}
           >
-            去登录
+            已有账号，去登录
           </span>
         </label>
         <button
@@ -191,7 +181,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           } btn flex h-10 w-full items-center justify-center space-x-3 rounded-md border border-gray-200 text-sm shadow-sm transition-all duration-75 focus:outline-none`}
           type="submit"
         >
-          找回密码
+          确认注册
         </button>
       </form>
     </>

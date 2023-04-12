@@ -11,11 +11,9 @@ import { useForm } from 'react-hook-form'
 import { PageTypeEnum } from '@/constants/user'
 import { postLogin } from '@/api/user'
 import type { ResLogin } from '@/api/response/user'
-import { useToast } from '@/hooks/useToast'
-import { useScreen } from '@/hooks/useScreen'
 import { LoadingDots } from '@/components/share/icons'
 import Image from 'next/image'
-import Link from 'next/link'
+import { toast } from 'react-hot-toast'
 
 interface Props {
   setPageType: Dispatch<`${PageTypeEnum}`>
@@ -28,7 +26,6 @@ interface LoginFormType {
 }
 
 const LoginForm = ({ setPageType, loginSuccess }: Props) => {
-  const { toast } = useToast()
   const {
     register,
     handleSubmit,
@@ -47,19 +44,13 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
             password,
           })
         )
-        toast({
-          title: '登录成功',
-          status: 'success',
-        })
+        toast('登录成功', { icon: `✅` })
       } catch (error: any) {
-        toast({
-          title: error.message || '登录异常',
-          status: 'error',
-        })
+        toast(error.message || '登录异常' || '发送验证码异常', { icon: `🔴` })
       }
       setRequesting(false)
     },
-    [loginSuccess, toast]
+    [loginSuccess]
   )
 
   return (

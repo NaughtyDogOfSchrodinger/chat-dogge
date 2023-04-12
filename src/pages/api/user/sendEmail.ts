@@ -27,11 +27,12 @@ export default async function handler(
       code += Math.floor(Math.random() * 10)
     }
 
+    const expire_min = 4
     // 判断 1 分钟内是否有重复数据
     const authCode = await AuthCode.findOne({
       email,
       type,
-      expiredTime: { $gte: Date.now() + 4 * 60 * 1000 }, // 如果有一个记录的过期时间，大于当前+4分钟，说明距离上次发送还没到1分钟。（因为默认创建时，过期时间是未来5分钟）
+      expiredTime: { $gte: Date.now() + expire_min * 60 * 1000 }, // 如果有一个记录的过期时间，大于当前+4分钟，说明距离上次发送还没到1分钟。（因为默认创建时，过期时间是未来5分钟）
     })
 
     if (authCode) {
@@ -46,7 +47,12 @@ export default async function handler(
     })
 
     // 发送验证码
-    await sendCode(email as string, code, type as `${EmailTypeEnum}`)
+    await sendCode(
+      email as string,
+      code,
+      (expire_min + 1).toString(),
+      type as `${EmailTypeEnum}`
+    )
 
     jsonRes(res, {
       message: '发送验证码成功',

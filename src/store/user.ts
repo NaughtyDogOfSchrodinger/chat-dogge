@@ -13,9 +13,12 @@ type State = {
   initUserInfo: () => Promise<null>
   setUserInfo: (user: UserType, token?: string) => void
   updateUserInfo: (user: UserUpdateParams) => void
+  clearUserInfo: () => void
   myModels: ModelSchema[]
   getMyModels: () => void
   setMyModels: (data: ModelSchema[]) => void
+  clearMyModels: () => void
+  clear: () => void
 }
 
 export const useUserStore = create<State>()(
@@ -45,6 +48,12 @@ export const useUserStore = create<State>()(
           }
         })
       },
+      clearUserInfo() {
+        set((state) => {
+          if (!state.userInfo) return
+          state.userInfo = null
+        })
+      },
       myModels: [],
       getMyModels: () =>
         getMyModels().then((res) => {
@@ -58,6 +67,15 @@ export const useUserStore = create<State>()(
           state.myModels = data
         })
         return null
+      },
+      clearMyModels() {
+        set((state) => {
+          state.myModels = []
+        })
+      },
+      clear() {
+        this.clearUserInfo()
+        this.clearMyModels()
       },
     }))
   )

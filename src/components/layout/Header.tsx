@@ -13,6 +13,7 @@ import { useSignInModal } from '@/components/layout/sign-in-modal'
 import { AnimatePresence, motion } from 'framer-motion'
 import UserDropdown from '@/components/layout/user-dropdown'
 import { FADE_IN_ANIMATION_SETTINGS } from '@/utils/constants'
+import { useUserStore } from '@/store/user'
 
 function MobileNavLink({
   href,
@@ -129,7 +130,7 @@ function MobileNavigation() {
 }
 
 export function Header() {
-  const { data: session, status } = useSession()
+  const { userInfo } = useUserStore()
   const { SignInModal, setShowSignInModal } = useSignInModal()
   // @ts-ignore
   const HEADER_LINKS = useHeaders()
@@ -155,7 +156,7 @@ export function Header() {
             {/*<LanguageSelector />*/}
             <div>
               <AnimatePresence>
-                {!session && status !== 'loading' ? (
+                {!userInfo ? (
                   <motion.button
                     className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
                     onClick={() => setShowSignInModal(true)}

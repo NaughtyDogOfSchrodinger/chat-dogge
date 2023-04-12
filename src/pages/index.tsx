@@ -55,7 +55,6 @@ const Home = () => {
   if (isLoading) {
     return (
       <>
-        <Header />
         <main>
           <Hero />
           <div className="w-full bg-slate-50 bg-gradient-to-br from-indigo-50 via-white to-cyan-100 pb-20 pt-10">
@@ -72,14 +71,12 @@ const Home = () => {
             </div>
           </div>
         </main>
-        <Footer />
       </>
     )
   }
 
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <div className="w-full bg-slate-50 pb-20 pt-10">
@@ -108,7 +105,6 @@ const Home = () => {
         {/* <Pricing /> */}
         {/* <Faqs /> */}
       </main>
-      <Footer />
     </>
   )
 }

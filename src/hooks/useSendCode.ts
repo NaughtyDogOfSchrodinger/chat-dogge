@@ -2,18 +2,18 @@ import { useState, useMemo, useCallback } from 'react'
 import { sendCodeToEmail } from '@/api/user'
 import { EmailTypeEnum } from '@/constants/common'
 let timer: any
-import { useToast } from './useToast'
-
+// import { useToast } from './useToast'
+import { toast } from 'react-hot-toast'
 export const useSendCode = () => {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const [codeSending, setCodeSending] = useState(false)
   const [codeCountDown, setCodeCountDown] = useState(0)
   const sendCodeText = useMemo(() => {
     if (codeCountDown >= 10) {
-      return `${codeCountDown}s后重新获取`
+      return `${codeCountDown}s`
     }
     if (codeCountDown > 0) {
-      return `0${codeCountDown}s后重新获取`
+      return `0${codeCountDown}s`
     }
     return '获取'
   }, [codeCountDown])
@@ -35,16 +35,9 @@ export const useSendCode = () => {
             return val - 1
           })
         }, 1000)
-        toast({
-          title: '验证码已发送',
-          status: 'success',
-          position: 'top',
-        })
+        toast('验证码已发送', { icon: `✅` })
       } catch (error: any) {
-        toast({
-          title: error.message || '发送验证码异常',
-          status: 'error',
-        })
+        toast(error.message || '发送验证码异常', { icon: `🔴` })
       }
       setCodeSending(false)
     },
