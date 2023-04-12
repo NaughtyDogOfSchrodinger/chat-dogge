@@ -1,6 +1,6 @@
 import { CustomOpenAIKeyForm } from '@/components/CustomOpenAIKeyForm'
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
+import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
 import { Purchase } from '@/components/Purchase'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'

@@ -1,8 +1,8 @@
 import AppList from '@/components/AppList'
 import AppListLoading from '@/components/AppListLoading'
 import { Button } from '@/components/Button'
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
+import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/Hero'
 import { SearchInput } from '@/components/SearchInput'
 import { api } from '@/utils/api'
@@ -55,7 +55,6 @@ const Home = () => {
   if (isLoading) {
     return (
       <>
-        <Header />
         <main>
           <Hero />
           <div className="w-full bg-slate-50 bg-gradient-to-br from-indigo-50 via-white to-cyan-100 pb-20 pt-10">
@@ -72,14 +71,12 @@ const Home = () => {
             </div>
           </div>
         </main>
-        <Footer />
       </>
     )
   }
 
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <div className="w-full bg-slate-50 pb-20 pt-10">
@@ -108,7 +105,6 @@ const Home = () => {
         {/* <Pricing /> */}
         {/* <Faqs /> */}
       </main>
-      <Footer />
     </>
   )
 }

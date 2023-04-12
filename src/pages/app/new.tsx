@@ -1,7 +1,7 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { Button } from '@/components/Button'
 import { EmojiField } from '@/components/EmojiField'
-import Layout from '@/components/Layout'
+import Layout from '@/components/layout/Layout'
 import { createAppSchema } from '@/server/api/schema'
 import { api, type RouterInputs } from '@/utils/api'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,7 +11,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'next-i18next'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Chat } from '@/components/Chat'
+import { Chat } from '@/components/chat/Chat'
 import { useSession } from 'next-auth/react'
 
 type Inputs = RouterInputs['app']['create']
