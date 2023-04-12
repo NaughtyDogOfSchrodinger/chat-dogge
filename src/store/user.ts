@@ -26,6 +26,7 @@ export const useUserStore = create<State>()(
     immer((set, get) => ({
       userInfo: null,
       async initUserInfo() {
+        console.log('-------init-------')
         const res = await getTokenLogin()
         get().setUserInfo(res)
         return null

@@ -33,9 +33,8 @@ const SignInModal = ({
     (res: ResLogin) => {
       setUserInfo(res.user, res.token)
       setShowSignInModal(false)
-      // router.push('/model/list')
     },
-    [router, setUserInfo]
+    [setShowSignInModal, setUserInfo]
   )
 
   function DynamicComponent({ type }: { type: `${PageTypeEnum}` }) {

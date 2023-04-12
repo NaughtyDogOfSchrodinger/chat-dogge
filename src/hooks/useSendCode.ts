@@ -41,7 +41,7 @@ export const useSendCode = () => {
       }
       setCodeSending(false)
     },
-    [toast]
+    []
   )
 
   return {

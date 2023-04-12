@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
 import { AuthCode } from '@/service/models/authCode'
+import { User } from '@/service/models/user'
 import { connectToDatabase } from '@/service/mongo'
 import { sendCode } from '@/service/utils/sendEmail'
 import { EmailTypeEnum } from '@/constants/common'
@@ -37,6 +38,19 @@ export default async function handler(
 
     if (authCode) {
       throw new Error('请勿频繁获取验证码')
+    }
+
+    if (type == 'register') {
+      const user = await User.findOne({ email })
+      if (user) {
+        throw new Error('该邮箱已被注册')
+      }
+    }
+    if (type == 'findPassword') {
+      const user = await User.findOne({ email })
+      if (!user) {
+        throw new Error('该邮箱不存在')
+      }
     }
 
     // 创建 auth 记录
