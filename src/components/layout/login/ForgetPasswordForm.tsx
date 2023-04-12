@@ -176,6 +176,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           </span>
         </label>
         <button
+          disabled={requesting}
           className={`${
             requesting ? 'cursor-not-allowed ' : 'border'
           } btn flex h-10 w-full items-center justify-center space-x-3 rounded-md border border-gray-200 text-sm shadow-sm transition-all duration-75 focus:outline-none`}
