@@ -115,6 +115,7 @@ export const defaultModel: ModelSchema = {
   systemPrompt: '',
   intro: '',
   temperature: 5,
+  hitCount: 0,
   service: {
     company: 'openai',
     trainId: '',

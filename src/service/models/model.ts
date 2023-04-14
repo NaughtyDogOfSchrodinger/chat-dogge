@@ -1,5 +1,9 @@
 import { Schema, model, models, Model as MongoModel } from 'mongoose'
-import { ModelSchema as ModelType } from '@/types/mongoSchema'
+import {
+  ModelPopulate,
+  ModelSchema as ModelType,
+  ModelUserRelSchema,
+} from '@/types/mongoSchema'
 const ModelSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
@@ -12,7 +16,7 @@ const ModelSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: '/imgs/modelAvatar.png',
+    default: '😑',
   },
   systemPrompt: {
     // 系统提示词
@@ -42,6 +46,10 @@ const ModelSchema = new Schema({
     min: 0,
     max: 10,
     default: 4,
+  },
+  hitCount: {
+    type: Number,
+    default: 0,
   },
   service: {
     company: {
@@ -93,7 +101,11 @@ const ModelSchema = new Schema({
     default: {},
     required: true,
   },
+  like: {
+    type: Boolean,
+    default: false,
+  },
 })
 // @ts-ignore
-export const Model: MongoModel<ModelType> =
+export const Model: MongoModel<ModelPopulate> =
   models['model'] || model('model', ModelSchema)

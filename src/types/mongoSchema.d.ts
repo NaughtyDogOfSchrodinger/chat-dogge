@@ -30,6 +30,7 @@ export interface ModelSchema {
   name: string
   avatar: string
   systemPrompt: string
+  hitCount: number
   intro: string
   userId: string
   status: `${ModelStatusEnum}`
@@ -52,7 +53,13 @@ export interface ModelSchema {
 }
 
 export interface ModelPopulate extends ModelSchema {
-  userId: UserModelSchema
+  like: boolean
+}
+
+export interface ModelUserRelSchema {
+  _id: string
+  userId: string
+  modelId: string
 }
 
 export type ModelDataType = 0 | 1

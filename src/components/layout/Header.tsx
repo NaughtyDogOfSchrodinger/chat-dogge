@@ -8,7 +8,6 @@ import { Logo } from '@/components/layout/Logo'
 import { NavLink } from '@/components/layout/NavLink'
 import { useTranslation } from 'next-i18next'
 import { LanguageSelector } from './LanguageSelector'
-import { useSession } from 'next-auth/react'
 import { useSignInModal } from '@/components/layout/sign-in-modal'
 import { AnimatePresence, motion } from 'framer-motion'
 import UserDropdown from '@/components/layout/user-dropdown'
@@ -163,7 +162,7 @@ export function Header() {
                     onClick={() => setShowSignInModal(true)}
                     {...FADE_IN_ANIMATION_SETTINGS}
                   >
-                    Sign In
+                    登录
                   </motion.button>
                 ) : (
                   <UserDropdown />

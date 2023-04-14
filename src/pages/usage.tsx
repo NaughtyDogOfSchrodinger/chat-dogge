@@ -8,12 +8,10 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 const Usage = () => {
   return (
     <div>
-      <Header />
       <main>
         <Purchase />
         <CustomOpenAIKeyForm />
       </main>
-      <Footer />
     </div>
   )
 }

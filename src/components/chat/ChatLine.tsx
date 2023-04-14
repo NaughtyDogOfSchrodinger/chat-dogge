@@ -11,7 +11,7 @@ export interface ChatGPTMessage {
   content: string
 }
 
-// loading placeholder animation for the chat line
+// loading placeholder animation for the newChat line
 export const LoadingChatLine = () => (
   <div className="flex min-w-full animate-pulse px-4 py-5 sm:px-6">
     <div className="flex flex-grow space-x-3">

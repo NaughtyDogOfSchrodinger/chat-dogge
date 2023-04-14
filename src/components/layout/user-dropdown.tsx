@@ -12,6 +12,7 @@ export default function UserDropdown() {
   const { userInfo, clearUserInfo, clearMyModels } = useUserStore()
   const { email, balance } = userInfo || {}
   const [openPopover, setOpenPopover] = useState(false)
+  const { getAllModels } = useUserStore()
   if (!userInfo) return null
 
   return (
@@ -35,10 +36,11 @@ export default function UserDropdown() {
                 clearUserInfo()
                 clearMyModels()
                 clearToken()
+                getAllModels()
               }}
             >
               <LogOut className="h-4 w-4" />
-              <p className="text-sm">Logout</p>
+              <p className="text-sm">退出登录</p>
             </button>
           </div>
         }

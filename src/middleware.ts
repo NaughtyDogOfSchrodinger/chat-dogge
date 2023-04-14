@@ -13,7 +13,7 @@ const ratelimit = new Ratelimit({
 })
 
 export const config = {
-  matcher: ['/api/generate', '/api/chat'],
+  matcher: ['/api/generate', '/api/newChat'],
 }
 
 export default async function middleware(

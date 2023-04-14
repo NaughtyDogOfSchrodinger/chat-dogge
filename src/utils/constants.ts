@@ -28,4 +28,5 @@ export const DEPLOY_URL =
 export type ChatProps = {
   callback: any
   keyDown: boolean
+  modelId: string
 }

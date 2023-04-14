@@ -1,83 +1,81 @@
-import { HandThumbUpIcon, PlayIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
+import { FlameIcon, HeartIcon } from 'lucide-react'
+import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
+import { useUserStore } from '@/store/user'
+import { useCallback } from 'react'
+import { postCreateModel, userCollect } from '@/api/model'
 
 interface AppListProps {
-  list: Array<{
-    id: string
-    name: string
-    description: string
-    icon: string
-  }>
+  list: Array<ModelPopulate>
 }
 const AppList = (props: AppListProps) => {
+  // @ts-ignore
   const { t } = useTranslation('common')
-  const { list } = props
 
-  const currentApps = list.map((v) => ({
-    id: v.id,
-    title: v.name,
-    description: v.description,
-    href: '/app/' + v.id,
-    emoji: v.icon,
-    iconBackground: 'bg-indigo-50',
-  }))
+  const { getAllModels } = useUserStore()
 
+  const handleUserCollect = useCallback(
+    async (modelId: string, like: boolean) => {
+      try {
+        await userCollect({ modelId, like })
+        toast(like ? '收藏成功' : '取消收藏成功', { icon: '✅' })
+        getAllModels()
+      } catch (err: any) {
+        toast(typeof err === 'string' ? err : err.message || '出现了意外', {
+          icon: '🔴',
+        })
+      }
+    },
+    [getAllModels]
+  )
   return (
     <ul
       role="list"
-      className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+      className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
     >
-      {currentApps.map((app) => (
-        <li
-          key={app.id}
-          className="col-span-1 flex flex-col justify-between divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
-        >
-          <Link href={app.href}>
-            <div className="flex flex-1 flex-col p-8">
-              <div className="mx-auto flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-3xl">
-                {app.emoji}
-              </div>
-              <h3 className="mt-6 text-sm font-medium text-gray-900">
-                {app.title}
-              </h3>
-              <dl className="mt-1 flex flex-grow flex-col justify-between">
-                <dt className="sr-only">Title</dt>
-                <dd className="text-sm text-gray-500">{app.description}</dd>
-              </dl>
+      {props.list.map((app) => (
+        <div key={app._id} className="card w-auto bg-base-100 shadow-xl">
+          <div className="card-body">
+            <div className="mx-auto flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-3xl">
+              {app.avatar}
             </div>
-          </Link>
-
-          <div>
-            <div className="-mt-px flex divide-x divide-gray-200">
-              <div className="flex w-0 flex-1">
-                <button
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                  onClick={() => toast(t('developing'), { icon: '🙇' })}
-                >
-                  <HandThumbUpIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  {t('recommend')}
-                </button>
+            <div className="card-title justify-between">
+              {app.name}
+              <div
+                className="badge-secondary badge badge-xs modal-middle border-white bg-white text-black"
+                // hidden={hit < 100}
+              >
+                <FlameIcon className="h-8 w-8 fill-[#f25207] text-[#f25207]" />
+                <p className="text-sm text-black"> {app.hitCount}</p>
               </div>
-              <div className="-ml-px flex w-0 flex-1">
-                <Link
-                  href={app.href}
-                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                >
-                  <PlayIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  {t('run')}
-                </Link>
+              {/*<div className="badge-secondary badge">NEW</div>*/}
+            </div>
+            <p className="text-sm text-gray-500">
+              {app.intro.length > 40
+                ? app.intro.substring(0, 40) + '...'
+                : app.intro}
+            </p>
+            <div className="card-actions modal-middle justify-between">
+              <div>
+                <HeartIcon
+                  onClick={() => handleUserCollect(app._id, !app.like)}
+                  className={`${
+                    app.like ? 'fill-[#eb3313]' : 'hover:fill-[#eb3313]'
+                  } h-5 w-5 text-[#eb3313]`}
+                  aria-hidden="true"
+                />
               </div>
+              <Link
+                href={'/model/detail?modelId=' + `${app._id}`}
+                className="btn-sm btn bg-black text-white"
+              >
+                {t('run')}
+              </Link>
             </div>
           </div>
-        </li>
+        </div>
       ))}
     </ul>
   )

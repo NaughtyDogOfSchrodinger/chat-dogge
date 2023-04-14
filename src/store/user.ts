@@ -15,7 +15,9 @@ type State = {
   updateUserInfo: (user: UserUpdateParams) => void
   clearUserInfo: () => void
   myModels: ModelSchema[]
+  allModels: ModelSchema[]
   getMyModels: () => void
+  getAllModels: () => void
   setMyModels: (data: ModelSchema[]) => void
   clearMyModels: () => void
   clear: () => void
@@ -56,10 +58,18 @@ export const useUserStore = create<State>()(
         })
       },
       myModels: [],
+      allModels: [],
       getMyModels: () =>
         getMyModels().then((res) => {
           set((state) => {
             state.myModels = res
+          })
+          return res
+        }),
+      getAllModels: () =>
+        getMyModels().then((res) => {
+          set((state) => {
+            state.allModels = res
           })
           return res
         }),

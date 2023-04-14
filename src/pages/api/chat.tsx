@@ -30,21 +30,7 @@ const handler = async (req: Request): Promise<Response> => {
     user: body?.user,
     n: 1,
   }
-  return await fetch(`${HOST_URL}/api/user?id=${payload.user}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
-    .then((res) => res.json())
-    .then(async (data) => {
-      console.log(`left token: ${data.tokenCount}`)
-      if (data.tokenCount > 0) {
-        const stream = await OpenAIStream(payload, body?.isLogin)
-        return new Response(stream)
-      } else {
-        return new Response(undefined, { status: 439 })
-      }
-    })
+  const stream = await OpenAIStream(payload, body?.isLogin)
+  return new Response(stream)
 }
 export default handler

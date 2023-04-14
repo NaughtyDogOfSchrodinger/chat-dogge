@@ -67,20 +67,6 @@ export async function OpenAIStream(
           if (data === '[DONE]') {
             console.log('DONE')
             controller.close()
-            await fetch(`${HOST_URL}/api/cost`, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-              body: JSON.stringify({
-                userId: payload.user,
-                count: counter,
-              }),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(`left token: ${data.tokenCount}`)
-              })
             return
           }
           try {

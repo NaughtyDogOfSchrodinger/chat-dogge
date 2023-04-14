@@ -1,25 +1,29 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { Button } from '@/components/Button'
 import { EmojiField } from '@/components/EmojiField'
-import Layout from '@/components/layout/Layout'
-import { createAppSchema } from '@/server/api/schema'
-import { api, type RouterInputs } from '@/utils/api'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'next-i18next'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Chat } from '@/components/chat/Chat'
-import { useSession } from 'next-auth/react'
+import { useCallback, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import { postCreateModel } from '@/api/model'
+import { modelList } from '@/constants/model'
+import { ModelSchema } from '@/types/mongoSchema'
+import { useUserStore } from '@/store/user'
 
-type Inputs = RouterInputs['app']['create']
+interface CreateFormType {
+  avatar: string
+  name: string
+  serviceModelName: string
+  description: string
+  prompt: string
+}
 
 const NewApp = () => {
   const router = useRouter()
-  const { data: session } = useSession()
-  const { id } = session?.user || {}
   // @ts-ignore
   const { t } = useTranslation('common')
 
@@ -29,21 +33,48 @@ const NewApp = () => {
     control,
     getValues,
     formState: { errors },
-  } = useForm<Inputs>({ resolver: zodResolver(createAppSchema) })
-  const mutation = api.app.create.useMutation({
-    onSuccess: (data, variables, context) => {
-      router.push(`/app/${data.id}`)
-    },
-    onError: () => {
-      console.log('on error')
+  } = useForm<CreateFormType>({
+    defaultValues: {
+      serviceModelName: modelList[0]?.model,
     },
   })
+  const [requesting, setRequesting] = useState(false)
+  const [refresh, setRefresh] = useState(false)
+  const { myModels, setMyModels, getMyModels } = useUserStore()
+  const createModelSuccess = useCallback(
+    (data: ModelSchema) => {
+      setMyModels([data, ...myModels])
+    },
+    [myModels, setMyModels]
+  )
+  // const {
+  //   getValues,
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<CreateFormType>({
+  //   defaultValues: {
+  //     serviceModelName: modelList[0].model,
+  //   },
+  // })
 
-  const { isLoading: isCreating } = mutation
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    mutation.mutate(data)
-  }
+  const handleCreateModel = useCallback(
+    async (data: CreateFormType) => {
+      setRequesting(true)
+      try {
+        const res = await postCreateModel(data)
+        toast('创建成功', { icon: '✅' })
+        createModelSuccess(res)
+        router.push(`/model/detail?modelId=${res._id}`)
+      } catch (err: any) {
+        toast(typeof err === 'string' ? err : err.message || '出现了意外', {
+          icon: '🔴',
+        })
+      }
+      setRequesting(false)
+    },
+    [createModelSuccess, router]
+  )
 
   return (
     <>
@@ -57,21 +88,19 @@ const NewApp = () => {
             <h1 className="py-10 text-center text-2xl font-semibold text-gray-900">
               {t('create_app')}
             </h1>
-            <form className=" space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className=" space-y-6"
+              onSubmit={handleSubmit(handleCreateModel)}
+            >
               <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
                 <div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
                   <div className="grid grid-cols-3 gap-6">
                     <div className="col-span-3 sm:col-span-2">
-                      <input
-                        hidden={true}
-                        defaultValue={id}
-                        {...register('userId')}
-                      />
                       <label className="block text-sm font-medium leading-6 text-gray-900">
                         {t('icon')}
                       </label>
                       <Controller
-                        name="icon"
+                        name="avatar"
                         control={control}
                         defaultValue="🤖"
                         render={({ field }) => (
@@ -82,7 +111,7 @@ const NewApp = () => {
                         )}
                       />
                       <p className="mt-2 text-sm text-red-500">
-                        {errors.icon && errors.icon.message}
+                        {errors.avatar && errors.avatar.message}
                       </p>
                       <p className="mt-2 text-sm text-gray-500">
                         {t('pick_emoji_icon')}
@@ -104,6 +133,34 @@ const NewApp = () => {
                       </div>
                       <p className="mt-2 text-sm text-red-500">
                         {errors.name && errors.name.message}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <div className="col-span-3 sm:col-span-2">
+                      <div className="form-control w-full max-w-xs">
+                        <label className="label">
+                          <span className="label-text">选择基础模型</span>
+                        </label>
+                        <select
+                          className="select-bordered select"
+                          {...register('serviceModelName', {
+                            required: '底层模型不能为空',
+                            onChange() {
+                              setRefresh(!refresh)
+                            },
+                          })}
+                        >
+                          {modelList.map((item) => (
+                            <option key={item.model} value={item.model}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <p className="mt-2 text-sm text-red-500">
+                        {!!errors.serviceModelName &&
+                          errors.serviceModelName.message}
                       </p>
                     </div>
                   </div>
@@ -148,16 +205,16 @@ const NewApp = () => {
                       </p>
                     </div>
                   </div>
-                  <section className="flex flex-col gap-3 ">
-                    <div className="lg:w-6/1 ">
-                      <Chat
-                        keyDown={false}
-                        callback={async () => {
-                          return getValues().prompt
-                        }}
-                      />
-                    </div>
-                  </section>
+                  {/*<section className="flex flex-col gap-3 ">*/}
+                  {/*  <div className="lg:w-6/1 ">*/}
+                  {/*    <Chat*/}
+                  {/*      keyDown={false}*/}
+                  {/*      callback={async () => {*/}
+                  {/*        return getValues().prompt*/}
+                  {/*      }}*/}
+                  {/*    />*/}
+                  {/*  </div>*/}
+                  {/*</section>*/}
                 </div>
               </div>
 
@@ -173,7 +230,7 @@ const NewApp = () => {
                   variant="solid"
                   color="slate"
                   type="submit"
-                  loading={isCreating}
+                  loading={requesting}
                 >
                   {t('create')}
                 </Button>

@@ -7,9 +7,10 @@ import { ChatProps } from '@/utils/constants'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
-import { useSession } from 'next-auth/react'
+import { hitCount } from '@/api/model'
+import { useUserStore } from '@/store/user'
 
-const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
+const COOKIE_NAME = 'nextjs-example-ai-newChat-gpt3'
 
 export const InputMessage = ({
   input,
@@ -25,7 +26,7 @@ export const InputMessage = ({
       className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 sm:text-sm"
       value={input}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' && keydown) {
+        if (e.key === 'Enter') {
           sendMessage(input, getValues)
           setInput('')
         }
@@ -51,25 +52,16 @@ export function Chat(props: ChatProps) {
   const router = useRouter()
   // @ts-ignore
   const { t } = useTranslation('common')
-  const { data: session } = useSession()
+  const { userInfo, clearUserInfo, clearMyModels } = useUserStore()
 
   const [messages, setMessages] = useState<ChatGPTMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
 
-  useEffect(() => {
-    if (session) {
-      setCookie(COOKIE_NAME, session?.user.id)
-    } else if (!cookie[COOKIE_NAME]) {
-      // generate a semi random short id
-      const id = Math.random().toString(36).substring(7)
-      setCookie(COOKIE_NAME, id)
-    }
-  }, [cookie, session, setCookie])
-
-  // send message to API /api/chat endpoint
+  // send message to API /api/newChat endpoint
   const sendMessage = async (message: string, callback: any) => {
+    await hitCount(props.modelId)
     const system = await callback()
     console.log(`message: ${message}, system: ${system}`)
     setLoading(true)
@@ -92,7 +84,7 @@ export function Chat(props: ChatProps) {
         userKey: loadLicenseKey(),
         messages: addSystem,
         user: cookie[COOKIE_NAME],
-        isLogin: !!session,
+        isLogin: userInfo,
       }),
     })
 
