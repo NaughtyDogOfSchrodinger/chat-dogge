@@ -29,4 +29,5 @@ export type ChatProps = {
   callback: any
   keyDown: boolean
   modelId: string
+  chatId: string | undefined
 }

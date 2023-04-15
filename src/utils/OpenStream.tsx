@@ -65,7 +65,6 @@ export async function OpenAIStream(
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
           if (data === '[DONE]') {
-            console.log('DONE')
             controller.close()
             return
           }

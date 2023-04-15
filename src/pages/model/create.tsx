@@ -11,7 +11,7 @@ import { useCallback, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { postCreateModel } from '@/api/model'
 import { modelList } from '@/constants/model'
-import { ModelSchema } from '@/types/mongoSchema'
+import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { useUserStore } from '@/store/user'
 
 interface CreateFormType {
@@ -40,23 +40,13 @@ const NewApp = () => {
   })
   const [requesting, setRequesting] = useState(false)
   const [refresh, setRefresh] = useState(false)
-  const { myModels, setMyModels, getMyModels } = useUserStore()
+  const { myModels, setMyModels } = useUserStore()
   const createModelSuccess = useCallback(
-    (data: ModelSchema) => {
+    (data: ModelPopulate) => {
       setMyModels([data, ...myModels])
     },
     [myModels, setMyModels]
   )
-  // const {
-  //   getValues,
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<CreateFormType>({
-  //   defaultValues: {
-  //     serviceModelName: modelList[0].model,
-  //   },
-  // })
 
   const handleCreateModel = useCallback(
     async (data: CreateFormType) => {

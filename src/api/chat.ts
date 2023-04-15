@@ -12,7 +12,7 @@ export const getChatSiteId = (modelId: string) =>
  * 获取初始化聊天内容
  */
 export const getInitChatSiteInfo = (chatId: string) =>
-  GET<InitChatResponse>(`/chat/init?chatId=${chatId}`)
+  GET<InitChatResponse>(`/chat/init?modelId=${chatId}`)
 
 /**
  * 发送 GPT3 prompt
@@ -45,3 +45,6 @@ export const postSaveChat = (data: {
  */
 export const delChatRecordByIndex = (chatId: string, index: number) =>
   DELETE(`/chat/delChatRecordByIndex?chatId=${chatId}&index=${index}`)
+
+export const clearChatRecord = (chatId: string) =>
+  DELETE(`/chat/clearChatRecord?chatId=${chatId}`)

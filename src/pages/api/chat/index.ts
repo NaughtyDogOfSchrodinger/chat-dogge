@@ -1,6 +1,5 @@
 import { type ChatGPTMessage } from '@/components/chat/ChatLine'
 import { OpenAIStream, OpenAIStreamPayload } from '@/utils/OpenStream'
-import { HOST_URL } from '@/utils/hostUrl'
 
 // break the app if the API key is missing
 if (!process.env.OPENAI_API_KEY) {
@@ -18,6 +17,7 @@ const handler = async (req: Request): Promise<Response> => {
   messages.push(...body?.messages)
   const payload: OpenAIStreamPayload = {
     model: 'gpt-3.5-turbo',
+    // @ts-ignore
     messages: messages,
     temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
     max_tokens: process.env.AI_MAX_TOKENS

@@ -31,25 +31,25 @@ export const PurchaseAction = (props: PurchaseActionProps) => {
         <span className="text-5xl font-bold tracking-tight text-gray-900">
           ¥25
         </span>
-        <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-          10w {t('count')}
-        </span>
+        {/*<span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">*/}
+        {/*  10w {t('count')}*/}
+        {/*</span>*/}
       </p>
       <p className="mt-6 flex items-baseline justify-center gap-x-2">
         <span className="text-5xl font-bold tracking-tight text-gray-900">
           ¥68
         </span>
-        <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-          30w {t('count')}
-        </span>
+        {/*<span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">*/}
+        {/*  30w {t('count')}*/}
+        {/*</span>*/}
       </p>
       <p className="mt-6 flex items-baseline justify-center gap-x-2">
         <span className="text-5xl font-bold tracking-tight text-gray-900">
           ¥128
         </span>
-        <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-          100w {t('count')}
-        </span>
+        {/*<span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">*/}
+        {/*  100w {t('count')}*/}
+        {/*</span>*/}
       </p>
       <div>
         <button

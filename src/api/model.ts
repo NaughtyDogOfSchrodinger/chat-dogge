@@ -13,7 +13,7 @@ import { ModelPopulate } from '@/types/mongoSchema'
 /**
  * 获取模型列表
  */
-export const getMyModels = () => GET<ModelSchema[]>('/model/list')
+export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
 
 /**
  * 创建一个模型
@@ -21,7 +21,7 @@ export const getMyModels = () => GET<ModelSchema[]>('/model/list')
 export const postCreateModel = (data: {
   name: string
   serviceModelName: string
-}) => POST<ModelSchema>('/model/create', data)
+}) => POST<ModelPopulate>('/model/create', data)
 
 /**
  * 用户收藏

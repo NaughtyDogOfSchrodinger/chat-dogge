@@ -15,7 +15,6 @@ import { pushGenerateVectorBill } from '../events/pushBill'
 /* 获取用户 api 的 openai 信息 */
 export const getUserApiOpenai = async (userId: string) => {
   const user = await User.findById(userId)
-  console.log(user)
   const userApiKey = user?.openaiKey
 
   if (!userApiKey) {
@@ -138,7 +137,6 @@ export const gpt35StreamResponse = ({
         try {
           const json = JSON.parse(data)
           const content: string = json?.choices?.[0].delta.content || ''
-          // console.log('content:', content);
           if (!content || (responseContent === '' && content === '\n')) return
 
           responseContent += content

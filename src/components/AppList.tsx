@@ -6,15 +6,17 @@ import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { useUserStore } from '@/store/user'
 import { useCallback } from 'react'
 import { postCreateModel, userCollect } from '@/api/model'
+import { getChatSiteId } from '@/api/chat'
 
 interface AppListProps {
   list: Array<ModelPopulate>
+  models: any
 }
 const AppList = (props: AppListProps) => {
   // @ts-ignore
   const { t } = useTranslation('common')
 
-  const { getAllModels } = useUserStore()
+  const getAllModels = props.models
 
   const handleUserCollect = useCallback(
     async (modelId: string, like: boolean) => {
@@ -43,10 +45,7 @@ const AppList = (props: AppListProps) => {
             </div>
             <div className="card-title justify-between">
               {app.name}
-              <div
-                className="badge-secondary badge badge-xs modal-middle border-white bg-white text-black"
-                // hidden={hit < 100}
-              >
+              <div className="badge-secondary badge badge-xs modal-middle border-white bg-white text-black">
                 <FlameIcon className="h-8 w-8 fill-[#f25207] text-[#f25207]" />
                 <p className="text-sm text-black"> {app.hitCount}</p>
               </div>

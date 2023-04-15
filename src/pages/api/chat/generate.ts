@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
 import { connectToDatabase, Model, Chat } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
-import type { ModelSchema } from '@/types/mongoSchema'
 
 /* 获取我的模型 */
 export default async function handler(
@@ -16,7 +15,7 @@ export default async function handler(
     const { authorization } = req.headers
 
     if (!authorization) {
-      throw new Error('无权生成对话')
+      return jsonRes(res, {})
     }
 
     if (!modelId) {
@@ -28,26 +27,33 @@ export default async function handler(
 
     await connectToDatabase()
 
-    // 校验是否为用户的模型
-    const model = await Model.findOne<ModelSchema>({
-      _id: modelId,
-      userId,
-    })
+    // // 校验是否为用户的模型
+    // const model = await Model.findOne<ModelSchema>({
+    //   _id: modelId,
+    //   userId,
+    // })
+    //
+    // if (!model) {
+    //   throw new Error('无权使用该模型')
+    // }
 
-    if (!model) {
-      throw new Error('无权使用该模型')
+    const chat = await Chat.findOne({ userId, modelId })
+    if (chat) {
+      jsonRes(res, {
+        data: chat._id, // 即聊天框的 ID
+      })
+    } else {
+      // 创建 newChat 数据
+      const response = await Chat.create({
+        userId,
+        modelId,
+        content: [],
+      })
+
+      jsonRes(res, {
+        data: response._id, // 即聊天框的 ID
+      })
     }
-
-    // 创建 newChat 数据
-    const response = await Chat.create({
-      userId,
-      modelId,
-      content: [],
-    })
-
-    jsonRes(res, {
-      data: response._id, // 即聊天框的 ID
-    })
   } catch (err) {
     jsonRes(res, {
       code: 500,

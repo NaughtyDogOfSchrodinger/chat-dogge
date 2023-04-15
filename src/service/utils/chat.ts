@@ -14,7 +14,7 @@ export const getOpenAIApi = (apiKey: string) => {
 }
 
 export const authChat = async (chatId: string, authorization?: string) => {
-  // 获取 newChat 数据
+  // 获取 chat 数据
   const chat = await Chat.findById<ChatPopulate>(chatId).populate({
     path: 'modelId',
     options: {

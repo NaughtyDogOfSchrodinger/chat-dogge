@@ -1,6 +1,5 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { NextSeo } from 'next-seo'
-import { useTranslation } from 'next-i18next'
 import { Chat } from '@/components/chat/Chat'
 import { getModelById, hitCount } from '@/api/model'
 import { ModelSchema } from '@/types/mongoSchema'
@@ -9,23 +8,28 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { defaultModel } from '@/constants/model'
 import { useQuery } from '@tanstack/react-query'
 import { getChatSiteId } from '@/api/chat'
-import { useRouter } from 'next/router'
-
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useUserStore } from '@/store/user'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
-  console.log(modelId)
   return {
-    props: { modelId },
+    props: {
+      modelId,
+      ...(await serverSideTranslations(context.locale!, ['common'])),
+    },
   }
 }
 
 const ChatDogge = ({ modelId }: { modelId: string }) => {
   const [model, setModel] = useState<ModelSchema>(defaultModel)
-
-  const { setLoading } = useGlobalStore()
+  const [chatId, setChatId] = useState<string>()
+  const { loading, setLoading } = useGlobalStore()
+  const { userInfo } = useUserStore()
   const loadModel = useCallback(async () => {
     setLoading(true)
     try {
+      const chatId = await getChatSiteId(modelId)
+      setChatId(chatId)
       const res = await getModelById(modelId)
       await hitCount(modelId)
       console.log(res)
@@ -39,20 +43,20 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
   }, [modelId, setLoading])
 
   useQuery([modelId], loadModel)
-  const router = useRouter()
+  // const router = useRouter()
 
   /* 点前往聊天预览页 */
-  const handlePreviewChat = useCallback(async () => {
-    setLoading(true)
-    try {
-      const chatId = await getChatSiteId(model._id)
-
-      router.push(`/chat?chatId=${chatId}`)
-    } catch (err) {
-      console.log('error->', err)
-    }
-    setLoading(false)
-  }, [setLoading, model, router])
+  // const handlePreviewChat = useCallback(async () => {
+  //   setLoading(true)
+  //   try {
+  //     const chatId = await getChatSiteId(model._id)
+  //
+  //     router.push(`/chat?chatId=${chatId}`)
+  //   } catch (err) {
+  //     console.log('error->', err)
+  //   }
+  //   setLoading(false)
+  // }, [setLoading, model, router])
 
   return (
     <>
@@ -79,8 +83,8 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           <div className="w-full max-w-xl">
             <section className="flex flex-col gap-3 ">
               <div className="lg:w-6/1 ">
-                {/*<button onClick={handlePreviewChat}>对话体验</button>*/}
                 <Chat
+                  chatId={chatId}
                   modelId={modelId}
                   keyDown={true}
                   callback={async () => {
@@ -95,4 +99,5 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     </>
   )
 }
+
 export default ChatDogge

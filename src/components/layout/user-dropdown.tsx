@@ -1,18 +1,15 @@
-import { Dispatch, SetStateAction, useState } from 'react'
-import { Dog, LogOut, UnlinkIcon } from 'lucide-react'
+import { useState } from 'react'
+import { Dog, LogOut } from 'lucide-react'
 import Popover from '@/components/share/popover'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { FADE_IN_ANIMATION_SETTINGS } from '@/utils/constants'
 import { useUserStore } from '@/store/user'
-import Link from 'next/link'
-import { clearToken } from '@/utils/user'
 
-export default function UserDropdown() {
-  const { userInfo, clearUserInfo, clearMyModels } = useUserStore()
+export default function UserDropdown({ callback }: { callback: any }) {
+  const { userInfo } = useUserStore()
   const { email, balance } = userInfo || {}
   const [openPopover, setOpenPopover] = useState(false)
-  const { getAllModels } = useUserStore()
   if (!userInfo) return null
 
   return (
@@ -33,10 +30,7 @@ export default function UserDropdown() {
             <button
               className="relative flex w-full items-center justify-start space-x-2 rounded-md p-2 text-left text-sm transition-all duration-75 hover:bg-gray-100"
               onClick={() => {
-                clearUserInfo()
-                clearMyModels()
-                clearToken()
-                getAllModels()
+                callback()
               }}
             >
               <LogOut className="h-4 w-4" />

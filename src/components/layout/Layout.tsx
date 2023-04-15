@@ -6,7 +6,10 @@ import { useUserStore } from '@/store/user'
 import { useGlobalStore } from '@/store/global'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
-
+const authPage: { [key: string]: boolean } = {
+  '/model/create': true,
+  '/myApp': true,
+}
 const Layout = (props: { children?: JSX.Element | JSX.Element[] }) => {
   const router = useRouter()
 
@@ -25,7 +28,7 @@ const Layout = (props: { children?: JSX.Element | JSX.Element[] }) => {
     {
       retry: 0,
       onError(error) {
-        if (router.pathname == '/model/create') {
+        if (authPage[router.pathname]) {
           router.push('/')
           toast('请先登录', { icon: `🔴` })
         }
