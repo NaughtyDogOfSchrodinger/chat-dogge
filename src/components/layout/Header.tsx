@@ -2,18 +2,27 @@ import { Popover, Transition, Menu } from '@headlessui/react'
 
 import clsx from 'clsx'
 import Link from 'next/link'
-import { Dispatch, Fragment, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  Fragment,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { Container } from '@/components/Container'
 import { Logo } from '@/components/layout/Logo'
 import { NavLink } from '@/components/layout/NavLink'
 import { useTranslation } from 'next-i18next'
 import { LanguageSelector } from './LanguageSelector'
-import { useSession } from 'next-auth/react'
 import { useSignInModal } from '@/components/layout/sign-in-modal'
 import { AnimatePresence, motion } from 'framer-motion'
 import UserDropdown from '@/components/layout/user-dropdown'
 import { FADE_IN_ANIMATION_SETTINGS } from '@/utils/constants'
 import { useUserStore } from '@/store/user'
+import { clearToken } from '@/utils/user'
+import { ResLogin } from '@/api/response/user'
+import { useRouter } from 'next/router'
 
 function MobileNavLink({
   href,
@@ -70,12 +79,16 @@ const useHeaders = () => {
   const HEADER_LINKS: Array<{ href: string; label: string; target?: string }> =
     useMemo(
       () => [
-        // {
-        //   href: 'https://chat.chatdogge.xyz/',
-        //   label: t('🤖️ prompt机器人'),
-        // },
+        {
+          href: '/myApp',
+          label: t('🐚️ 我的应用'),
+        },
+        {
+          href: '/usage',
+          label: t('💰️ 定价'),
+        },
       ],
-      []
+      [t]
     )
   return HEADER_LINKS
 }
@@ -132,7 +145,19 @@ function MobileNavigation() {
 export function Header() {
   const { SignInModal, setShowSignInModal } = useSignInModal()
 
-  const { userInfo } = useUserStore()
+  const { userInfo, clearUserInfo, clearMyModels } = useUserStore()
+  const router = useRouter()
+  const { getAllModels } = useUserStore()
+  const loginOut = useCallback(
+    (res: ResLogin) => {
+      clearUserInfo()
+      clearMyModels()
+      getAllModels()
+      clearToken()
+      router.push('/')
+    },
+    [clearMyModels, clearUserInfo, getAllModels, router]
+  )
   // @ts-ignore
   const HEADER_LINKS = useHeaders()
 
@@ -163,10 +188,10 @@ export function Header() {
                     onClick={() => setShowSignInModal(true)}
                     {...FADE_IN_ANIMATION_SETTINGS}
                   >
-                    Sign In
+                    登录
                   </motion.button>
                 ) : (
-                  <UserDropdown />
+                  <UserDropdown callback={loginOut} />
                 )}
               </AnimatePresence>
             </div>

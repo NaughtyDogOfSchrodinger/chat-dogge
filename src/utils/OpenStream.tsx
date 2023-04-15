@@ -65,22 +65,7 @@ export async function OpenAIStream(
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
           if (data === '[DONE]') {
-            console.log('DONE')
             controller.close()
-            await fetch(`${HOST_URL}/api/cost`, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-              body: JSON.stringify({
-                userId: payload.user,
-                count: counter,
-              }),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(`left token: ${data.tokenCount}`)
-              })
             return
           }
           try {

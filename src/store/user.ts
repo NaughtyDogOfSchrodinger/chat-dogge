@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { UserType, UserUpdateParams } from '@/types/user'
-import type { ModelSchema } from '@/types/mongoSchema'
+import type { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { setToken } from '@/utils/user'
 import { getMyModels } from '@/api/model'
 import { formatPrice } from '@/utils/user'
@@ -14,9 +14,11 @@ type State = {
   setUserInfo: (user: UserType, token?: string) => void
   updateUserInfo: (user: UserUpdateParams) => void
   clearUserInfo: () => void
-  myModels: ModelSchema[]
+  myModels: ModelPopulate[]
+  allModels: ModelPopulate[]
   getMyModels: () => void
-  setMyModels: (data: ModelSchema[]) => void
+  getAllModels: () => void
+  setMyModels: (data: ModelPopulate[]) => void
   clearMyModels: () => void
   clear: () => void
 }
@@ -26,7 +28,6 @@ export const useUserStore = create<State>()(
     immer((set, get) => ({
       userInfo: null,
       async initUserInfo() {
-        console.log('-------init-------')
         const res = await getTokenLogin()
         get().setUserInfo(res)
         return null
@@ -56,6 +57,7 @@ export const useUserStore = create<State>()(
         })
       },
       myModels: [],
+      allModels: [],
       getMyModels: () =>
         getMyModels().then((res) => {
           set((state) => {
@@ -63,7 +65,14 @@ export const useUserStore = create<State>()(
           })
           return res
         }),
-      setMyModels(data: ModelSchema[]) {
+      getAllModels: () =>
+        getMyModels().then((res) => {
+          set((state) => {
+            state.allModels = res
+          })
+          return res
+        }),
+      setMyModels(data: ModelPopulate[]) {
         set((state) => {
           state.myModels = data
         })

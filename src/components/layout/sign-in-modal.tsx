@@ -1,5 +1,4 @@
 import Modal from '@/components/share/modal'
-import { signIn } from 'next-auth/react'
 import React, {
   useState,
   Dispatch,
@@ -16,6 +15,7 @@ import { ResLogin } from '@/api/response/user'
 import LoginForm from '@/components/layout/login/LoginForm'
 import RegisterForm from '@/components/layout/login/RegisterForm'
 import ForgetPasswordForm from '@/components/layout/login/ForgetPasswordForm'
+import { useQuery } from '@tanstack/react-query'
 
 const SignInModal = ({
   showSignInModal,
@@ -25,6 +25,7 @@ const SignInModal = ({
   setShowSignInModal: Dispatch<SetStateAction<boolean>>
 }) => {
   const router = useRouter()
+  const { getAllModels } = useUserStore()
   const [pageType, setPageType] = useState<`${PageTypeEnum}`>(
     PageTypeEnum.login
   )
@@ -32,9 +33,11 @@ const SignInModal = ({
   const loginSuccess = useCallback(
     (res: ResLogin) => {
       setUserInfo(res.user, res.token)
+      getAllModels()
       setShowSignInModal(false)
+      router.push('/')
     },
-    [setShowSignInModal, setUserInfo]
+    [getAllModels, router, setShowSignInModal, setUserInfo]
   )
 
   function DynamicComponent({ type }: { type: `${PageTypeEnum}` }) {
@@ -50,8 +53,8 @@ const SignInModal = ({
   }
 
   useEffect(() => {
-    // router.prefetch('/model/list')
-  }, [router])
+    getAllModels()
+  }, [getAllModels, router])
 
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>

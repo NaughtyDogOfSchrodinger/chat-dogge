@@ -1,10 +1,21 @@
 import clsx from 'clsx'
 import Balancer from 'react-wrap-balancer'
+import md from './markdown-it'
+import {
+  ClipboardCopyIcon,
+  Copy,
+  Dog,
+  DogIcon,
+  LucideClipboardCopy,
+  Redo,
+  RefreshCw,
+  TrashIcon,
+} from 'lucide-react'
+import { ChatSiteItemType } from '@/types/chat'
 
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 const BalancerWrapper = (props: any) => <Balancer {...props} />
-
-type ChatGPTAgent = 'user' | 'system' | 'assistant'
+type ChatGPTAgent = 'Human' | 'AI' | 'SYSTEM'
 
 export interface ChatGPTMessage {
   role: ChatGPTAgent
@@ -28,33 +39,37 @@ export const LoadingChatLine = () => (
   </div>
 )
 
-// util helper to convert new lines to <br /> tags
-const convertNewLines = (text: string) =>
-  text.split('\n').map((line, i) => (
-    <span key={i}>
-      {line} <br />
-    </span>
-  ))
-
-export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
-  if (!content || role == 'system') {
-    return null
-  }
-  const formatteMessage = convertNewLines(content)
-
+export function ChatLine({
+  index,
+  chatMsg,
+  onDelete,
+  onCopy,
+}: {
+  index: number
+  chatMsg: ChatSiteItemType
+  onDelete: any
+  onCopy: any
+}) {
   return (
-    <div
-      className={
-        role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both'
-      }
-    >
-      <div className="float-right mb-5 rounded-lg bg-white px-2 py-2 shadow-lg ring-1 ring-zinc-100 sm:px-4">
-        <div className="flex space-x-3">
-          <div className="flex-1 gap-4">
-            <p className={clsx('text font-normal')}>
-              <BalancerWrapper>{formatteMessage}</BalancerWrapper>
-            </p>
-          </div>
+    <div className=" roup sm:hover:bg-slate/6 dark:sm:hover:bg-slate/5 message-item relative mx--4 flex gap-3 rounded-lg px-4 transition-colors">
+      <div className="flex-start col-span-1 mb-5 flex w-full justify-between rounded-lg bg-white px-2 py-2 shadow-lg ring-1 ring-zinc-100 sm:px-4">
+        <div className="message prose-slate dark:prose-invert dark:text-slate prose overflow-hidden break-words">
+          <div
+            className="flex-1 gap-4 text-left"
+            dangerouslySetInnerHTML={{
+              __html: md.render(chatMsg.value),
+            }}
+          ></div>
+        </div>
+        <div className="<sm:top--4 <sm:right-0 text-slate-7 dark:text-slate dark:bg-#292B32 bg-#E7EBF0 absolute top-2 right-6 flex items-center justify-between rounded text-sm opacity-0 hover:opacity-100">
+          <Copy
+            className="text-slate-7 h-4 w-4 hover:fill-black"
+            onClick={() => onCopy(chatMsg.value)}
+          />
+          <TrashIcon
+            className="text-slate-7 h-4 w-4 hover:fill-black"
+            onClick={() => onDelete(index)}
+          />
         </div>
       </div>
     </div>

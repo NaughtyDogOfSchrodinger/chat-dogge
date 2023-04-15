@@ -11,7 +11,6 @@ const Test = () => {
   }
   return (
     <>
-      <Header />
       <main className="w-full bg-slate-50 bg-gradient-to-br  from-indigo-50 via-white to-cyan-100 pb-20 pt-10">
         <div className="container mx-auto overflow-x-auto">
           <div className="flex w-full flex-col lg:flex-row">
@@ -148,7 +147,6 @@ const Test = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   )
 }

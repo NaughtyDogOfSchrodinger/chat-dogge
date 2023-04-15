@@ -39,7 +39,7 @@ export const modelList: ModelConstantsData[] = [
     maxToken: 4000,
     contextMaxToken: 7500,
     maxTemperature: 2,
-    price: 3,
+    price: 6,
   },
   {
     serviceCompany: 'openai',
@@ -49,7 +49,7 @@ export const modelList: ModelConstantsData[] = [
     maxToken: 4000,
     contextMaxToken: 7000,
     maxTemperature: 1,
-    price: 3,
+    price: 6,
   },
   // {
   //   serviceCompany: 'openai',
@@ -115,6 +115,7 @@ export const defaultModel: ModelSchema = {
   systemPrompt: '',
   intro: '',
   temperature: 5,
+  hitCount: 0,
   service: {
     company: 'openai',
     trainId: '',

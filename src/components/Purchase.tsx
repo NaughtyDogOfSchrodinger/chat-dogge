@@ -53,7 +53,7 @@ export const Purchase = () => {
           <p className="mt-6 text-lg leading-8 text-gray-600">
             {t('please_buy', {
               rateLimitCount: RATE_LIMIT_COUNT,
-              freeTokenCount: FREE_TOKEN_COUNT,
+              balance: 0.5,
             })}
           </p>
         </div>

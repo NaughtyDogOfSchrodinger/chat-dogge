@@ -15,6 +15,8 @@ import { LoadingDots } from '@/components/share/icons'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { EMAIL_REG } from '@/constants/common'
+import { useUserStore } from '@/store/user'
+import { useQuery } from '@tanstack/react-query'
 
 interface Props {
   setPageType: Dispatch<`${PageTypeEnum}`>

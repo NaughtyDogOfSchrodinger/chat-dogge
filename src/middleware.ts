@@ -1,5 +1,4 @@
 import { RATE_LIMIT_COUNT } from '@/utils/constants'
-import { validateLicenseKey } from '@/utils/lemon'
 import { GenerateApiInput } from '@/utils/types'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
@@ -11,9 +10,14 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(RATE_LIMIT_COUNT, '1 d'),
   analytics: true, // <- Enable analytics
 })
-
 export const config = {
-  matcher: ['/api/generate', '/api/chat'],
+  matcher: [
+    '/api/generate',
+    '/api/chat',
+    '/api/chat/chatGpt',
+    '/api/chat/vectorGpt',
+    '/api/chat/gpt3',
+  ],
 }
 
 export default async function middleware(

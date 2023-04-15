@@ -142,7 +142,7 @@ export const pushGenerateVectorBill = async ({
 
     if (isPay) {
       try {
-        const unitPrice = 0.4
+        const unitPrice = 0.8
         // 计算价格. 至少为1
         let price = unitPrice * tokenLen
         price = price > 1 ? price : 1

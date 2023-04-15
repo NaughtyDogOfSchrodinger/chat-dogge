@@ -8,11 +8,12 @@ import { ModelUpdateParams } from '@/types/model'
 import { TrainingItemType } from '../types/training'
 import { RequestPaging } from '../types/index'
 import { Obj2Query } from '@/utils/tools'
+import { ModelPopulate } from '@/types/mongoSchema'
 
 /**
  * 获取模型列表
  */
-export const getMyModels = () => GET<ModelSchema[]>('/model/list')
+export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
 
 /**
  * 创建一个模型
@@ -20,7 +21,19 @@ export const getMyModels = () => GET<ModelSchema[]>('/model/list')
 export const postCreateModel = (data: {
   name: string
   serviceModelName: string
-}) => POST<ModelSchema>('/model/create', data)
+}) => POST<ModelPopulate>('/model/create', data)
+
+/**
+ * 用户收藏
+ */
+export const userCollect = (data: { modelId: string; like: boolean }) =>
+  POST('/model/userCollect', data)
+
+/**
+ * 浏览/使用数量+1
+ */
+export const hitCount = (modelId: string) =>
+  POST<{}>(`/model/hitIncrease?modelId=${modelId}`)
 
 /**
  * 根据 ID 删除模型
