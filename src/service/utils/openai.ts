@@ -119,14 +119,14 @@ export const gpt35StreamResponse = ({
   stream: PassThrough
   chatResponse: any
 }) =>
-  new Promise<{ responseContent: string }>(async (resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       // 创建响应流
       res.setHeader('Content-Type', 'text/event-stream;charset-utf-8')
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('X-Accel-Buffering', 'no')
       res.setHeader('Cache-Control', 'no-cache, no-transform')
-
+      res.setHeader('Transfer-Encoding', 'chunked')
       let responseContent = ''
       stream.pipe(res)
 
@@ -140,7 +140,7 @@ export const gpt35StreamResponse = ({
           if (!content || (responseContent === '' && content === '\n')) return
 
           responseContent += content
-          !stream.destroyed && stream.push(content.replace(/\n/g, '<br/>'))
+          !stream.destroyed && stream.push(content)
         } catch (error) {
           error
         }
@@ -164,7 +164,7 @@ export const gpt35StreamResponse = ({
       stream.destroy()
 
       resolve({
-        responseContent,
+        stream,
       })
     } catch (error) {
       reject(error)

@@ -120,21 +120,21 @@ export default async function handler(
 
       step = 1
 
-      const { responseContent } = await gpt35StreamResponse({
+      await gpt35StreamResponse({
         res,
         stream,
         chatResponse,
       })
-      const promptsContent = formatPrompts.map((item) => item.content).join('')
+      // const promptsContent = formatPrompts.map((item) => item.content).join('')
 
-      // 只有使用平台的 key 才计费
-      pushChatBill({
-        isPay: !userApiKey,
-        modelName: model.service.modelName,
-        userId,
-        chatId: chatOrModelId,
-        text: promptsContent + responseContent,
-      })
+      // // 只有使用平台的 key 才计费
+      // pushChatBill({
+      //   isPay: !userApiKey,
+      //   modelName: model.service.modelName,
+      //   userId,
+      //   chatId: chatOrModelId,
+      //   text: promptsContent + responseContent,
+      // })
     } else {
       if (!chatOrModelId || !prompt) {
         throw new Error('缺少参数')
