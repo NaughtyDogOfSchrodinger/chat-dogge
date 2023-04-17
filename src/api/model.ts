@@ -9,6 +9,7 @@ import { TrainingItemType } from '../types/training'
 import { RequestPaging } from '../types/index'
 import { Obj2Query } from '@/utils/tools'
 import { ModelPopulate } from '@/types/mongoSchema'
+import { ChatItemType } from '@/types/chat'
 
 /**
  * 获取模型列表
@@ -45,6 +46,14 @@ export const delModelById = (id: string) => DELETE(`/model/del?modelId=${id}`)
  */
 export const getModelById = (id: string) =>
   GET<ModelSchema>(`/model/detail?modelId=${id}`)
+
+/**
+ * 根据 ID 获取模型
+ */
+export const getChatGptData = (data: {
+  prompt: ChatItemType[]
+  chatOrModelId: string
+}) => POST(`/chat/chatGpt`, data)
 
 /**
  * 根据 ID 更新模型

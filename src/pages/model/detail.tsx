@@ -1,6 +1,6 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { NextSeo } from 'next-seo'
-import { getModelById, hitCount } from '@/api/model'
+import { getChatGptData, getModelById, hitCount } from '@/api/model'
 import { ModelSchema } from '@/types/mongoSchema'
 import { useGlobalStore } from '@/store/global'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -21,10 +21,11 @@ import { useDisclosure } from '@chakra-ui/react'
 import { useCopyData } from '@/utils/tools'
 import { useChatStore } from '@/store/chat'
 import { toast } from 'react-hot-toast'
-import { ChatSiteItemType } from '@/types/chat'
+import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { streamFetch } from '@/api/fetch'
 import { InitChatResponse } from '@/api/response/chat'
 import { TrashIcon } from 'lucide-react'
+import { getToken } from '@/utils/user'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
   return {
@@ -199,7 +200,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         const newMessages = [
           ...messages,
           { obj: prompts.obj, value: prompts.value },
-        ]
+        ] as ChatItemType[]
         // @ts-ignore
         setMessages(newMessages)
         prompt = newMessages
@@ -209,51 +210,95 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
             obj: prompts.obj,
             value: prompts.value,
           },
-        ]
+        ] as ChatItemType[]
       }
       console.log(`input: ${chatId || modelId}`)
-      // 流请求，获取数据
-      const res = await streamFetch({
-        // @ts-ignore
-        url: urlMap[chatData.modelName],
-        data: {
-          prompt,
-          chatOrModelId: chatId || modelId,
-        },
-        onMessage: (text: string) => {
-          setChatData((state) => ({
-            ...state,
-            history: state.history.map((item, index) => {
-              if (index !== state.history.length - 1) return item
-              return {
-                ...item,
-                value: item.value + text,
-              }
-            }),
-          }))
-        },
-        abortSignal: controller.current,
+      const temp = await getChatGptData({
+        prompt,
+        chatOrModelId: chatId || modelId,
       })
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(temp),
+        // signal: controller.current,
+      })
+      const data = response.body
+      if (!data) {
+        return
+      }
+
+      const reader = data.getReader()
+      const decoder = new TextDecoder()
+      let done = false
+      let count = 0
+      let lastMessage = ''
+      while (!done) {
+        const { value, done: doneReading } = await reader.read()
+        done = doneReading
+        const chunkValue = decoder.decode(value)
+
+        lastMessage = lastMessage + chunkValue
+        count++
+        setChatData((state) => ({
+          ...state,
+          history: state.history.map((item, index) => {
+            if (index !== state.history.length - 1) return item
+            return {
+              ...item,
+              value: item.value + chunkValue,
+            }
+          }),
+        }))
+        // setMessages([
+        //   ...newMessages,
+        //   { role: 'assistant', content: lastMessage } as ChatGPTMessage,
+        // ])
+      }
+      // 流请求，获取数据
+      // const res = await streamFetch({
+      //   // @ts-ignore
+      //   url: urlMap[chatData.modelName],
+      //   data: {
+      //     prompt,
+      //     chatOrModelId: chatId || modelId,
+      //   },
+      //   onMessage: (text: string) => {
+      //     setChatData((state) => ({
+      //       ...state,
+      //       history: state.history.map((item, index) => {
+      //         if (index !== state.history.length - 1) return item
+      //         return {
+      //           ...item,
+      //           value: item.value + text,
+      //         }
+      //       }),
+      //     }))
+      //   },
+      //   abortSignal: controller.current,
+      // })
 
       // 保存对话信息
-      try {
-        if (chatId) {
-          await postSaveChat({
-            chatId,
-            prompts: [
-              ...prompt,
-              {
-                obj: 'AI',
-                value: res as string,
-              },
-            ],
-          })
-        }
-      } catch (err) {
-        toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
-          icon: '🔴',
-        })
-      }
+      // try {
+      //   if (chatId) {
+      //     await postSaveChat({
+      //       chatId,
+      //       prompts: [
+      //         ...prompt,
+      //         {
+      //           obj: 'AI',
+      //           value: res as string,
+      //         },
+      //       ],
+      //     })
+      //   }
+      // } catch (err) {
+      //   toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
+      //     icon: '🔴',
+      //   })
+      // }
 
       // 设置完成状态
       setChatData((state) => ({

@@ -96,35 +96,48 @@ export default async function handler(
         modelConstantsData.maxTemperature * (model.temperature / 10)
 
       // 获取 chatAPI
-      const chatAPI = getOpenAIApi(userApiKey || systemKey)
-      // 发出请求
-      const chatResponse = await chatAPI.createChatCompletion(
-        {
-          model: model.service.chatModel,
-          temperature: temperature,
-          // max_tokens: modelConstantsData.maxToken,
-          messages: formatPrompts,
-          frequency_penalty: 0.5, // 越大，重复内容越少
-          presence_penalty: -0.5, // 越大，越容易出现新内容
-          stream: true,
-          stop: ['.!?。'],
-        },
-        {
-          timeout: 40000,
-          responseType: 'stream',
-          // httpsAgent: httpsAgent(!userApiKey),
-        }
-      )
-
-      console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
-
-      step = 1
-
-      await gpt35StreamResponse({
-        res,
-        stream,
-        chatResponse,
+      // const chatAPI = getOpenAIApi(userApiKey || systemKey)
+      const result = {
+        model: model.service.chatModel,
+        temperature: temperature,
+        max_tokens: modelConstantsData.maxToken,
+        messages: formatPrompts,
+        frequency_penalty: 0.5, // 越大，重复内容越少
+        presence_penalty: -0.5, // 越大，越容易出现新内容
+        stream: true,
+        stop: ['.!?。'],
+      }
+      jsonRes(res, {
+        data: result,
       })
+      // 发出请求
+      // const chatResponse = await chatAPI.createChatCompletion(
+      //   {
+      //     model: model.service.chatModel,
+      //     temperature: temperature,
+      //     max_tokens: modelConstantsData.maxToken,
+      //     messages: formatPrompts,
+      //     frequency_penalty: 0.5, // 越大，重复内容越少
+      //     presence_penalty: -0.5, // 越大，越容易出现新内容
+      //     stream: true,
+      //     stop: ['.!?。'],
+      //   },
+      //   {
+      //     timeout: 40000,
+      //     responseType: 'stream',
+      //     // httpsAgent: httpsAgent(!userApiKey),
+      //   }
+      // )
+
+      // console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
+      //
+      // step = 1
+      //
+      // await gpt35StreamResponse({
+      //   res,
+      //   stream,
+      //   chatResponse,
+      // })
       // const promptsContent = formatPrompts.map((item) => item.content).join('')
 
       // // 只有使用平台的 key 才计费
@@ -193,34 +206,47 @@ export default async function handler(
         modelConstantsData.maxTemperature * (model.temperature / 10)
 
       // 获取 chatAPI
-      const chatAPI = getOpenAIApi(process.env.OPENAIKEY as string)
-      // 发出请求
-      const chatResponse = await chatAPI.createChatCompletion(
-        {
-          model: model.service.chatModel,
-          temperature: temperature,
-          // max_tokens: modelConstantsData.maxToken,
-          messages: formatPrompts,
-          frequency_penalty: 0.5, // 越大，重复内容越少
-          presence_penalty: -0.5, // 越大，越容易出现新内容
-          stream: true,
-          stop: ['.!?。'],
-        },
-        {
-          timeout: 40000,
-          responseType: 'stream',
-          // httpsAgent: httpsAgent(!userApiKey),
-        }
-      )
-
-      console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
-
-      step = 1
-      await gpt35StreamResponse({
-        res,
-        stream,
-        chatResponse,
+      // const chatAPI = getOpenAIApi(process.env.OPENAIKEY as string)
+      const result = {
+        model: model.service.chatModel,
+        temperature: temperature,
+        max_tokens: modelConstantsData.maxToken,
+        messages: formatPrompts,
+        frequency_penalty: 0.5, // 越大，重复内容越少
+        presence_penalty: -0.5, // 越大，越容易出现新内容
+        stream: true,
+        stop: ['.!?。'],
+      }
+      jsonRes(res, {
+        data: result,
       })
+      // 发出请求
+      // const chatResponse = await chatAPI.createChatCompletion(
+      //   {
+      //     model: model.service.chatModel,
+      //     temperature: temperature,
+      //     // max_tokens: modelConstantsData.maxToken,
+      //     messages: formatPrompts,
+      //     frequency_penalty: 0.5, // 越大，重复内容越少
+      //     presence_penalty: -0.5, // 越大，越容易出现新内容
+      //     stream: true,
+      //     stop: ['.!?。'],
+      //   },
+      //   {
+      //     timeout: 40000,
+      //     responseType: 'stream',
+      //     // httpsAgent: httpsAgent(!userApiKey),
+      //   }
+      // )
+      //
+      // console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
+      //
+      // step = 1
+      // await gpt35StreamResponse({
+      //   res,
+      //   stream,
+      //   chatResponse,
+      // })
     }
   } catch (err: any) {
     if (step === 1) {

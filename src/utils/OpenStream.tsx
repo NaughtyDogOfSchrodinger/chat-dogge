@@ -3,8 +3,6 @@ import {
   ParsedEvent,
   ReconnectInterval,
 } from 'eventsource-parser'
-import { MAX_TOKENS } from '@/utils/constants'
-import { HOST_URL } from '@/utils/hostUrl'
 
 export type ChatGPTAgent = 'user' | 'system' | 'assistant'
 
@@ -27,10 +25,7 @@ export interface OpenAIStreamPayload {
   n: number
 }
 
-export async function OpenAIStream(
-  payload: OpenAIStreamPayload,
-  isLogin: boolean
-) {
+export async function OpenAIStream(payload: JSON) {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
@@ -45,16 +40,12 @@ export async function OpenAIStream(
     requestHeaders['OpenAI-Organization'] = process.env.OPENAI_API_ORG
   }
   //todo has paid
-  const isUsingLicense = true
   const res = await fetch(
     `https://${process.env.BASE_URL}/v1/chat/completions`,
     {
       headers: requestHeaders,
       method: 'POST',
-      body: JSON.stringify({
-        ...payload,
-        max_tokens: isLogin ? MAX_TOKENS * 2 : MAX_TOKENS,
-      }),
+      body: JSON.stringify(payload),
     }
   )
   return new ReadableStream({
