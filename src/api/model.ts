@@ -14,9 +14,14 @@ import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
 
 /**
- * 获取模型列表
+ * 获取我的模型列表
  */
 export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
+
+/**
+ * 获取所有模型列表
+ */
+export const getAllModels = () => GET<ModelPopulate[]>('/model/all')
 
 /**
  * 创建一个模型

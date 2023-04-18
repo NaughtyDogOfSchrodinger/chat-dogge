@@ -94,9 +94,6 @@ function request(
       delete data[key]
     }
   }
-  console.log(
-    `url: ${url}, data: ${data}, config: ${config}, method: ${method}`
-  )
   return instance
     .request({
       baseURL: '/api',

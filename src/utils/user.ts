@@ -1,5 +1,5 @@
 import { PRICE_SCALE } from '@/constants/common'
-const tokenKey = 'fast-gpt-token'
+const tokenKey = 'chatDogge-token'
 
 export const setToken = (val: string) => {
   localStorage.setItem(tokenKey, val)
