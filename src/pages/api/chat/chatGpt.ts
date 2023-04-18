@@ -46,14 +46,14 @@ export default async function handler(
       }
 
       await connectToDatabase()
-      let startTime = Date.now()
+      // let startTime = Date.now()
 
-      const { chat, userApiKey, systemKey, userId } = await authChat(
-        chatOrModelId,
-        authorization
-      )
+      const { chat } = await authChat(chatOrModelId, authorization)
 
       const model: ModelSchema = chat.modelId
+      await Model.findByIdAndUpdate(model._id, {
+        $inc: { hitCount: 1 },
+      })
       const modelConstantsData = modelList.find(
         (item) => item.model === model.service.modelName
       )
@@ -100,7 +100,7 @@ export default async function handler(
       const result = {
         model: model.service.chatModel,
         temperature: temperature,
-        max_tokens: modelConstantsData.maxToken,
+        max_tokens: 2048,
         messages: formatPrompts,
         frequency_penalty: 0.5, // 越大，重复内容越少
         presence_penalty: -0.5, // 越大，越容易出现新内容
@@ -153,7 +153,7 @@ export default async function handler(
         throw new Error('缺少参数')
       }
       await connectToDatabase()
-      let startTime = Date.now()
+      // let startTime = Date.now()
       // const { chat, userApiKey, systemKey, userId } = await authChat(
       //   chatOrModelId,
       //   authorization
@@ -164,6 +164,9 @@ export default async function handler(
       if (model == null) {
         throw new Error('模型不存在')
       }
+      await Model.findByIdAndUpdate(chatOrModelId, {
+        $inc: { hitCount: 1 },
+      })
       const modelConstantsData = modelList.find(
         (item) => item.model === model.service.modelName
       )
@@ -210,7 +213,7 @@ export default async function handler(
       const result = {
         model: model.service.chatModel,
         temperature: temperature,
-        max_tokens: modelConstantsData.maxToken,
+        max_tokens: 2048,
         messages: formatPrompts,
         frequency_penalty: 0.5, // 越大，重复内容越少
         presence_penalty: -0.5, // 越大，越容易出现新内容

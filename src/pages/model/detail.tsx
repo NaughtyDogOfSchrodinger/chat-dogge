@@ -43,7 +43,6 @@ interface ChatType extends InitChatResponse {
 
 export const InputMessage = ({
   input,
-  setInput,
   sendPrompt,
   textChange,
   isChatting,
@@ -61,7 +60,6 @@ export const InputMessage = ({
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           sendPrompt()
-          setInput('')
         }
       }}
       onChange={textChange}
@@ -71,7 +69,6 @@ export const InputMessage = ({
       className="btn-sm btn ml-4 flex-none"
       onClick={() => {
         sendPrompt()
-        setInput('')
       }}
     >
       发送
@@ -79,44 +76,8 @@ export const InputMessage = ({
   </div>
 )
 const ChatDogge = ({ modelId }: { modelId: string }) => {
-  const [model, setModel] = useState<ModelSchema>(defaultModel)
-  const [chatId, setChatId] = useState<string>()
-  const { userInfo } = useUserStore()
-  const { loading, setLoading } = useGlobalStore()
-
-  const loadModel = useCallback(async () => {
-    setLoading(true)
-    try {
-      const chatId = await getChatSiteId(modelId)
-      setChatId(chatId)
-      const res = await getModelById(modelId)
-      await hitCount(modelId)
-      console.log(res)
-      res.security.expiredTime /= 60 * 60 * 1000
-      setModel(res)
-    } catch (err) {
-      console.log('error->', err)
-    }
-    setLoading(false)
-    return null
-  }, [modelId, setLoading])
-
-  useQuery([modelId], loadModel)
-  // const router = useRouter()
-
-  /* 点前往聊天预览页 */
-  // const handlePreviewChat = useCallback(async () => {
-  //   setLoading(true)
-  //   try {
-  //     const chatId = await getChatSiteId(model._id)
-  //
-  //     router.push(`/chat?chatId=${chatId}`)
-  //   } catch (err) {
-  //     console.log('error->', err)
-  //   }
-  //   setLoading(false)
-  // }, [setLoading, model, router])
-
+  const [model, setModel] = useState<ModelSchema>()
+  const [chat, setChat] = useState<InitChatResponse>()
   const router = useRouter()
 
   const ChatBox = useRef<HTMLDivElement>(null)
@@ -196,14 +157,13 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       if (!urlMap[chatData.modelName]) return Promise.reject('找不到模型')
 
       let prompt
-      if (chatId) {
-        const newMessages = [
-          ...messages,
-          { obj: prompts.obj, value: prompts.value },
-        ] as ChatItemType[]
+      console.log(`chat: ${chat?.chatId}`)
+      if (chat?.chatId === undefined) {
         // @ts-ignore
-        setMessages(newMessages)
-        prompt = newMessages
+        prompt = [
+          ...chatData.history,
+          { obj: prompts.obj, value: prompts.value },
+        ]
       } else {
         prompt = [
           {
@@ -212,12 +172,11 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           },
         ] as ChatItemType[]
       }
-      console.log(`input: ${chatId || modelId}`)
       const temp = await getChatGptData({
         prompt,
-        chatOrModelId: chatId || modelId,
+        chatOrModelId: chat?.chatId || modelId,
       })
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chat/openAI', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -239,7 +198,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         const { value, done: doneReading } = await reader.read()
         done = doneReading
         const chunkValue = decoder.decode(value)
-
         lastMessage = lastMessage + chunkValue
         count++
         setChatData((state) => ({
@@ -252,53 +210,27 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
             }
           }),
         }))
-        // setMessages([
-        //   ...newMessages,
-        //   { role: 'assistant', content: lastMessage } as ChatGPTMessage,
-        // ])
       }
-      // 流请求，获取数据
-      // const res = await streamFetch({
-      //   // @ts-ignore
-      //   url: urlMap[chatData.modelName],
-      //   data: {
-      //     prompt,
-      //     chatOrModelId: chatId || modelId,
-      //   },
-      //   onMessage: (text: string) => {
-      //     setChatData((state) => ({
-      //       ...state,
-      //       history: state.history.map((item, index) => {
-      //         if (index !== state.history.length - 1) return item
-      //         return {
-      //           ...item,
-      //           value: item.value + text,
-      //         }
-      //       }),
-      //     }))
-      //   },
-      //   abortSignal: controller.current,
-      // })
 
       // 保存对话信息
-      // try {
-      //   if (chatId) {
-      //     await postSaveChat({
-      //       chatId,
-      //       prompts: [
-      //         ...prompt,
-      //         {
-      //           obj: 'AI',
-      //           value: res as string,
-      //         },
-      //       ],
-      //     })
-      //   }
-      // } catch (err) {
-      //   toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
-      //     icon: '🔴',
-      //   })
-      // }
+      try {
+        if (chat && chat.chatId) {
+          await postSaveChat({
+            chatId: chat.chatId,
+            prompts: [
+              ...prompt,
+              {
+                obj: 'AI',
+                value: lastMessage as string,
+              },
+            ],
+          })
+        }
+      } catch (err) {
+        toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
+          icon: '🔴',
+        })
+      }
 
       // 设置完成状态
       setChatData((state) => ({
@@ -312,7 +244,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         }),
       }))
     },
-    [chatData.modelName, chatId, messages, modelId]
+    [chat, chatData, modelId]
   )
 
   /**
@@ -328,7 +260,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     const storeInput = inputVal
     // 去除空行
     const val = inputVal.trim().replace(/\n\s*/g, '\n')
-    if (!chatData?.modelId || !val) {
+    if (!model || !model._id || !val) {
       toast('内容为空', {
         icon: '🔴',
       })
@@ -336,14 +268,18 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     }
 
     // 长度校验
-    const model = modelList.find((item) => item.model === chatData.modelName)
+    const innerModel = modelList.find(
+      (item) => item.model === chatData.modelName
+    )
 
-    if (model && val.length >= model.maxToken) {
+    if (innerModel && val.length >= innerModel.maxToken) {
       toast('单次输入超出 4000 字符', {
         icon: '🔴',
       })
       return
     }
+
+    setInputVal('')
 
     const newChatList: ChatSiteItemType[] = [
       ...chatData.history,
@@ -364,23 +300,20 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       ...state,
       history: newChatList,
     }))
-
     // 清空输入内容
     resetInputVal('')
     scrollToBottom()
 
     try {
-      await hitCount(modelId)
-
       // @ts-ignore
       await gptChatPrompt(newChatList[newChatList.length - 2])
 
       // 如果是 Human 第一次发送，插入历史记录
       const humanChat = newChatList.filter((item) => item.obj === 'Human')
       if (humanChat.length === 1) {
-        if (chatId) {
+        if (chat && chat.chatId) {
           pushChatHistory({
-            chatId,
+            chatId: chat.chatId,
             // @ts-ignore
             title: humanChat[0].value,
           })
@@ -400,25 +333,22 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
   }, [
     isChatting,
     inputVal,
-    chatData?.modelId,
-    chatData.history,
-    chatData.modelName,
+    model,
+    chatData,
     resetInputVal,
     scrollToBottom,
-    modelId,
     gptChatPrompt,
-    chatId,
+    chat,
     pushChatHistory,
   ])
 
   // 删除一句话
   const delChatRecord = useCallback(
     async (index: number) => {
-      setLoading(true)
       try {
-        if (chatId) {
+        if (chat && chat.chatId) {
           // 删除数据库最后一句
-          await delChatRecordByIndex(chatId, index)
+          await delChatRecordByIndex(chat.chatId, index)
         }
 
         setChatData((state) => ({
@@ -428,18 +358,16 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       } catch (err) {
         console.log(err)
       }
-      setLoading(false)
     },
-    [chatId, setLoading]
+    [chat]
   )
 
   // 删除一句话
   const clearHistory = useCallback(async () => {
-    setLoading(true)
     try {
-      if (chatId) {
+      if (chat && chat.chatId) {
         // 删除数据库最后一句
-        await clearChatRecord(chatId)
+        await clearChatRecord(chat.chatId)
       }
 
       setChatData((state) => ({
@@ -449,8 +377,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     } catch (err) {
       console.log(err)
     }
-    setLoading(false)
-  }, [chatId, setLoading])
+  }, [chat])
 
   // 复制内容
   const onclickCopy = useCallback(
@@ -464,21 +391,22 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
 
   // 初始化聊天框
   useQuery(
-    ['init', chatId],
+    ['init', model],
     () => {
-      setLoading(true)
-      return getInitChatSiteInfo(modelId)
+      return getModelById(modelId)
     },
     {
       onSuccess(res) {
+        setModel(res.model)
+        setChat(res.chat)
         setChatData({
-          ...res,
-          history: res.history.map((item) => ({
+          ...res.chat,
+          history: res.chat.history.map((item) => ({
             ...item,
             status: 'finish',
           })),
         })
-        if (res.history.length > 0) {
+        if (res.chat.history.length > 0) {
           setTimeout(() => {
             scrollToBottom()
           }, 500)
@@ -488,10 +416,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         toast(e?.message || '初始化异常,请检查地址' || '聊天出错了~', {
           icon: '🔴',
         })
-        // router.push('/model/list')
-      },
-      onSettled() {
-        setLoading(false)
       },
     }
   )
@@ -503,14 +427,14 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       controller.current?.abort()
     }
-  }, [chatId])
+  }, [])
 
   const textChange = useCallback((e: any) => {
     const textarea = e.target
     setInputVal(textarea.value)
   }, [])
 
-  return (
+  return model ? (
     <>
       <NextSeo
         title={model.name}
@@ -563,6 +487,8 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         </main>
       </div>
     </>
+  ) : (
+    <></>
   )
 }
 

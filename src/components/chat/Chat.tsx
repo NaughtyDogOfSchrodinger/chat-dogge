@@ -306,8 +306,6 @@ export function Chat(props: ChatProps) {
     scrollToBottom()
 
     try {
-      await hitCount(modelId)
-
       // @ts-ignore
       await gptChatPrompt(newChatList[newChatList.length - 2])
 

@@ -58,7 +58,6 @@ export default async function handler(
       // 获取 chat 数据
       const model = await Model.findById<ModelSchema>(modelId)
       if (model == null) {
-        console.log(`dsadsadad: ${modelId}`)
         throw new Error('模型不存在')
       }
 
