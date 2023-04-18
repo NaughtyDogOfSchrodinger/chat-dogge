@@ -94,7 +94,6 @@ function request(
       delete data[key]
     }
   }
-
   return instance
     .request({
       baseURL: '/api',

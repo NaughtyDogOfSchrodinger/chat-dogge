@@ -3,8 +3,8 @@ import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { UserType, UserUpdateParams } from '@/types/user'
 import type { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
-import { setToken } from '@/utils/user'
-import { getMyModels } from '@/api/model'
+import { getToken, setToken } from '@/utils/user'
+import { getAllModels, getMyModels } from '@/api/model'
 import { formatPrice } from '@/utils/user'
 import { getTokenLogin } from '@/api/user'
 
@@ -28,6 +28,9 @@ export const useUserStore = create<State>()(
     immer((set, get) => ({
       userInfo: null,
       async initUserInfo() {
+        if (!getToken()) {
+          return null
+        }
         const res = await getTokenLogin()
         get().setUserInfo(res)
         return null
@@ -66,7 +69,7 @@ export const useUserStore = create<State>()(
           return res
         }),
       getAllModels: () =>
-        getMyModels().then((res) => {
+        getAllModels().then((res) => {
           set((state) => {
             state.allModels = res
           })

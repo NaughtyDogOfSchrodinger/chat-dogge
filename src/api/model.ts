@@ -3,17 +3,25 @@ import type {
   ModelSchema,
   ModelDataSchema,
   ModelSplitDataSchema,
+  ChatSchema,
 } from '@/types/mongoSchema'
 import { ModelUpdateParams } from '@/types/model'
 import { TrainingItemType } from '../types/training'
 import { RequestPaging } from '../types/index'
 import { Obj2Query } from '@/utils/tools'
 import { ModelPopulate } from '@/types/mongoSchema'
+import { ChatItemType, ChatSiteItemType } from '@/types/chat'
+import { InitChatResponse } from '@/api/response/chat'
 
 /**
- * 获取模型列表
+ * 获取我的模型列表
  */
 export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
+
+/**
+ * 获取所有模型列表
+ */
+export const getAllModels = () => GET<ModelPopulate[]>('/model/all')
 
 /**
  * 创建一个模型
@@ -44,7 +52,17 @@ export const delModelById = (id: string) => DELETE(`/model/del?modelId=${id}`)
  * 根据 ID 获取模型
  */
 export const getModelById = (id: string) =>
-  GET<ModelSchema>(`/model/detail?modelId=${id}`)
+  GET<{ model: ModelSchema; chat: InitChatResponse }>(
+    `/model/detail?modelId=${id}`
+  )
+
+/**
+ * 根据 ID 获取模型
+ */
+export const getChatGptData = (data: {
+  prompt: ChatItemType[]
+  chatOrModelId: string
+}) => POST(`/chat/chatGpt`, data)
 
 /**
  * 根据 ID 更新模型

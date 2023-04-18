@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
-import { connectToDatabase } from '@/service/mongo'
+import { Chat, connectToDatabase, User } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { Model } from '@/service/models/model'
 import type { ModelSchema } from '@/types/mongoSchema'
+import { ChatPopulate } from '@/types/mongoSchema'
 
 /* 获取我的模型 */
 export default async function handler(
@@ -11,7 +12,7 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
-    // const { authorization } = req.headers
+    const { authorization } = req.headers
 
     // if (!authorization) {
     //   throw new Error('无权操作')
@@ -22,12 +23,7 @@ export default async function handler(
     if (!modelId) {
       throw new Error('参数错误')
     }
-
-    // 凭证校验
-    // const userId = await authToken(authorization)
-
     await connectToDatabase()
-
     // 根据 userId 获取模型信息
     const model = await Model.findOne<ModelSchema>({
       _id: modelId,
@@ -36,10 +32,54 @@ export default async function handler(
     if (!model) {
       throw new Error('模型不存在')
     }
+    if (authorization) {
+      const userId = await authToken(authorization)
+      const user = await User.findById(userId)
+      if (!user) {
+        throw new Error('用户不存在')
+      }
+      let chat = await Chat.findOne({ userId, modelId })
+      if (!chat) {
+        chat = await Chat.create({
+          userId,
+          modelId,
+          content: [],
+        })
+      }
 
-    jsonRes(res, {
-      data: model,
-    })
+      chat.content = chat.content.filter((item) => item.deleted !== true)
+      jsonRes(res, {
+        data: {
+          model,
+          chat: {
+            chatId: chat._id,
+            modelId: model._id,
+            name: model.name,
+            avatar: model.avatar,
+            intro: model.intro,
+            modelName: model.service.modelName,
+            chatModel: model.service.chatModel,
+            history: chat.content,
+          },
+        },
+      })
+    } else {
+      jsonRes(res, {
+        data: {
+          model,
+          chat: {
+            chatId: undefined,
+            modelId: model._id,
+            name: model.name,
+            avatar: model.avatar,
+            intro: model.intro,
+            modelName: model.service.modelName,
+            chatModel: model.service.chatModel,
+            history: [],
+          },
+        },
+      })
+    }
   } catch (err) {
     jsonRes(res, {
       code: 500,

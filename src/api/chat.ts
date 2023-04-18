@@ -44,7 +44,7 @@ export const postSaveChat = (data: {
  * 删除一句对话
  */
 export const delChatRecordByIndex = (chatId: string, index: number) =>
-  DELETE(`/chat/delChatRecordByIndex?chatId=${chatId}&index=${index}`)
+  GET(`/chatRecord/delChatRecordByIndex?chatId=${chatId}&index=${index}`)
 
 export const clearChatRecord = (chatId: string) =>
-  DELETE(`/chat/clearChatRecord?chatId=${chatId}`)
+  GET(`/chatRecord/clearChatRecord?chatId=${chatId}`)

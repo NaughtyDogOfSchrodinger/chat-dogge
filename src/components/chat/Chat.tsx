@@ -203,10 +203,12 @@ export function Chat(props: ChatProps) {
           setChatData((state) => ({
             ...state,
             history: state.history.map((item, index) => {
+              console.log(`-----------item: ${text}`)
+
               if (index !== state.history.length - 1) return item
               return {
                 ...item,
-                value: item.value + text,
+                value: text,
               }
             }),
           }))
@@ -304,8 +306,6 @@ export function Chat(props: ChatProps) {
     scrollToBottom()
 
     try {
-      await hitCount(modelId)
-
       // @ts-ignore
       await gptChatPrompt(newChatList[newChatList.length - 2])
 
