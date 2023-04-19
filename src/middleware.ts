@@ -4,6 +4,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 import { isDev } from './utils/isDev'
+import { getToken } from '@/utils/user'
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -11,31 +12,15 @@ const ratelimit = new Ratelimit({
   analytics: true, // <- Enable analytics
 })
 export const config = {
-  matcher: [
-    '/api/generate',
-    '/api/chat',
-    '/api/chat/chatGpt',
-    '/api/chat/vectorGpt',
-    '/api/chat/gpt3',
-  ],
+  matcher: ['/api/chat/openAI'],
 }
 
 export default async function middleware(
   request: NextRequest,
   event: NextFetchEvent
 ): Promise<Response | undefined> {
-  const { isLogin } = (await request.json()) as GenerateApiInput
-
-  if (isLogin) {
-    console.log('user is login')
-    // const { isValid } = await validateLicenseKey(userKey)
-    // if (!isValid) {
-    //   return runOutOfRatelimit(439)
-    // }
-    return NextResponse.next()
-  }
-
-  if (isDev) {
+  const authorization = request.headers.get('Authorization')
+  if (isDev || authorization) {
     return NextResponse.next()
   }
 
