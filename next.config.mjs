@@ -15,6 +15,7 @@ const config = {
   },
   images: {
     domains: ['avatars.githubusercontent.com'],
-  }
+  },
+  output: "standalone",
 }
 export default config
