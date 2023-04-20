@@ -3,7 +3,7 @@ import { jsonRes } from '@/service/response'
 import { connectToDatabase } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { Model } from '@/service/models/model'
-import type { ModelSchema } from '@/types/mongoSchema'
+import type { ModelUpdateParams } from '@/types/model'
 
 /* 获取我的模型 */
 export default async function handler(
@@ -11,15 +11,16 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
+    const { name, service, security, systemPrompt, intro, temperature } =
+      req.body as ModelUpdateParams
+    const { modelId } = req.query as { modelId: string }
     const { authorization } = req.headers
 
     if (!authorization) {
       throw new Error('无权操作')
     }
 
-    const { modelId } = req.query
-
-    if (!modelId) {
+    if (!name || !service || !security || !modelId) {
       throw new Error('参数错误')
     }
 
@@ -28,19 +29,23 @@ export default async function handler(
 
     await connectToDatabase()
 
-    // 根据 userId 获取模型信息
-    const model = await Model.findOne<ModelSchema>({
-      userId,
-      _id: modelId,
-    })
+    // 更新模型
+    await Model.updateOne(
+      {
+        _id: modelId,
+        userId,
+      },
+      {
+        name,
+        systemPrompt,
+        intro,
+        temperature,
+        // service,
+        security,
+      }
+    )
 
-    if (!model) {
-      throw new Error('模型不存在')
-    }
-
-    jsonRes(res, {
-      data: model,
-    })
+    jsonRes(res)
   } catch (err) {
     jsonRes(res, {
       code: 500,

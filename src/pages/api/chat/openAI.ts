@@ -10,9 +10,8 @@ export const config = {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  const body = await req.json()
-
-  const stream = await OpenAIStream(body)
-  return new Response(stream)
+  const payload = await req.json()
+  const result = await OpenAIStream(payload)
+  return new Response(result)
 }
 export default handler

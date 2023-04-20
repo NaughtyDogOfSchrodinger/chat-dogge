@@ -39,6 +39,7 @@ export async function OpenAIStream(payload: JSON) {
   if (process.env.OPENAI_API_ORG) {
     requestHeaders['OpenAI-Organization'] = process.env.OPENAI_API_ORG
   }
+
   const res = await fetch(
     `https://${process.env.BASE_URL}/v1/chat/completions`,
     {

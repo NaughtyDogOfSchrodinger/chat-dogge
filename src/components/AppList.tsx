@@ -4,13 +4,14 @@ import { useTranslation } from 'next-i18next'
 import { FlameIcon, HeartIcon } from 'lucide-react'
 import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { useUserStore } from '@/store/user'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { postCreateModel, userCollect } from '@/api/model'
 import { getChatSiteId } from '@/api/chat'
 
 interface AppListProps {
   list: Array<ModelPopulate>
   models: any
+  isMy: boolean
 }
 const AppList = (props: AppListProps) => {
   // @ts-ignore
@@ -66,12 +67,29 @@ const AppList = (props: AppListProps) => {
                   aria-hidden="true"
                 />
               </div>
-              <Link
-                href={'/model/detail?modelId=' + `${app._id}`}
-                className="btn-sm btn bg-black text-white"
-              >
-                {t('run')}
-              </Link>
+              {props.isMy ? (
+                <div className="flex justify-end gap-1">
+                  <Link
+                    href={'/model/edit?modelId=' + `${app._id}`}
+                    className="btn-sm btn bg-black text-white"
+                  >
+                    编辑
+                  </Link>
+                  <Link
+                    href={'/model/detail?modelId=' + `${app._id}`}
+                    className="btn-sm btn bg-black text-white"
+                  >
+                    {t('run')}
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  href={'/model/detail?modelId=' + `${app._id}`}
+                  className="btn-sm btn bg-black text-white"
+                >
+                  {t('run')}
+                </Link>
+              )}
             </div>
           </div>
         </div>

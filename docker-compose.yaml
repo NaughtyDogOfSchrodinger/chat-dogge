@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  chatdogge:
+    build: ./
+    image: hjailinux/chat-dogge:latest
+    ports:
+      - 3000:3000
+    environment:
+      BASE_URL: closeai.deno.dev
+      OPENAI_API_KEY: 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
+      MY_MAIL: xuedingedewanpigou@qq.com
+      MAILE_CODE: dsqiuazwddjhbecf
+      TOKEN_KEY: sssssssss
+      MONGODB_URI: mongodb://root:ROOT_1234@mongo:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
+      OPENAIKEY: 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
+      REDIS_URL: redis://default:psw1234@redis-stack:6379
+    restart: always
+    container_name: chat-dogge
+    depends_on:
+      - mongodb
+      - redis-stack
+    links:
+      - mongodb:mongo
+      - redis-stack:redis-stack
+  mongodb:
+    image: mongo:6.0.4
+    container_name: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=ROOT_1234
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/data/logs
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/logs:/data/logs
+    ports:
+      - 27017:27017
+  redis-stack:
+    image: redis/redis-stack:6.2.6-v6
+    container_name: redis-stack
+    restart: unless-stopped
+    ports:
+      - "8100:6379"
+      - "8101:8001"
+    environment:
+      - REDIS_ARGS=--requirepass psw1234
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./redis/redis.conf:/redis.conf
+      - ./redis/data:/data

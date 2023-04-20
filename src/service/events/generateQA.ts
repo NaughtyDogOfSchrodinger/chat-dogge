@@ -25,9 +25,8 @@ export async function generateQA(next = false): Promise<any> {
       { $match: { textList: { $exists: true, $ne: [] } } },
       { $sample: { size: 1 } },
     ])
-
+    console.log(`------------------: ${data.length}`)
     const dataItem: ModelSplitDataSchema = data[0]
-
     if (!dataItem) {
       console.log('没有需要生成 QA 的数据')
       global.generatingQA = false
@@ -38,7 +37,6 @@ export async function generateQA(next = false): Promise<any> {
 
     // 获取 5 个源文本
     const textList: string[] = dataItem.textList.slice(-5)
-
     // 获取 openapi Key
     let userApiKey = '',
       systemKey = ''
@@ -93,7 +91,7 @@ export async function generateQA(next = false): Promise<any> {
             },
             {
               timeout: 180000,
-              httpsAgent: httpsAgent(!userApiKey),
+              // httpsAgent: httpsAgent(!userApiKey),
             }
           )
           .then((res) => {

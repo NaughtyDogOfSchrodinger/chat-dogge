@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast'
 const authPage: { [key: string]: boolean } = {
   '/model/create': true,
   '/myApp': true,
+  '/model/edit': true,
 }
 const Layout = (props: { children?: JSX.Element | JSX.Element[] }) => {
   const router = useRouter()

@@ -44,7 +44,7 @@ const MyApp = () => {
       <main>
         <div className="w-full bg-slate-50 pb-20 pt-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <AppList list={myModels} models={getMyModels} />
+            <AppList list={myModels} models={getMyModels} isMy={true} />
           </div>
         </div>
       </main>
