@@ -26,5 +26,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKER_USERNAME }}/$(basename ${GITHUB_REPOSITORY}):latest
+          tags: ${{ env.DOCKER_USERNAME }}/chatdogge:latest
 
