@@ -1,47 +1,41 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
-import { connectToDatabase } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
-import { Model } from '@/service/models/model'
-import type { ModelSchema } from '@/types/mongoSchema'
+import { connectRedis } from '@/service/redis'
 
-/* 获取我的模型 */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   try {
+    let { dataId } = req.query as {
+      dataId: string
+    }
     const { authorization } = req.headers
 
     if (!authorization) {
       throw new Error('无权操作')
     }
 
-    const { modelId } = req.query
-
-    if (!modelId) {
-      throw new Error('参数错误')
+    if (!dataId) {
+      throw new Error('缺少参数')
     }
 
     // 凭证校验
     const userId = await authToken(authorization)
 
-    await connectToDatabase()
+    const redis = await connectRedis()
 
-    // 根据 userId 获取模型信息
-    const model = await Model.findOne<ModelSchema>({
-      userId,
-      _id: modelId,
-    })
-
-    if (!model) {
-      throw new Error('模型不存在')
+    // 校验是否为该用户的数据
+    const dataItemUserId = await redis.hGet(dataId, 'userId')
+    if (dataItemUserId !== userId) {
+      throw new Error('无权操作')
     }
-
-    jsonRes(res, {
-      data: model,
-    })
+    // 删除
+    await redis.del(dataId)
+    jsonRes(res)
   } catch (err) {
+    console.log(err)
     jsonRes(res, {
       code: 500,
       error: err,

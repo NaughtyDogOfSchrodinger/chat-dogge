@@ -1,6 +1,11 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { NextSeo } from 'next-seo'
-import { getChatGptData, getModelById, hitCount } from '@/api/model'
+import {
+  getChatGptData,
+  getModelWithChatById,
+  getPrompt,
+  hitCount,
+} from '@/api/model'
 import { ModelSchema } from '@/types/mongoSchema'
 import { useGlobalStore } from '@/store/global'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -14,7 +19,6 @@ import {
   postSaveChat,
 } from '@/api/chat'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useUserStore } from '@/store/user'
 import { ChatLine } from '@/components/chat/ChatLine'
 import { useRouter } from 'next/router'
 import { useDisclosure } from '@chakra-ui/react'
@@ -22,10 +26,9 @@ import { useCopyData } from '@/utils/tools'
 import { useChatStore } from '@/store/chat'
 import { toast } from 'react-hot-toast'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'
-import { streamFetch } from '@/api/fetch'
 import { InitChatResponse } from '@/api/response/chat'
 import { TrashIcon } from 'lucide-react'
-import { getToken } from '@/utils/user'
+import { formatPrice, getToken } from '@/utils/user'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
   return {
@@ -172,7 +175,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           },
         ] as ChatItemType[]
       }
-      const temp = await getChatGptData({
+      const payload = await getPrompt({
         prompt,
         chatOrModelId: chat?.chatId || modelId,
       })
@@ -180,8 +183,9 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: getToken() || '',
         },
-        body: JSON.stringify(temp),
+        body: JSON.stringify(payload),
         // signal: controller.current,
       })
       const data = response.body
@@ -393,7 +397,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
   useQuery(
     ['init', model],
     () => {
-      return getModelById(modelId)
+      return getModelWithChatById(modelId)
     },
     {
       onSuccess(res) {
@@ -455,6 +459,14 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           </h1>
           <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
             {model.intro}
+          </p>
+          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
+            {formatPrice(
+              modelList.find((item) => item.model === model.service.modelName)
+                ?.price || 0,
+              1000
+            )}
+            元/1K tokens(包括上下文和回答)
           </p>
           <div className="w-full max-w-xl">
             <section className="flex flex-col gap-3 ">

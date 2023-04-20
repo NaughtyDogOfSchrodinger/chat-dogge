@@ -46,16 +46,21 @@ export const hitCount = (modelId: string) =>
 /**
  * 根据 ID 删除模型
  */
-export const delModelById = (id: string) => DELETE(`/model/del?modelId=${id}`)
+export const delModelById = (id: string) => GET(`/model/del?modelId=${id}`)
 
 /**
  * 根据 ID 获取模型
  */
 export const getModelById = (id: string) =>
-  GET<{ model: ModelSchema; chat: InitChatResponse }>(
-    `/model/detail?modelId=${id}`
-  )
+  GET<ModelSchema>(`/model/detail?modelId=${id}`)
 
+/**
+ * 根据 ID 获取模型
+ */
+export const getModelWithChatById = (id: string) =>
+  GET<{ model: ModelSchema; chat: InitChatResponse }>(
+    `/model/detailWithChat?modelId=${id}`
+  )
 /**
  * 根据 ID 获取模型
  */
@@ -64,6 +69,13 @@ export const getChatGptData = (data: {
   chatOrModelId: string
 }) => POST(`/chat/chatGpt`, data)
 
+/**
+ * 获取openAi消息
+ */
+export const getPrompt = (data: {
+  prompt: ChatItemType[]
+  chatOrModelId: string
+}) => POST<string>(`/chat/getPrompt`, data)
 /**
  * 根据 ID 更新模型
  */

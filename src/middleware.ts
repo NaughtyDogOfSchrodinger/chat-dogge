@@ -47,7 +47,7 @@ export default async function middleware(
 }
 
 function runOutOfRatelimit(errorCode: number) {
-  return new NextResponse(JSON.stringify({ success: false, message: '' }), {
+  return new NextResponse(JSON.stringify('今日免费次数已用尽'), {
     status: errorCode,
     headers: { 'content-type': 'application/json' },
   })

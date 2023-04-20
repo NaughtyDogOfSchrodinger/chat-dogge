@@ -86,7 +86,11 @@ const Home = () => {
               />
               <div />
             </div>
-            <AppList list={R.take(sizeToShow, list)} models={getAllModels} />
+            <AppList
+              list={R.take(sizeToShow, list)}
+              models={getAllModels}
+              isMy={false}
+            />
 
             <div className="mt-10 flex justify-center">
               <Button color="slate" onClick={handleShowMore}>
