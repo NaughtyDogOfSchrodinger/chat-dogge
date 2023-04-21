@@ -29,6 +29,7 @@ import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
 import { TrashIcon } from 'lucide-react'
 import { formatPrice, getToken } from '@/utils/user'
+import { streamFetch } from '@/api/fetch'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
   return {
@@ -179,42 +180,64 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         prompt,
         chatOrModelId: chat?.chatId || modelId,
       })
-      const response = await fetch('/api/chat/openAI', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: getToken() || '',
-        },
-        body: JSON.stringify(payload),
-        // signal: controller.current,
-      })
-      const data = response.body
-      if (!data) {
-        return
-      }
+      // const response = await fetch('/api/chat/openAI', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authorization: getToken() || '',
+      //   },
+      //   body: JSON.stringify(payload),
+      //   // signal: controller.current,
+      // })
+      // const data = response.body
+      // if (!data) {
+      //   return
+      // }
+      //
+      // const reader = data.getReader()
+      // const decoder = new TextDecoder()
+      // let done = false
+      // let count = 0
+      // let lastMessage = ''
+      // while (!done) {
+      //   const { value, done: doneReading } = await reader.read()
+      //   done = doneReading
+      //   const chunkValue = decoder.decode(value)
+      //   lastMessage = lastMessage + chunkValue
+      //   count++
+      //   setChatData((state) => ({
+      //     ...state,
+      //     history: state.history.map((item, index) => {
+      //       if (index !== state.history.length - 1) return item
+      //       return {
+      //         ...item,
+      //         value: item.value + chunkValue,
+      //       }
+      //     }),
+      //   }))
+      // }
 
-      const reader = data.getReader()
-      const decoder = new TextDecoder()
-      let done = false
-      let count = 0
-      let lastMessage = ''
-      while (!done) {
-        const { value, done: doneReading } = await reader.read()
-        done = doneReading
-        const chunkValue = decoder.decode(value)
-        lastMessage = lastMessage + chunkValue
-        count++
-        setChatData((state) => ({
-          ...state,
-          history: state.history.map((item, index) => {
-            if (index !== state.history.length - 1) return item
-            return {
-              ...item,
-              value: item.value + chunkValue,
-            }
-          }),
-        }))
-      }
+      // 流请求，获取数据
+      const res = await streamFetch({
+        url: '/api/chat/getPrompt',
+        data: {
+          prompt,
+          chatOrModelId: chat?.chatId || modelId,
+        },
+        onMessage: (text: string) => {
+          setChatData((state) => ({
+            ...state,
+            history: state.history.map((item, index) => {
+              if (index !== state.history.length - 1) return item
+              return {
+                ...item,
+                value: item.value + text,
+              }
+            }),
+          }))
+        },
+        abortSignal: controller.current,
+      })
 
       // 保存对话信息
       try {
@@ -225,7 +248,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
               ...prompt,
               {
                 obj: 'AI',
-                value: lastMessage as string,
+                value: res as string,
               },
             ],
           })
