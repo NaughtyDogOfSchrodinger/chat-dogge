@@ -161,7 +161,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       if (!urlMap[chatData.modelName]) return Promise.reject('找不到模型')
 
       let prompt
-      console.log(`chat: ${chat?.chatId}`)
       if (chat?.chatId === undefined) {
         // @ts-ignore
         prompt = [
@@ -176,46 +175,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           },
         ] as ChatItemType[]
       }
-      const payload = await getPrompt({
-        prompt,
-        chatOrModelId: chat?.chatId || modelId,
-      })
-      // const response = await fetch('/api/chat/openAI', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: getToken() || '',
-      //   },
-      //   body: JSON.stringify(payload),
-      //   // signal: controller.current,
-      // })
-      // const data = response.body
-      // if (!data) {
-      //   return
-      // }
-      //
-      // const reader = data.getReader()
-      // const decoder = new TextDecoder()
-      // let done = false
-      // let count = 0
-      // let lastMessage = ''
-      // while (!done) {
-      //   const { value, done: doneReading } = await reader.read()
-      //   done = doneReading
-      //   const chunkValue = decoder.decode(value)
-      //   lastMessage = lastMessage + chunkValue
-      //   count++
-      //   setChatData((state) => ({
-      //     ...state,
-      //     history: state.history.map((item, index) => {
-      //       if (index !== state.history.length - 1) return item
-      //       return {
-      //         ...item,
-      //         value: item.value + chunkValue,
-      //       }
-      //     }),
-      //   }))
-      // }
 
       // 流请求，获取数据
       const res = await streamFetch({
