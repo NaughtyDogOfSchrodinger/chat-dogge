@@ -14,10 +14,3 @@ body * {
   @apply transition-colors duration-100;
 }
 
-@layer base {
-  ul,
-  ol {
-    list-style: revert;
-    list-style-position: inside;
-  }
-}
