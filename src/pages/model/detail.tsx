@@ -479,7 +479,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
                 ref={bottomRef}
                 id="save-as-image"
               >
-                {/*<div className="rounded-2xl border-zinc-100  bg-[#f5f5f7] lg:border lg:p-6">*/}
                 {chatData.history.map((content, index) => (
                   <ChatLine
                     key={index}
@@ -503,7 +502,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
                   isChatting={isChatting}
                   clearHistory={clearHistory}
                 />
-                {/*</div>*/}
               </div>
             </div>
           </div>

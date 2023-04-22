@@ -93,7 +93,7 @@ export function ChatLine({
                     {String(children).replace(/\n$/, '')}
                   </SyntaxHighlighter>
                   {!saving && (
-                    <div className="absolute right-0 top-1 mr-1 cursor-pointer rounded bg-slate-50 p-1 dark:bg-slate-700">
+                    <div className="absolute right-0 top-1 mr-1 cursor-pointer rounded bg-slate-50 p-1 ">
                       <Copy
                         className="text-slate-7 h-4 w-4 hover:fill-black"
                         onClick={() =>
