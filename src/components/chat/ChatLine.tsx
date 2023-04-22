@@ -4,6 +4,8 @@ import remarkGfm from 'remark-gfm'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { Copy, TrashIcon } from 'lucide-react'
 import Image from 'next/image'
+import { monoBlue } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 type ChatGPTAgent = 'Human' | 'AI' | 'SYSTEM'
 
