@@ -110,8 +110,8 @@ export default async function handler(
             input: text,
           },
           {
-            timeout: 20000,
-            // httpsAgent: httpsAgent(isPay),
+            timeout: 5000,
+            httpsAgent: httpsAgent(true),
           }
         )
         .then((res) => ({
@@ -216,9 +216,9 @@ export default async function handler(
         stop: ['.!?。'],
       },
       {
-        timeout: 40000,
+        timeout: 5000,
         responseType: 'stream',
-        // httpsAgent: httpsAgent(true),
+        httpsAgent: httpsAgent(true),
       }
     )
 
