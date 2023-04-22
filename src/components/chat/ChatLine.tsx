@@ -112,37 +112,19 @@ export function ChatLine({
           {chatMsg.value.replace(/^\s+/, '').replace(/\n\n/g, '\n')}
         </ReactMarkdown>
         {!saving && (
-          <div className="ml-1 mr-2 cursor-pointer">
+          <div className="ml-1 mr-2 flex cursor-pointer">
             <Copy
               className="text-slate-7 h-4 w-4 hover:fill-black"
               onClick={() =>
                 onCopy(chatMsg.value.replace(/^\s+/, '').replace(/\n\n/g, '\n'))
               }
             />
+            <TrashIcon
+              className="text-slate-7 h-4 w-4 hover:fill-black"
+              onClick={() => onDelete(index)}
+            />
           </div>
         )}
-        <TrashIcon
-          className="text-slate-7 h-4 w-4 hover:fill-black"
-          onClick={() => onDelete(index)}
-        />
-        {/*<div className="message prose-slate dark:prose-invert dark:text-slate prose overflow-hidden break-words">*/}
-        {/*  <div*/}
-        {/*    className="flex-1 gap-4 text-left"*/}
-        {/*    dangerouslySetInnerHTML={{*/}
-        {/*      __html: md.render(chatMsg.value),*/}
-        {/*    }}*/}
-        {/*  ></div>*/}
-        {/*</div>*/}
-        {/*<div className="<sm:top--4 <sm:right-0 text-slate-7 dark:text-slate dark:bg-#292B32 bg-#E7EBF0 absolute top-2 right-6 flex items-center justify-between rounded text-sm opacity-0 hover:opacity-100">*/}
-        {/*  <Copy*/}
-        {/*    className="text-slate-7 h-4 w-4 hover:fill-black"*/}
-        {/*    onClick={() => onCopy(chatMsg.value)}*/}
-        {/*  />*/}
-        {/*  <TrashIcon*/}
-        {/*    className="text-slate-7 h-4 w-4 hover:fill-black"*/}
-        {/*    onClick={() => onDelete(index)}*/}
-        {/*  />*/}
-        {/*</div>*/}
       </div>
     </div>
   )

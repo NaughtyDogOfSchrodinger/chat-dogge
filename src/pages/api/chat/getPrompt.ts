@@ -111,7 +111,7 @@ export default async function handler(
           },
           {
             timeout: 5000,
-            httpsAgent: httpsAgent(true),
+            // httpsAgent: httpsAgent(true),
           }
         )
         .then((res) => ({
@@ -218,7 +218,7 @@ export default async function handler(
       {
         timeout: 5000,
         responseType: 'stream',
-        httpsAgent: httpsAgent(true),
+        // httpsAgent: httpsAgent(true),
       }
     )
 
