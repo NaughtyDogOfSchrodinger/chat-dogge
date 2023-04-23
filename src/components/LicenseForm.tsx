@@ -2,7 +2,6 @@ import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import { PURCHASE_URL } from '@/utils/constants'
 import { clientValidateLicenseKey } from '@/utils/lemon'
-import { loadLicenseKey, saveLicenseKey } from '@/utils/localData'
 import { useEffect, useRef } from 'react'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
@@ -12,17 +11,13 @@ interface LicenseFormProps {
 }
 export const LicenseForm = (props: LicenseFormProps) => {
   const licenseKeyInputRef = useRef<HTMLInputElement>(null)
+  // @ts-ignore
   const { t } = useTranslation('common')
 
-  useEffect(() => {
-    if (licenseKeyInputRef.current) {
-      licenseKeyInputRef.current.value = loadLicenseKey()
-    }
-  }, [])
+  useEffect(() => {}, [])
 
   const handleClear = () => {
     toast(t('data_cleared'), { icon: '🗑️' })
-    saveLicenseKey('')
     props.onBackToPurchase()
   }
 
@@ -35,7 +30,6 @@ export const LicenseForm = (props: LicenseFormProps) => {
     toast(t('saving'))
     const { isValid } = await clientValidateLicenseKey(value)
     if (isValid) {
-      saveLicenseKey(value)
       toast(t('saved'), { icon: '✅' })
     } else {
       toast(t('license_wrong'), { icon: '❌' })

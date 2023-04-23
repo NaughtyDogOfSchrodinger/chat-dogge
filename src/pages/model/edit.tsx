@@ -172,23 +172,6 @@ const Edit = ({ modelId }: { modelId: string }) => {
   //   content: '确认删除该模型?'
   // });
   const { register, setValue, getValues } = formHooks
-  const [refresh, setRefresh] = useState(false)
-
-  const {
-    isOpen: isOpenSelectFileModal,
-    onOpen: onOpenSelectFileModal,
-    onClose: onCloseSelectFileModal,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenSelectUrlModal,
-    onOpen: onOpenSelectUrlModal,
-    onClose: onCloseSelectUrlModal,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenSelectJsonModal,
-    onOpen: onOpenSelectJsonModal,
-    onClose: onCloseSelectJsonModal,
-  } = useDisclosure()
 
   const { FileModal, setShowFileModal } = useSelectFile({
     modelId: model._id,
@@ -280,7 +263,12 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     type="text"
                     placeholder="底层模型名称"
                     className="input-bordered input w-full max-w-xs"
-                    value={getValues('service.modelName')}
+                    value={
+                      // @ts-ignore
+                      modelList.find(
+                        (item) => item.model === getValues('service.modelName')
+                      ).name
+                    }
                     disabled={true}
                   />
                 </div>
@@ -317,7 +305,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
               <div className="form-control w-full max-w-xs gap-3">
                 <div>
                   <label className="label">
-                    <span className="label-text">Temprature</span>
+                    <span className="label-text">发散能力</span>
                   </label>
                   <input
                     type="range"

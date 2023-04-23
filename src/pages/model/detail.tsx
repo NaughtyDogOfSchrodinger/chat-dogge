@@ -149,6 +149,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           }))
         },
         abortSignal: controller.current,
+        stop,
       })
 
       // 保存对话信息
@@ -421,6 +422,16 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
 
   function handleStop() {
     stop.current = true
+    setChatData((state) => ({
+      ...state,
+      history: state.history.map((item, index) => {
+        if (index !== state.history.length - 1) return item
+        return {
+          ...item,
+          status: 'finish',
+        }
+      }),
+    }))
   }
   function handleSave() {
     // cause we always have a system message at the first
@@ -472,7 +483,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
             )}
             元/1K tokens(包括上下文和回答)
           </p>
-          <div className="flex w-full flex-col items-center">
+          <div className="flex w-full flex-col items-center ">
             <div className="mt-16 flex w-full flex-1 flex-col items-center text-center">
               <div
                 className="w-full max-w-5xl text-left font-sans leading-tight dark:text-slate-200"

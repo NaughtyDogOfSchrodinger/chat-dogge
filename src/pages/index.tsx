@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useUserStore } from '@/store/user'
 import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
+import { ChatModelNameEnum } from '@/constants/model'
 
 type PageProps = {}
 
@@ -36,14 +37,31 @@ const Home = () => {
 
   const { isLoading } = useQuery(['loadModels'], getAllModels)
 
-  const list = (
-    searchValue
-      ? allModels!.filter(
-          (app) =>
-            app.name.includes(searchValue) || app.intro.includes(searchValue)
-        )
-      : allModels
-  ) as ModelPopulate[]
+  const [base, setBase] = useState(false)
+  const [knowledge, setKnowledge] = useState(false)
+
+  const list = allModels!.filter((app) => {
+    if (base) {
+      return (
+        app.service.modelName == ChatModelNameEnum.GPT35 &&
+        (searchValue
+          ? app.name.includes(searchValue) || app.intro.includes(searchValue)
+          : true)
+      )
+    }
+    if (knowledge) {
+      return (
+        app.service.modelName == ChatModelNameEnum.VECTOR_GPT &&
+        (searchValue
+          ? app.name.includes(searchValue) || app.intro.includes(searchValue)
+          : true)
+      )
+    }
+
+    return searchValue
+      ? app.name.includes(searchValue) || app.intro.includes(searchValue)
+      : true
+  }) as ModelPopulate[]
 
   const handleShowMore = () => {
     setSizeToShow(sizeToShow + 100)
@@ -59,8 +77,12 @@ const Home = () => {
               <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0 ">
                 <div />
                 <SearchInput
+                  base={base}
+                  knowledge={knowledge}
+                  setBase={setBase}
+                  setKnowledge={setKnowledge}
                   setSearchValue={setSearchValue}
-                  placeholder={`Search ${allModels!.length} apps...`}
+                  placeholder={`搜索 ${allModels!.length} 个 GPT 应用`}
                 />
                 <div />
               </div>
@@ -78,11 +100,15 @@ const Home = () => {
         <Hero />
         <div className="w-full bg-slate-50 pb-20 pt-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0 ">
+            <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0">
               <div />
               <SearchInput
+                base={base}
+                knowledge={knowledge}
+                setBase={setBase}
+                setKnowledge={setKnowledge}
                 setSearchValue={setSearchValue}
-                placeholder={`Search ${allModels!.length} apps...`}
+                placeholder={`搜索 ${allModels!.length} 个 GPT 应用`}
               />
               <div />
             </div>
@@ -99,12 +125,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* <PrimaryFeatures /> */}
-        {/* <SecondaryFeatures /> */}
-        {/*<CallToAction />*/}
-        {/* <Testimonials /> */}
-        {/* <Pricing /> */}
-        {/* <Faqs /> */}
       </main>
     </>
   )

@@ -4,8 +4,13 @@ import { useRef } from 'react'
 interface SearchInputProps {
   placeholder: string
   setSearchValue: (v: string) => void
+  base: boolean
+  knowledge: boolean
+  setBase: (flag: boolean) => void
+  setKnowledge: (flag: boolean) => void
 }
 export const SearchInput = (props: SearchInputProps) => {
+  const { base, knowledge, setBase, setKnowledge } = props
   const isComposing = useRef(false)
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -56,6 +61,31 @@ export const SearchInput = (props: SearchInputProps) => {
           className="block w-full rounded-lg border border-gray-300 bg-white p-4 pl-10 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600"
           placeholder={props.placeholder}
         />
+      </div>
+      <br />
+      <div className="flex items-center gap-2">
+        <button
+          className={`${
+            !base ? 'badge bg-black' : 'badge-outline badge'
+          } badge-lg `}
+          onClick={() => {
+            setBase(!base)
+            setKnowledge(false)
+          }}
+        >
+          基础类型
+        </button>
+        <button
+          className={`${
+            !knowledge ? 'badge bg-black' : 'badge-outline badge'
+          } badge-lg`}
+          onClick={() => {
+            setKnowledge(!knowledge)
+            setBase(false)
+          }}
+        >
+          知识库类型
+        </button>
       </div>
     </div>
   )

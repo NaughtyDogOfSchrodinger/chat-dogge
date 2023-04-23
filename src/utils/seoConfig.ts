@@ -1,11 +1,10 @@
 import { DefaultSeoProps } from 'next-seo'
 
-export const SITE_DESC =
-  '立即使用海量的 Prompt 应用，或在几秒钟内创建属于自己的应用。'
+export const SITE_DESC = '定制自己的的 GPT 应用。'
 export const DEFAULT_SEO_CONFIG: DefaultSeoProps = {
-  title: 'ChatDogge - Create Prompt Application in seconds',
+  title: 'ChatDogge - 定制自己的 GPT 应用',
   titleTemplate: '%s | ChatDogge',
-  defaultTitle: 'ChatDogge - Create Prompt Application in seconds',
+  defaultTitle: 'ChatDogge - Customize your own GPT Application',
   description: SITE_DESC,
   openGraph: {
     images: [

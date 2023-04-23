@@ -16,7 +16,12 @@ import { InitChatResponse } from '@/api/response/chat'
 /**
  * 获取我的模型列表
  */
-export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
+export const getMyModels = () => GET<ModelPopulate[]>('/model/icreated')
+
+/**
+ * 获取我收藏的模型列表
+ */
+export const getMyFavModels = () => GET<ModelPopulate[]>('/model/icollected')
 
 /**
  * 获取所有模型列表

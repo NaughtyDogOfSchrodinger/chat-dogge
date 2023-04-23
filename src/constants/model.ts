@@ -33,7 +33,7 @@ export type ModelConstantsData = {
 export const modelList: ModelConstantsData[] = [
   {
     serviceCompany: 'openai',
-    name: 'chatGPT',
+    name: '基础类型',
     model: ChatModelNameEnum.GPT35,
     trainName: '',
     maxToken: 4000,
@@ -43,7 +43,7 @@ export const modelList: ModelConstantsData[] = [
   },
   {
     serviceCompany: 'openai',
-    name: '知识库',
+    name: '知识库类型',
     model: ChatModelNameEnum.VECTOR_GPT,
     trainName: 'vector',
     maxToken: 4000,

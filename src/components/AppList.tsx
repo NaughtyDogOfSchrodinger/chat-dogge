@@ -7,6 +7,7 @@ import { useUserStore } from '@/store/user'
 import React, { useCallback } from 'react'
 import { postCreateModel, userCollect } from '@/api/model'
 import { getChatSiteId } from '@/api/chat'
+import { ChatModelNameEnum } from '@/constants/model'
 
 interface AppListProps {
   list: Array<ModelPopulate>
@@ -67,29 +68,36 @@ const AppList = (props: AppListProps) => {
                   aria-hidden="true"
                 />
               </div>
-              {props.isMy ? (
-                <div className="flex justify-end gap-1">
+              <div className="flex justify-end gap-1">
+                {props.isMy &&
+                app.service.modelName == ChatModelNameEnum.VECTOR_GPT ? (
+                  <Link
+                    href={'/model/edit?modelId=' + `${app._id}`}
+                    className="btn-sm btn bg-black text-white"
+                  >
+                    训练
+                  </Link>
+                ) : (
+                  ''
+                )}
+                {props.isMy &&
+                app.service.modelName != ChatModelNameEnum.VECTOR_GPT ? (
                   <Link
                     href={'/model/edit?modelId=' + `${app._id}`}
                     className="btn-sm btn bg-black text-white"
                   >
                     编辑
                   </Link>
-                  <Link
-                    href={'/model/detail?modelId=' + `${app._id}`}
-                    className="btn-sm btn bg-black text-white"
-                  >
-                    {t('run')}
-                  </Link>
-                </div>
-              ) : (
+                ) : (
+                  ''
+                )}
                 <Link
                   href={'/model/detail?modelId=' + `${app._id}`}
                   className="btn-sm btn bg-black text-white"
                 >
                   {t('run')}
                 </Link>
-              )}
+              </div>
             </div>
           </div>
         </div>

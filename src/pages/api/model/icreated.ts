@@ -3,6 +3,7 @@ import { jsonRes } from '@/service/response'
 import { connectToDatabase } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { Model } from '@/service/models/model'
+import { ModelUserRel } from '@/service/models/modelUserRel'
 
 /* 获取我的模型 */
 export default async function handler(
@@ -26,6 +27,12 @@ export default async function handler(
       userId,
     }).sort({
       _id: -1,
+    })
+
+    const rels = await ModelUserRel.find({ userId })
+    const relSet = new Set<string>(rels.map((r) => r.modelId.toString()))
+    models.map((model) => {
+      model.like = relSet.has(model._id.toString())
     })
 
     jsonRes(res, {

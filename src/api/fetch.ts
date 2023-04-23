@@ -4,12 +4,14 @@ interface StreamFetchProps {
   data: any
   onMessage: (text: string) => void
   abortSignal: AbortController
+  stop: any
 }
 export const streamFetch = ({
   url,
   data,
   onMessage,
   abortSignal,
+  stop,
 }: StreamFetchProps) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -28,6 +30,7 @@ export const streamFetch = ({
       let responseText = ''
 
       const read = async () => {
+        if (stop.current) return
         const { done, value } = await reader?.read()
         if (done) {
           if (res.status === 200) {

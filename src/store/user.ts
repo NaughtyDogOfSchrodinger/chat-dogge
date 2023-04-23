@@ -4,7 +4,7 @@ import { immer } from 'zustand/middleware/immer'
 import type { UserType, UserUpdateParams } from '@/types/user'
 import type { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { getToken, setToken } from '@/utils/user'
-import { getAllModels, getMyModels } from '@/api/model'
+import { getAllModels, getMyFavModels, getMyModels } from '@/api/model'
 import { formatPrice } from '@/utils/user'
 import { getTokenLogin } from '@/api/user'
 
@@ -15,9 +15,11 @@ type State = {
   updateUserInfo: (user: UserUpdateParams) => void
   clearUserInfo: () => void
   myModels: ModelPopulate[]
+  myFavModels: ModelPopulate[]
   allModels: ModelPopulate[]
   getMyModels: () => void
   getAllModels: () => void
+  getMyFavModels: () => void
   setMyModels: (data: ModelPopulate[]) => void
   clearMyModels: () => void
   clear: () => void
@@ -61,6 +63,7 @@ export const useUserStore = create<State>()(
       },
       myModels: [],
       allModels: [],
+      myFavModels: [],
       getMyModels: () =>
         getMyModels().then((res) => {
           set((state) => {
@@ -72,6 +75,13 @@ export const useUserStore = create<State>()(
         getAllModels().then((res) => {
           set((state) => {
             state.allModels = res
+          })
+          return res
+        }),
+      getMyFavModels: () =>
+        getMyFavModels().then((res) => {
+          set((state) => {
+            state.myFavModels = res
           })
           return res
         }),

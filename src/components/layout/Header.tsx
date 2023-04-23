@@ -80,8 +80,12 @@ const useHeaders = () => {
     useMemo(
       () => [
         {
-          href: '/myApp',
-          label: t('🐚️ 我的应用'),
+          href: '/iCreated',
+          label: t('🐚️ 我创建的'),
+        },
+        {
+          href: '/iCollected',
+          label: t('❤️ 我收藏的'),
         },
         {
           href: '/usage',
