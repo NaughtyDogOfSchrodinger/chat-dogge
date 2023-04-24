@@ -91,6 +91,10 @@ const useHeaders = () => {
           href: '/usage',
           label: t('💰️ 定价'),
         },
+        {
+          href: '/model/detail?modelId=6445f34ef691e2c63acac089',
+          label: t('💁客服'),
+        },
       ],
       [t]
     )

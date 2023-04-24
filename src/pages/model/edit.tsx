@@ -35,6 +35,10 @@ import { useSelectFile } from '@/components/dataImport/select-file-modal'
 import { useSelectUrl } from '@/components/dataImport/select-url-modal'
 import { usePagination } from '@/hooks/usePagination'
 import { RedisModelDataItemType } from '@/types/redis'
+import {
+  FormData,
+  useInputData,
+} from '@/components/dataImport/input-data-modal'
 
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
@@ -181,6 +185,13 @@ const Edit = ({ modelId }: { modelId: string }) => {
     modelId: model._id,
   })
 
+  const [editInputData, setEditInputData] = useState<FormData>()
+
+  const { InputModal, setShowInputModal } = useInputData({
+    modelId: model._id,
+    defaultValues: editInputData,
+  })
+
   const {
     data: modelDataList,
     isLoading,
@@ -218,6 +229,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
     <>
       <FileModal />
       <UrlModal />
+      <InputModal />
       <NextSeo
         title={model.name}
         description={model.intro}
@@ -385,6 +397,18 @@ const Edit = ({ modelId }: { modelId: string }) => {
                           className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
                         >
                           <li>
+                            <button
+                              className="justify-between active:bg-black"
+                              onClick={() => {
+                                setEditInputData(undefined)
+                                toggleOpen(false)
+                                setShowInputModal(true)
+                              }}
+                            >
+                              手动输入
+                            </button>
+                          </li>
+                          <li>
                             <label
                               htmlFor="my-modal-3"
                               className="justify-between active:bg-black"
@@ -446,12 +470,19 @@ const Edit = ({ modelId }: { modelId: string }) => {
                             {ModelDataStatusMap[item.status]}
                           </td>
                           <th className="h-8 border px-1 text-center text-sm">
-                            <Link
+                            <button
                               className="link-neutral link"
-                              href="src/pages#"
+                              onClick={() => {
+                                setEditInputData({
+                                  dataId: item.id,
+                                  q: item.q,
+                                  text: item.text,
+                                })
+                                setShowInputModal(true)
+                              }}
                             >
                               编辑
-                            </Link>
+                            </button>
                           </th>
                           <th className="h-8 border px-1 text-center text-sm">
                             <button
