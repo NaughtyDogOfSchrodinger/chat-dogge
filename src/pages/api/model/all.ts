@@ -15,7 +15,7 @@ export default async function handler(
 
     // 根据 userId 获取模型信息
     const models = await Model.find().sort({
-      _id: -1,
+      hitCount: -1,
     })
     const { authorization } = req.headers
 
