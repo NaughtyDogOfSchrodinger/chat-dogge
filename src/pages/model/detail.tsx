@@ -475,14 +475,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
             {model.intro}
           </p>
-          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
-            {formatPrice(
-              modelList.find((item) => item.model === model.service.modelName)
-                ?.price || 0,
-              1000
-            )}
-            元/1K tokens(包括上下文和回答)
-          </p>
           <div className="flex w-full flex-col items-center ">
             <div className="mt-16 flex w-full flex-1 flex-col items-center text-center">
               <div
