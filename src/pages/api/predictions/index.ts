@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
-import { authToken, openaiChatFilter } from '@/service/utils/tools'
+import { authToken, httpsAgent, openaiChatFilter } from '@/service/utils/tools'
 import { pushChatBill, pushImageBill } from '@/service/events/pushBill'
 import { ChatModelNameEnum } from '@/constants/model'
 import { ChatItemType } from '@/types/chat'
@@ -77,7 +77,7 @@ export default async function handler(
       },
       {
         timeout: 5000,
-        // httpsAgent: httpsAgent(true),
+        httpsAgent: httpsAgent(true),
       }
     )
 
