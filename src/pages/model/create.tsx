@@ -13,8 +13,7 @@ import { postCreateModel } from '@/api/model'
 import { modelList } from '@/constants/model'
 import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { useUserStore } from '@/store/user'
-import { InfoIcon, SaveIcon } from 'lucide-react'
-import LoadingDots from '@/components/LoadingDots'
+import { InfoIcon } from 'lucide-react'
 
 interface CreateFormType {
   avatar: string

@@ -1,8 +1,6 @@
 import AppList from '@/components/AppList'
 import AppListLoading from '@/components/AppListLoading'
 import { Button } from '@/components/Button'
-import { Footer } from '@/components/layout/Footer'
-import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/Hero'
 import { SearchInput } from '@/components/SearchInput'
 import type { GetStaticProps } from 'next'
@@ -12,7 +10,7 @@ import * as R from 'ramda'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useUserStore } from '@/store/user'
-import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
+import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatModelNameEnum } from '@/constants/model'
 
 type PageProps = {}

@@ -1,6 +1,4 @@
-import Head from 'next/head'
 import Link from 'next/link'
-import { NextSeo } from 'next-seo'
 import React from 'react'
 
 export default function About() {

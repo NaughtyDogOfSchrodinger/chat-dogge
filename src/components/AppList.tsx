@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
 import { FlameIcon, HeartIcon } from 'lucide-react'
-import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
-import { useUserStore } from '@/store/user'
+import { ModelPopulate } from '@/types/mongoSchema'
 import React, { useCallback } from 'react'
-import { postCreateModel, userCollect } from '@/api/model'
-import { getChatSiteId } from '@/api/chat'
+import { userCollect } from '@/api/model'
 import { ChatModelNameEnum } from '@/constants/model'
 
 interface AppListProps {

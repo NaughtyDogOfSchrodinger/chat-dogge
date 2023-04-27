@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 export const getMd = async (url: string) => {
   const response = await fetch(`/docs/${url}`)
-  const textContent = await response.text()
-  return textContent
+  return await response.text()
 }
 
 export const useMarkdown = ({ url }: { url: string }) => {

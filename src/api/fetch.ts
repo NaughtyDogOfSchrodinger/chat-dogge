@@ -1,4 +1,4 @@
-import { getToken } from '../utils/user'
+import { getToken } from '@/utils/user'
 interface StreamFetchProps {
   url: string
   data: any

@@ -1,5 +1,5 @@
 import { RATE_LIMIT_COUNT } from '@/utils/constants'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { LicenseForm } from '@/components/LicenseForm'
 import { PurchaseAction } from '@/components/PurchaseAction'

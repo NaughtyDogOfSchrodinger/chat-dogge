@@ -1,6 +1,5 @@
 import { TrashIcon, SaveIcon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { ChatSiteItemType } from '@/types/chat'
+import React from 'react'
 
 export default function InputMessage({
   input,

@@ -4,6 +4,7 @@ import { useTranslation } from 'next-i18next'
 
 export const CustomOpenAIKeyForm = () => {
   const [showOpenAIForm, setShowOpenAIForm] = useState(false)
+  // @ts-ignore
   const { t } = useTranslation('common')
 
   return (

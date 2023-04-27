@@ -1,5 +1,5 @@
-import { Model, model, Model as MongoModel, models, Schema } from 'mongoose'
-import { ModelUserRelSchema, UserModelSchema } from '@/types/mongoSchema'
+import { model, Model as MongoModel, models, Schema } from 'mongoose'
+import { ModelUserRelSchema } from '@/types/mongoSchema'
 
 const ModelUserRelSchema = new Schema({
   userId: {

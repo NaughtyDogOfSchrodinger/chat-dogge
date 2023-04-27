@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { ModelSchema } from '@/types/mongoSchema'
 import {
   ChatModelNameEnum,
@@ -24,13 +23,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { NextSeo } from 'next-seo'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
-import { useDisclosure } from '@chakra-ui/react'
-import { Breadcrumb } from '@/components/Breadcrumb'
-
-// const InputModel = dynamic(() => import('./components/InputDataModal'))
-// const SelectFileModel = dynamic(() => import('./components/SelectFileModal'))
-// const SelectUrlModel = dynamic(() => import('./components/SelectUrlModal'))
-// const SelectJsonModel = dynamic(() => import('./components/SelectJsonModal'))
 import { useSelectFile } from '@/components/dataImport/select-file-modal'
 import { useSelectUrl } from '@/components/dataImport/select-url-modal'
 import { usePagination } from '@/hooks/usePagination'

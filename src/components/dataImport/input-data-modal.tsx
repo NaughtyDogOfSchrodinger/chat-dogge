@@ -5,13 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useMutation } from '@tanstack/react-query'
-import {
-  getWebContent,
-  postModelDataInput,
-  postModelDataSplitData,
-  putModelDataById,
-} from '@/api/model'
+import { postModelDataInput, putModelDataById } from '@/api/model'
 import { toast } from 'react-hot-toast'
 import Modal from '@/components/share/modal'
 import LoadingDots from '@/components/LoadingDots'

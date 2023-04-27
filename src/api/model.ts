@@ -1,13 +1,8 @@
 import { GET, POST, DELETE, PUT } from './request'
-import type {
-  ModelSchema,
-  ModelDataSchema,
-  ModelSplitDataSchema,
-  ChatSchema,
-} from '@/types/mongoSchema'
+import type { ModelSchema, ModelDataSchema } from '@/types/mongoSchema'
 import { ModelUpdateParams } from '@/types/model'
-import { TrainingItemType } from '../types/training'
-import { RequestPaging } from '../types/index'
+import { TrainingItemType } from '@/types/training'
+import { RequestPaging } from '@/types'
 import { Obj2Query } from '@/utils/tools'
 import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'

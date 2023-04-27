@@ -7,7 +7,6 @@ import { getOpenApiKey } from './openai'
 export const getOpenAIApi = (apiKey: string) => {
   const configuration = new Configuration({
     apiKey,
-    basePath: `https://${process.env.BASE_URL}/v1`,
   })
 
   return new OpenAIApi(configuration, undefined)

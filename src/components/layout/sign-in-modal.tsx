@@ -7,7 +7,6 @@ import React, {
   useMemo,
   useEffect,
 } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { PageTypeEnum } from '@/constants/user'
 import { useUserStore } from '@/store/user'
@@ -15,7 +14,6 @@ import { ResLogin } from '@/api/response/user'
 import LoginForm from '@/components/layout/login/LoginForm'
 import RegisterForm from '@/components/layout/login/RegisterForm'
 import ForgetPasswordForm from '@/components/layout/login/ForgetPasswordForm'
-import { useQuery } from '@tanstack/react-query'
 
 const SignInModal = ({
   showSignInModal,

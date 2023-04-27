@@ -1,4 +1,4 @@
-import type { ChatPopulate, ModelSchema } from '@/types/mongoSchema'
+import type { ModelSchema } from '@/types/mongoSchema'
 import type { ChatItemType } from '@/types/chat'
 
 export type InitChatResponse = {

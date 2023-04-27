@@ -4,7 +4,6 @@ import { jsonRes } from '@/service/response'
 import { connectToDatabase } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { ModelUserRel } from '@/service/models/modelUserRel'
-import { ChatModelNameEnum } from '@/constants/model'
 
 export default async function handler(
   req: NextApiRequest,

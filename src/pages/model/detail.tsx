@@ -1,34 +1,19 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { NextSeo } from 'next-seo'
-import {
-  getChatGptData,
-  getModelWithChatById,
-  getPrompt,
-  hitCount,
-} from '@/api/model'
+import { getModelWithChatById } from '@/api/model'
 import { ModelSchema } from '@/types/mongoSchema'
-import { useGlobalStore } from '@/store/global'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ChatModelNameEnum, defaultModel, modelList } from '@/constants/model'
+import { ChatModelNameEnum, modelList } from '@/constants/model'
 import { useQuery } from '@tanstack/react-query'
-import {
-  clearChatRecord,
-  delChatRecordByIndex,
-  getChatSiteId,
-  getInitChatSiteInfo,
-  postSaveChat,
-} from '@/api/chat'
+import { clearChatRecord, delChatRecordByIndex, postSaveChat } from '@/api/chat'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { ChatLine } from '@/components/chat/ChatLine'
 import { useRouter } from 'next/router'
-import { useDisclosure } from '@chakra-ui/react'
 import { useCopyData } from '@/utils/tools'
 import { useChatStore } from '@/store/chat'
 import { toast } from 'react-hot-toast'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
-import { TrashIcon } from 'lucide-react'
-import { formatPrice, getToken } from '@/utils/user'
 import { streamFetch } from '@/api/fetch'
 import InputMessage from '@/components/chat/InputMessage'
 

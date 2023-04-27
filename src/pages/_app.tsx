@@ -7,14 +7,7 @@ import { DEFAULT_SEO_CONFIG } from '@/utils/seoConfig'
 import { toast, Toaster } from 'react-hot-toast'
 import { appWithTranslation } from 'next-i18next'
 import Layout from '@/components/layout/Layout'
-import { useRouter } from 'next/router'
-import { useUserStore } from '@/store/user'
-import { useGlobalStore } from '@/store/global'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import Script from 'next/script'
 import NProgress from 'nprogress' //nprogress module

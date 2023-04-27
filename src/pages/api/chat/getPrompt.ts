@@ -2,13 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { ChatItemType } from '@/types/chat'
 import { jsonRes } from '@/service/response'
 import { Chat, connectToDatabase, Model } from '@/service/mongo'
-import { authChat, getOpenAIApi } from '@/service/utils/chat'
+import { getOpenAIApi } from '@/service/utils/chat'
 import { ChatPopulate, ModelSchema } from '@/types/mongoSchema'
 import { ChatModelNameEnum, modelList } from '@/constants/model'
-import {
-  gpt35StreamResponse,
-  openaiCreateEmbedding,
-} from '@/service/utils/openai'
+import { gpt35StreamResponse } from '@/service/utils/openai'
 import { VecModelDataPrefix } from '@/constants/redis'
 import { vectorToBuffer } from '@/utils/tools'
 import {
@@ -110,7 +107,7 @@ export default async function handler(
           },
           {
             timeout: 5000,
-            // httpsAgent: httpsAgent(true),
+            httpsAgent: httpsAgent(true),
           }
         )
         .then((res) => ({
@@ -217,7 +214,7 @@ export default async function handler(
       {
         timeout: 5000,
         responseType: 'stream',
-        // httpsAgent: httpsAgent(true),
+        httpsAgent: httpsAgent(true),
       }
     )
 
