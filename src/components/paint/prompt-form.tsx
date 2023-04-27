@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
 const samplePrompts = [
-  'a gentleman otter in a 19th century portrait',
-  'bowl of ramen in the style of a comic book',
-  'flower field drawn by Jean-Jacques Sempé',
-  'illustration of a taxi cab in the style of r crumb',
-  'multicolor hyperspace',
-  'painting of fruit on a table in the style of Raimonds Staprans',
-  'pencil sketch of robots playing poker',
-  'photo of an astronaut riding a horse',
+  '19世纪肖像画中的绅士水獭',
+  '漫画风格的拉面碗',
+  '让-雅克·塞姆佩笔下的花田',
+  '以R·克拉姆布风格插画的出租车',
+  '多彩超空间',
+  '一幅以雷蒙兹·斯塔普兰斯风格为主题的桌上水果绘画',
+  '一幅铅笔素描，描绘了机器人在玩扑克牌',
+  '一张描绘宇航员骑马的照片',
 ]
 // @ts-ignore
 import sample from 'lodash/sample'
@@ -27,7 +27,7 @@ export default function PromptForm(props: any) {
           defaultValue={prompt}
           name="prompt"
           placeholder="输入提示词..."
-          className="block w-full flex-grow rounded-l-md"
+          className="w-full rounded-md border-2 border-black p-3 text-black shadow-sm focus:border-black focus:outline-0 "
         />
 
         <button

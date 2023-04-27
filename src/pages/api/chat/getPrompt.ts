@@ -23,7 +23,6 @@ import {
   ChatCompletionRequestMessage,
   ChatCompletionRequestMessageRoleEnum,
 } from 'openai'
-import { Redis } from '@upstash/redis'
 import { PassThrough } from 'stream'
 import * as process from 'process'
 if (!process.env.OPENAI_API_KEY) {

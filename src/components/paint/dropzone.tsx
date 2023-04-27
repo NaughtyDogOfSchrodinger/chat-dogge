@@ -24,9 +24,9 @@ export default function Dropzone(props: any) {
       <div className="m-auto">
         <input {...getInputProps()} />
         {isDragActive ? (
-          <p>将图像拖放到此处 ...</p>
+          <button className="btn">选择图片 ...</button>
         ) : (
-          <p>可选：将起始图像拖放到此处</p>
+          <button className="btn">可选：选择图片</button>
         )}
       </div>
     </div>

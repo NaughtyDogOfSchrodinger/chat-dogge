@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Head from 'next/head'
 import Canvas from '@/components/paint/canvas'
 import PromptForm from '@/components/paint/prompt-form'
 import Dropzone from '@/components/paint/dropzone'

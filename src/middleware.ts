@@ -1,10 +1,8 @@
 import { RATE_LIMIT_COUNT } from '@/utils/constants'
-import { GenerateApiInput } from '@/utils/types'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 import { isDev } from './utils/isDev'
-import { getToken } from '@/utils/user'
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
