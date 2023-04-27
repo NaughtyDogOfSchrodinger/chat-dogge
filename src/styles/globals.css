@@ -13,3 +13,33 @@
 body * {
   @apply transition-colors duration-100;
 }
+
+input {
+  @apply border;
+  @apply border-solid;
+  @apply border-gray-300;
+  /* @apply rounded-md; */
+  @apply px-4;
+  @apply py-2;
+}
+
+.border-hairline {
+  @apply border border-black border-opacity-10;
+}
+
+.lil-button {
+  @apply inline-block;
+  /* @apply border-hairline; */
+  @apply text-sm;
+  @apply text-gray-500;
+  @apply rounded-md;
+  @apply py-2;
+  @apply mx-3;
+}
+
+.icon {
+  @apply relative mr-1 inline;
+  top: -0.1em;
+  width: 1.1em;
+  height: 1.1em;
+}

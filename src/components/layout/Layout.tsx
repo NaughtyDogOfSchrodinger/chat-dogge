@@ -10,6 +10,8 @@ const authPage: { [key: string]: boolean } = {
   '/model/create': true,
   '/myApp': true,
   '/model/edit': true,
+  '/image': true,
+  '/paint': true,
 }
 const Layout = (props: { children?: JSX.Element | JSX.Element[] }) => {
   const router = useRouter()

@@ -88,12 +88,16 @@ const useHeaders = () => {
           label: t('❤️ 我收藏的'),
         },
         {
+          href: '/image',
+          label: t('🎨 画图'),
+        },
+        {
           href: '/usage',
           label: t('💰️ 定价'),
         },
         {
           href: '/model/detail?modelId=6445f34ef691e2c63acac089',
-          label: t('💁客服'),
+          label: t('💁 客服'),
         },
       ],
       [t]

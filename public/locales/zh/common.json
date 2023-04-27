@@ -42,7 +42,7 @@
   "paste_your_license": "粘贴你购买的 license key",
   "load_more": "加载更多",
   "price": "价格",
-  "please_buy": "未登录用户每日可使用 {{rateLimitCount}} 次,登录后账户免费余额 {{balance}} 元，超出额度请充值。",
+  "please_buy": "未登录用户每日可使用 {{rateLimitCount}} 次,登录后账户免费余额 {{balance}} 元，生成一张图片消耗0.2元，超出额度请充值。",
   "runout_today": "今天的免费限制已达到。请登录后使用。",
   "pay_to_use": "付费使用",
   "pay_to_use_p1": "ChatDogge项目需要负担高昂的服务器成本和 OpenAI API 成本，如果ChatDogge有帮助到您，请考虑付费使用。",

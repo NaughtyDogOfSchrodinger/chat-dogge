@@ -12,6 +12,7 @@ import { Obj2Query } from '@/utils/tools'
 import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
+import { GetImage } from '@/pages/paint'
 
 /**
  * 获取我的模型列表
@@ -81,6 +82,16 @@ export const getPrompt = (data: {
   prompt: ChatItemType[]
   chatOrModelId: string
 }) => POST<string>(`/chat/getPrompt`, data)
+
+/**
+ * 生成图片
+ */
+export const getImage = (data: GetImage) => POST<any>(`/predictions`, data)
+
+/**
+ *  查询图片
+ */
+export const getImageById = (id: string) => POST<any>(`/predictions/${id}`)
 /**
  * 根据 ID 更新模型
  */

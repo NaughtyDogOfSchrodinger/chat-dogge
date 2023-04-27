@@ -14,7 +14,7 @@ const config = {
     locales: ['zh', 'en', 'zh-Hant'],
   },
   images: {
-    domains: ['avatars.githubusercontent.com'],
+    domains: ['avatars.githubusercontent.com', "replicate.com", "replicate.delivery"],
   },
   output: "standalone",
 }

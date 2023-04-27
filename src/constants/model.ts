@@ -10,6 +10,7 @@ export enum ChatModelNameEnum {
   VECTOR_GPT = 'VECTOR_GPT',
   GPT3 = 'text-davinci-003',
   VECTOR = 'text-embedding-ada-002',
+  IMAGE = 'stable-diffusion',
 }
 
 export const ChatModelNameMap = {
@@ -17,6 +18,7 @@ export const ChatModelNameMap = {
   [ChatModelNameEnum.VECTOR_GPT]: 'gpt-3.5-turbo',
   [ChatModelNameEnum.GPT3]: 'text-davinci-003',
   [ChatModelNameEnum.VECTOR]: 'text-embedding-ada-002',
+  [ChatModelNameEnum.IMAGE]: 'stable-diffusion',
 }
 
 export type ModelConstantsData = {
@@ -50,6 +52,16 @@ export const modelList: ModelConstantsData[] = [
     contextMaxToken: 7000,
     maxTemperature: 1,
     price: 6,
+  },
+  {
+    serviceCompany: 'stable-diffusion',
+    name: '图片',
+    model: ChatModelNameEnum.IMAGE,
+    trainName: 'image',
+    maxToken: -1,
+    contextMaxToken: -1,
+    maxTemperature: 1,
+    price: 20000,
   },
   // {
   //   serviceCompany: 'openai',
