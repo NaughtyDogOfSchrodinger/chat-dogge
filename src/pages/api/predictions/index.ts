@@ -50,7 +50,7 @@ export default async function handler(
     ] as ChatItemType[]
     const chatAPI = getOpenAIApi(SYSTEM_KEY)
     // 控制在 tokens 数量，防止超出
-    const filterPrompts = openaiChatFilter(prompts, 4000)
+    const filterPrompts = openaiChatFilter(prompts, 7000)
     // 格式化文本内容成 chatgpt 格式
     const map = {
       Human: ChatCompletionRequestMessageRoleEnum.User,

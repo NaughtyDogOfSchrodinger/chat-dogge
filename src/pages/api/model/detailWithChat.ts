@@ -4,7 +4,6 @@ import { Chat, connectToDatabase, User } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { Model } from '@/service/models/model'
 import type { ModelSchema } from '@/types/mongoSchema'
-import { ChatPopulate } from '@/types/mongoSchema'
 
 /* 获取我的模型 */
 export default async function handler(

@@ -2,18 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
 
 const API_HOST = process.env.REPLICATE_API_HOST || 'https://api.replicate.com'
-
-// console.log({ API_HOST })
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   try {
-    const { authorization } = req.headers
-    if (!authorization) {
-      throw new Error('请先登录')
-    }
     const response = await fetch(`${API_HOST}/v1/predictions/${req.query.id}`, {
       headers: {
         Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
