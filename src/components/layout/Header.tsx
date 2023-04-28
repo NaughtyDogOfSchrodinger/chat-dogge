@@ -15,6 +15,7 @@ import { useUserStore } from '@/store/user'
 import { clearToken } from '@/utils/user'
 import { ResLogin } from '@/api/response/user'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 
 function MobileNavLink({
   href,
@@ -171,7 +172,8 @@ export function Header() {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Link href="/" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              {/*<Logo className="h-10 w-auto" />*/}
+              <Image src="/favicon.svg" alt="Logo" width={40} height={40} />
             </Link>
             <div className="hidden md:flex md:gap-x-6">
               {HEADER_LINKS.map(({ href, label, target }) => (
