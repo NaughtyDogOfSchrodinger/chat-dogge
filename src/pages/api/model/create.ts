@@ -16,14 +16,12 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
-    const { avatar, name, serviceModelName, description, prompt } =
-      req.body as {
-        avatar: string
-        name: string
-        serviceModelName: `${ChatModelNameEnum}`
-        description: string
-        prompt: string
-      }
+    const { name, serviceModelName, description, prompt } = req.body as {
+      name: string
+      serviceModelName: `${ChatModelNameEnum}`
+      description: string
+      prompt: string
+    }
     const { authorization } = req.headers
 
     if (!authorization) {
@@ -46,18 +44,17 @@ export default async function handler(
     await connectToDatabase()
 
     // 上限校验
-    const authCount = await Model.countDocuments({
-      userId,
-    })
-    if (authCount >= 20) {
-      throw new Error('上限 20 个模型')
-    }
+    // const authCount = await Model.countDocuments({
+    //   userId,
+    // })
+    // if (authCount >= 20) {
+    //   throw new Error('上限 20 个模型')
+    // }
 
     // 创建模型
     const response = await Model.create({
       name,
       userId,
-      avatar,
       intro: description,
       systemPrompt: prompt,
       status: ModelStatusEnum.running,

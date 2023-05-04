@@ -5,6 +5,7 @@ import {
   ChatModelNameEnum,
 } from '@/constants/model'
 import type { DataType } from './data'
+import { SortOrder } from 'mongoose'
 
 export type ServiceName = 'openai' | 'stable-diffusion'
 
@@ -31,6 +32,7 @@ export interface ModelSchema {
   avatar: string
   systemPrompt: string
   hitCount: number
+  favCount: number
   intro: string
   userId: string
   status: `${ModelStatusEnum}`

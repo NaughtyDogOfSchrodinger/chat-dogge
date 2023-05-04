@@ -16,6 +16,7 @@ import { clearToken } from '@/utils/user'
 import { ResLogin } from '@/api/response/user'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
+import { defaultFilterArgs } from '@/pages'
 
 function MobileNavLink({
   href,
@@ -157,7 +158,7 @@ export function Header() {
     (res: ResLogin) => {
       clearUserInfo()
       clearMyModels()
-      getAllModels()
+      getAllModels(defaultFilterArgs)
       clearToken()
       router.push('/')
     },

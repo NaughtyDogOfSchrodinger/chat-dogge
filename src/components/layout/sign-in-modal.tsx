@@ -14,6 +14,7 @@ import { ResLogin } from '@/api/response/user'
 import LoginForm from '@/components/layout/login/LoginForm'
 import RegisterForm from '@/components/layout/login/RegisterForm'
 import ForgetPasswordForm from '@/components/layout/login/ForgetPasswordForm'
+import { defaultFilterArgs } from '@/pages'
 
 const SignInModal = ({
   showSignInModal,
@@ -31,7 +32,7 @@ const SignInModal = ({
   const loginSuccess = useCallback(
     (res: ResLogin) => {
       setUserInfo(res.user, res.token)
-      getAllModels()
+      getAllModels(defaultFilterArgs)
       setShowSignInModal(false)
       router.push('/')
     },
@@ -51,7 +52,7 @@ const SignInModal = ({
   }
 
   useEffect(() => {
-    getAllModels()
+    getAllModels(defaultFilterArgs)
   }, [getAllModels, router])
 
   return (

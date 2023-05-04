@@ -8,6 +8,8 @@ import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
 import { GetImage } from '@/pages/paint'
+import { SortOrder } from 'mongoose'
+import { ChatModelNameEnum } from '@/constants/model'
 
 /**
  * 获取我的模型列表
@@ -22,7 +24,11 @@ export const getMyFavModels = () => GET<ModelPopulate[]>('/model/icollected')
 /**
  * 获取所有模型列表
  */
-export const getAllModels = () => GET<ModelPopulate[]>('/model/all')
+export const getAllModels = (data: {
+  hitCount?: SortOrder
+  favCount?: SortOrder
+  serviceModelName?: `${ChatModelNameEnum}`
+}) => POST<ModelPopulate[]>('/model/all', data)
 
 /**
  * 创建一个模型

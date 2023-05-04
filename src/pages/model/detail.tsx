@@ -16,7 +16,8 @@ import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
 import { streamFetch } from '@/api/fetch'
 import InputMessage from '@/components/chat/InputMessage'
-
+import { createAvatar } from '@dicebear/core'
+import { adventurer, micah } from '@dicebear/collection'
 import download from 'downloadjs'
 import { toPng } from 'html-to-image'
 export async function getServerSideProps(context: any) {
@@ -446,7 +447,9 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${model.avatar}</text></svg>`,
+            href: `${createAvatar(adventurer, {
+              seed: model.name,
+            }).toDataUriSync()}`,
           },
         ]}
       />

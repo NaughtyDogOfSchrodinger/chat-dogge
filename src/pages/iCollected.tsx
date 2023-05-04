@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import AppListLoading from '@/components/AppListLoading'
+import { defaultFilterArgs } from '@/pages/index'
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
@@ -36,7 +37,12 @@ const ICreated = () => {
       <main>
         <div className="w-full bg-slate-50 pb-20 pt-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <AppList list={myFavModels} models={getMyFavModels} isMy={true} />
+            <AppList
+              filterArgs={defaultFilterArgs}
+              list={myFavModels}
+              models={getMyFavModels}
+              isMy={true}
+            />
           </div>
         </div>
       </main>

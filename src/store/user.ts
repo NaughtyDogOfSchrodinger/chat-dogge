@@ -7,6 +7,8 @@ import { setToken } from '@/utils/user'
 import { getAllModels, getMyFavModels, getMyModels } from '@/api/model'
 import { formatPrice } from '@/utils/user'
 import { getTokenLogin } from '@/api/user'
+import { SortOrder } from 'mongoose'
+import { ChatModelNameEnum } from '@/constants/model'
 
 type State = {
   userInfo: UserType | null
@@ -18,7 +20,11 @@ type State = {
   myFavModels: ModelPopulate[]
   allModels: ModelPopulate[]
   getMyModels: () => void
-  getAllModels: () => void
+  getAllModels: (data: {
+    hitCount?: SortOrder
+    favCount?: SortOrder
+    serviceModelName?: `${ChatModelNameEnum}`
+  }) => void
   getMyFavModels: () => void
   setMyModels: (data: ModelPopulate[]) => void
   clearMyModels: () => void
@@ -71,8 +77,12 @@ export const useUserStore = create<State>()(
           })
           return res
         }),
-      getAllModels: () =>
-        getAllModels().then((res) => {
+      getAllModels: (data: {
+        hitCount?: SortOrder
+        favCount?: SortOrder
+        serviceModelName?: `${ChatModelNameEnum}`
+      }) =>
+        getAllModels(data).then((res) => {
           set((state) => {
             state.allModels = res
           })

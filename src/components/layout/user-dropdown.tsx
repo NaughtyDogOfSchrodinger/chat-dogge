@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { FADE_IN_ANIMATION_SETTINGS } from '@/utils/constants'
 import { useUserStore } from '@/store/user'
+import { createAvatar } from '@dicebear/core'
+import { micah } from '@dicebear/collection'
 
 export default function UserDropdown({ callback }: { callback: any }) {
   const { userInfo } = useUserStore()
@@ -45,14 +47,13 @@ export default function UserDropdown({ callback }: { callback: any }) {
         <button
           onClick={() => setOpenPopover(!openPopover)}
           className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
-        >
-          <Image
-            alt={`${email} | ''`}
-            src={`https://avatars.dicebear.com/api/micah/${email}.svg`}
-            width={40}
-            height={40}
-          />
-        </button>
+          dangerouslySetInnerHTML={{
+            __html: `${createAvatar(micah, {
+              size: 40,
+              seed: email,
+            })}`,
+          }}
+        ></button>
       </Popover>
     </motion.div>
   )

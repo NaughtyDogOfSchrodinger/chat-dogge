@@ -6,7 +6,8 @@ import { Copy, TrashIcon, UserIcon } from 'lucide-react'
 import Image from 'next/image'
 import { monoBlue } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { useUserStore } from '@/store/user'
-
+import { createAvatar } from '@dicebear/core'
+import { adventurer, micah } from '@dicebear/collection'
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 type ChatGPTAgent = 'Human' | 'AI' | 'SYSTEM'
 
@@ -58,11 +59,13 @@ export function ChatLine({
     >
       <div className="flex items-start">
         {chatMsg.obj === 'Human' ? (
-          <Image
-            alt={`${email} | ''`}
-            src={`https://avatars.dicebear.com/api/micah/${email}.svg`}
-            width={20}
-            height={20}
+          <p
+            dangerouslySetInnerHTML={{
+              __html: `${createAvatar(micah, {
+                size: 20,
+                seed: email,
+              }).toString()}`,
+            }}
           />
         ) : (
           <Image alt={`logo`} src="/favicon.svg" width={20} height={20} />

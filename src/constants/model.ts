@@ -4,6 +4,7 @@ import type {
   ModelSchema,
 } from '@/types/mongoSchema'
 import type { RedisModelDataItemType } from '@/types/redis'
+import { SortOrder } from 'mongoose'
 
 export enum ChatModelNameEnum {
   GPT35 = 'gpt-3.5-turbo',
@@ -75,6 +76,40 @@ export const modelList: ModelConstantsData[] = [
   // }
 ]
 
+export type ModelSort = {
+  name: string
+  hitCount?: SortOrder
+  favCount?: SortOrder
+}
+
+export const modelSortList: ModelSort[] = [
+  {
+    name: '默认排序',
+    hitCount: undefined,
+    favCount: undefined,
+  },
+  {
+    name: '热度高 -> 低',
+    hitCount: -1,
+    favCount: undefined,
+  },
+  {
+    name: '热度低 -> 高',
+    hitCount: 1,
+    favCount: undefined,
+  },
+  {
+    name: '喜欢多 -> 少',
+    hitCount: undefined,
+    favCount: -1,
+  },
+  {
+    name: '喜欢少 -> 多',
+    hitCount: undefined,
+    favCount: 1,
+  },
+]
+
 export enum TrainingStatusEnum {
   pending = 'pending',
   succeed = 'succeed',
@@ -128,6 +163,7 @@ export const defaultModel: ModelSchema = {
   intro: '',
   temperature: 5,
   hitCount: 0,
+  favCount: 0,
   service: {
     company: 'openai',
     trainId: '',

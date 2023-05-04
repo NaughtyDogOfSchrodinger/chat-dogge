@@ -16,7 +16,7 @@ const ModelSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: '😑',
+    default: '',
   },
   systemPrompt: {
     // 系统提示词
@@ -48,6 +48,10 @@ const ModelSchema = new Schema({
     default: 4,
   },
   hitCount: {
+    type: Number,
+    default: 0,
+  },
+  favCount: {
     type: Number,
     default: 0,
   },
