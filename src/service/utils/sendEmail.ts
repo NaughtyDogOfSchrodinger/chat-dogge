@@ -23,9 +23,9 @@ const template = (code: string, expire_min: string, action: string) => {
 </head>
 <body>
 <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; background-color: #f5f5f5; padding: 20px;">
-  <img src="https://www.chatdogge.xyz/favicon.svg" alt="chatdogge">
+  <img src="https://www.chatdogge.xyz/favicon.svg" width="40" height="40" alt="chatdogge">
   <p>尊敬的用户，</p>
-  <p>您正在${action} <a class="link link-hover" href="https://chatdogge.xyz/">ChatDogge</a> 账号，验证码为：</p><p style="font-size: 24px; color: #000000; margin: 20px 0;">${code}</p>
+  <p>您正在${action} <a class="link link-hover" href="https://www.chatdogge.xyz/">ChatDogge</a> 账号，验证码为：</p><p style="font-size: 24px; color: #000000; margin: 20px 0;">${code}</p>
   <p>请在注册页面填写验证码完成注册。验证码将在 ${expire_min} 分钟后失效，请尽快完成。</p>
   <p>如果您没有进行此操作，请忽略此邮件。</p>
   <p>祝您使用愉快！</p>

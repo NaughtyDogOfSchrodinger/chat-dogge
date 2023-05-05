@@ -3,11 +3,11 @@ import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
 import { FlameIcon, HeartIcon } from 'lucide-react'
 import { ModelPopulate } from '@/types/mongoSchema'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import { userCollect } from '@/api/model'
 import { ChatModelNameEnum } from '@/constants/model'
 import { createAvatar } from '@dicebear/core'
-import { adventurer, micah } from '@dicebear/collection'
+import { adventurer } from '@dicebear/collection'
 import Image from 'next/image'
 interface AppListProps {
   list: Array<ModelPopulate>

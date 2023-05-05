@@ -74,14 +74,6 @@ const useHeaders = () => {
     useMemo(
       () => [
         {
-          href: '/iCreated',
-          label: t('🐚️ 我创建的'),
-        },
-        {
-          href: '/iCollected',
-          label: t('❤️ 我收藏的'),
-        },
-        {
           href: '/image',
           label: t('🎨 画图'),
         },

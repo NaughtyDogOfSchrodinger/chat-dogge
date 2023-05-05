@@ -74,7 +74,11 @@ const Home = () => {
   )
   const { isLoading } = useQuery(['loadModels'], () => getAllModels(filterArgs))
 
-  const list = allModels!.filter((app) => true) as ModelPopulate[]
+  const list = allModels!.filter((app) => {
+    return searchValue != ''
+      ? app.name.includes(searchValue) || app.intro.includes(searchValue)
+      : true
+  }) as ModelPopulate[]
 
   const handleShowMore = () => {
     setSizeToShow(sizeToShow + 100)
