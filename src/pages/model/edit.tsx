@@ -375,7 +375,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     {/*<div>*/}
                     {/*  <button className="btn-xs btn ">导出</button>*/}
                     {/*</div>*/}
-                    <div className="dropdown-end dropdown ">
+                    <div className="dropdown dropdown-end ">
                       <label
                         tabIndex={0}
                         className="btn-xs btn"
@@ -438,8 +438,8 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     </div>
                   </div>
                 </div>
-                <div className="h-1/2">
-                  <table className="table-compact table w-full">
+                <div className="h-1/2 overflow-x-auto">
+                  <table className="table-responsive table-compact table table-auto">
                     {/* head */}
                     <thead>
                       <tr>

@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
-import { useTranslation } from 'next-i18next'
 import { FlameIcon, HeartIcon } from 'lucide-react'
 import { ModelPopulate } from '@/types/mongoSchema'
 import React, { useCallback } from 'react'
@@ -8,6 +7,8 @@ import { userCollect } from '@/api/model'
 import { createAvatar } from '@dicebear/core'
 import { adventurer, micah } from '@dicebear/collection'
 import Image from 'next/image'
+import useWindowSize from '@/hooks/use-window-size'
+import { useRouter } from 'next/router'
 interface AppListProps {
   list: Array<ModelPopulate>
   models: any
@@ -15,7 +16,10 @@ interface AppListProps {
   filterArgs: any
 }
 const AppList = (props: AppListProps) => {
+  const router = useRouter()
+
   const { filterArgs } = props
+  const { isDesktop } = useWindowSize()
 
   const getAllModels = props.models
 
@@ -40,13 +44,16 @@ const AppList = (props: AppListProps) => {
     >
       {props.list.map((app) => (
         <Link
+          id={app._id}
           key={app._id}
           href={`${
             props.isMy
               ? '/model/edit?modelId=' + app._id
               : '/model/detail?modelId=' + app._id
           }`}
-          className="card w-auto bg-base-100 shadow-xl hover:scale-105"
+          className={`${
+            isDesktop ? 'hover:scale-105' : ''
+          } card w-auto bg-base-100 shadow-xl `}
         >
           <div className="card-body">
             {/*<div*/}
@@ -82,7 +89,7 @@ const AppList = (props: AppListProps) => {
                 : app.intro}
             </p>
             <div className="card-actions modal-middle justify-between">
-              <div
+              <button
                 className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-7 sm:w-7"
                 dangerouslySetInnerHTML={{
                   __html: `${createAvatar(micah, {
@@ -90,7 +97,10 @@ const AppList = (props: AppListProps) => {
                     seed: app.userId.email,
                   })}`,
                 }}
-                onClick={(event) => event.preventDefault()}
+                onClick={(event) => {
+                  event.preventDefault()
+                  router.push(`/user?userId=${app.userId._id}`)
+                }}
               />
               {/*<p className="text-xs text-black"> {app.userId.email}</p>*/}
               <div className="flex gap-1">

@@ -23,7 +23,8 @@ export default function UserDropdown({ callback }: { callback: any }) {
         content={
           <div className="w-full rounded-md bg-white p-2 sm:w-56">
             <Link
-              href={'me'}
+              href={'/me'}
+              onClick={() => setOpenPopover(false)}
               className="relative flex w-full cursor-not-allowed items-center justify-start space-x-2 rounded-md p-2 text-left text-sm transition-all duration-75 hover:bg-gray-100"
             >
               <Dog className="h-4 w-4" />

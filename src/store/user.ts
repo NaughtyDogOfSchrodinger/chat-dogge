@@ -5,7 +5,6 @@ import type { UserType, UserUpdateParams } from '@/types/user'
 import type { ModelPopulate } from '@/types/mongoSchema'
 import { setToken } from '@/utils/user'
 import { getAllModels, getMyFavModels, getMyModels } from '@/api/model'
-import { formatPrice } from '@/utils/user'
 import { getTokenLogin } from '@/api/user'
 import { SortOrder } from 'mongoose'
 import { ChatModelNameEnum } from '@/constants/model'
@@ -19,13 +18,13 @@ type State = {
   myModels: ModelPopulate[]
   myFavModels: ModelPopulate[]
   allModels: ModelPopulate[]
-  getMyModels: () => void
+  getMyModels: (userId: string) => void
   getAllModels: (data: {
     hitCount?: SortOrder
     favCount?: SortOrder
     serviceModelName?: `${ChatModelNameEnum}`
   }) => void
-  getMyFavModels: () => void
+  getMyFavModels: (userId: string) => void
   setMyModels: (data: ModelPopulate[]) => void
   clearMyModels: () => void
   clear: () => void
@@ -47,7 +46,7 @@ export const useUserStore = create<State>()(
         set((state) => {
           state.userInfo = {
             ...user,
-            balance: formatPrice(user.balance),
+            balance: user.balance,
           }
         })
         token && setToken(token)
@@ -70,8 +69,8 @@ export const useUserStore = create<State>()(
       myModels: [],
       allModels: [],
       myFavModels: [],
-      getMyModels: () =>
-        getMyModels().then((res) => {
+      getMyModels: (userId: string) =>
+        getMyModels(userId).then((res) => {
           set((state) => {
             state.myModels = res
           })
@@ -88,8 +87,8 @@ export const useUserStore = create<State>()(
           })
           return res
         }),
-      getMyFavModels: () =>
-        getMyFavModels().then((res) => {
+      getMyFavModels: (userId: string) =>
+        getMyFavModels(userId).then((res) => {
           set((state) => {
             state.myFavModels = res
           })

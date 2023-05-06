@@ -13,8 +13,6 @@ import { useUserStore } from '@/store/user'
 import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatModelNameEnum, ModelSort, modelSortList } from '@/constants/model'
 import { SortOrder } from 'mongoose'
-import { getAllModels, getModelSplitDataListLen } from '@/api/model'
-import { ResLogin } from '@/api/response/user'
 
 type PageProps = {}
 export const defaultFilterArgs = {

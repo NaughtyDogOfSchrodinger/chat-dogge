@@ -14,12 +14,14 @@ import { ChatModelNameEnum } from '@/constants/model'
 /**
  * 获取我的模型列表
  */
-export const getMyModels = () => GET<ModelPopulate[]>('/model/icreated')
+export const getMyModels = (userId: string) =>
+  GET<ModelPopulate[]>(`/model/icreated?userId=${userId}`)
 
 /**
  * 获取我收藏的模型列表
  */
-export const getMyFavModels = () => GET<ModelPopulate[]>('/model/icollected')
+export const getMyFavModels = (userId: string) =>
+  GET<ModelPopulate[]>(`/model/icollected?userId=${userId}`)
 
 /**
  * 获取所有模型列表

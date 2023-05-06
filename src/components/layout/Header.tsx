@@ -1,10 +1,9 @@
-import { Popover, Transition, Menu } from '@headlessui/react'
+import { Popover, Transition } from '@headlessui/react'
 
 import clsx from 'clsx'
 import Link from 'next/link'
 import { Fragment, useCallback, useMemo } from 'react'
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/layout/Logo'
 import { NavLink } from '@/components/layout/NavLink'
 import { useTranslation } from 'next-i18next'
 import { useSignInModal } from '@/components/layout/sign-in-modal'

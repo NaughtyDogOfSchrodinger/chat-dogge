@@ -11,14 +11,13 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
-    const { authorization } = req.headers
-
-    if (!authorization) {
-      throw new Error('无权操作')
+    const { userId } = req.query as {
+      userId: string
     }
 
-    // 凭证校验
-    const userId = await authToken(authorization)
+    if (!userId) {
+      throw new Error('参数错误')
+    }
 
     await connectToDatabase()
 
@@ -26,6 +25,15 @@ export default async function handler(
     const models = await Model.find({
       _id: { $in: rels.map((rel) => rel.modelId) },
     })
+      .populate({
+        path: 'userId',
+        options: {
+          strictPopulate: false,
+        },
+      })
+      .sort({
+        _id: -1,
+      })
     models.map((model) => {
       model.like = true
     })
