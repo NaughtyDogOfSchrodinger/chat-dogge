@@ -8,6 +8,7 @@ export interface UserType {
   email: string
   openaiKey: string
   balance: number
+  createTime: Date
 }
 
 export interface UserUpdateParams {

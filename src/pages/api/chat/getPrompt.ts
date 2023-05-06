@@ -3,8 +3,12 @@ import { ChatItemType } from '@/types/chat'
 import { jsonRes } from '@/service/response'
 import { Chat, connectToDatabase, Model } from '@/service/mongo'
 import { getOpenAIApi } from '@/service/utils/chat'
-import { ChatPopulate, ModelSchema } from '@/types/mongoSchema'
-import { ChatModelNameEnum, modelList } from '@/constants/model'
+import { ChatPopulate, ModelSchema, ServiceName } from '@/types/mongoSchema'
+import {
+  ChatModelNameEnum,
+  modelList,
+  ModelStatusEnum,
+} from '@/constants/model'
 import { gpt35StreamResponse } from '@/service/utils/openai'
 import { VecModelDataPrefix } from '@/constants/redis'
 import { vectorToBuffer } from '@/utils/tools'
@@ -77,7 +81,22 @@ export default async function handler(
       if (modelResult == null) {
         throw new Error('模型不存在')
       }
-      model = modelResult
+      model = {
+        _id: modelResult._id,
+        name: modelResult.name,
+        avatar: modelResult.avatar,
+        systemPrompt: modelResult.systemPrompt,
+        hitCount: modelResult.hitCount,
+        favCount: modelResult.favCount,
+        intro: modelResult.intro,
+        userId: modelResult.userId._id,
+        status: modelResult.status,
+        updateTime: modelResult.updateTime,
+        trainingTimes: modelResult.trainingTimes,
+        temperature: modelResult.temperature,
+        service: modelResult.service,
+        security: modelResult.security,
+      } as ModelSchema
       prompts = prompt
     }
 

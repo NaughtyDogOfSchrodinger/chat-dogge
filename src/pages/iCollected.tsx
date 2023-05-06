@@ -41,7 +41,7 @@ const ICreated = () => {
               filterArgs={defaultFilterArgs}
               list={myFavModels}
               models={getMyFavModels}
-              isMy={true}
+              isMy={false}
             />
           </div>
         </div>

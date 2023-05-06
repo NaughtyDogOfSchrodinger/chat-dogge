@@ -45,15 +45,22 @@ export default async function handler(
             },
           }
         : {}
-    ).sort(
-      hitCount
-        ? favCount
-          ? { hitCount, favCount }
-          : { hitCount }
-        : favCount
-        ? { favCount }
-        : {}
     )
+      .populate({
+        path: 'userId',
+        options: {
+          strictPopulate: false,
+        },
+      })
+      .sort(
+        hitCount
+          ? favCount
+            ? { hitCount, favCount }
+            : { hitCount }
+          : favCount
+          ? { favCount }
+          : {}
+      )
     const { authorization } = req.headers
 
     if (authorization) {

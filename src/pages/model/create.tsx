@@ -129,14 +129,18 @@ const NewApp = () => {
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="col-span-3 sm:col-span-2">
-                      <div className="form-control w-full max-w-xs gap-1">
+                      <div className="form-control w-full gap-1">
                         <label className="block flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
                           选择应用类型
                           <div
                             className="tooltip"
                             data-tip={`基础类型无需训练，可以直接使用。知识库类型，需要用户提供数据训练后，得到更好的效果`}
                           >
-                            <InfoIcon width={20} height={20} />
+                            <InfoIcon
+                              width={20}
+                              height={20}
+                              className="text-red-400"
+                            />
                           </div>
                         </label>
                         <select
@@ -153,7 +157,11 @@ const NewApp = () => {
                               (item) => item.model != ChatModelNameEnum.IMAGE
                             )
                             .map((item) => (
-                              <option key={item.model} value={item.model}>
+                              <option
+                                key={item.model}
+                                value={item.model}
+                                className="w-full max-w-xs "
+                              >
                                 {item.name}
                               </option>
                             ))}
@@ -189,7 +197,11 @@ const NewApp = () => {
                       <label className="block flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
                         {t('prompt')}
                         <div className="tooltip" data-tip={t('prompt_desc')}>
-                          <InfoIcon width={20} height={20} />
+                          <InfoIcon
+                            width={20}
+                            height={20}
+                            className="text-red-400"
+                          />
                         </div>
                       </label>
                       <div className="mt-2 flex rounded-md shadow-sm">

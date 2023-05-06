@@ -50,11 +50,6 @@ const SignInModal = ({
 
     return <Component setPageType={setPageType} loginSuccess={loginSuccess} />
   }
-
-  useEffect(() => {
-    getAllModels(defaultFilterArgs)
-  }, [getAllModels, router])
-
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
       <div className="container card mx-auto w-96 bg-[#f0f2f5] text-neutral-content">

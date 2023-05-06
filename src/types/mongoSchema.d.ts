@@ -5,7 +5,6 @@ import {
   ChatModelNameEnum,
 } from '@/constants/model'
 import type { DataType } from './data'
-import { SortOrder } from 'mongoose'
 
 export type ServiceName = 'openai' | 'stable-diffusion'
 
@@ -56,6 +55,7 @@ export interface ModelSchema {
 
 export interface ModelPopulate extends ModelSchema {
   like: boolean
+  userId: UserModelSchema
 }
 
 export interface ModelUserRelSchema {

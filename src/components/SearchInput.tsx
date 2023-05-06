@@ -1,9 +1,6 @@
 import type { ChangeEventHandler } from 'react'
 import React, { useRef } from 'react'
-import { FlameIcon } from 'lucide-react'
 import { ChatModelNameEnum, modelList, modelSortList } from '@/constants/model'
-import { SortOrder } from 'mongoose'
-import { getAllModels } from '@/api/model'
 
 interface SearchInputProps {
   placeholder: string
