@@ -10,7 +10,7 @@ const ratelimit = new Ratelimit({
   analytics: true, // <- Enable analytics
 })
 export const config = {
-  matcher: ['/api/chat/openAI'],
+  matcher: ['/api/chat/getPrompt'],
 }
 
 export default async function middleware(
