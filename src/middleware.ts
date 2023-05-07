@@ -18,9 +18,9 @@ export default async function middleware(
   event: NextFetchEvent
 ): Promise<Response | undefined> {
   const authorization = request.headers.get('Authorization')
-  // if (isDev || authorization) {
-  //   return NextResponse.next()
-  // }
+  if (isDev || authorization) {
+    return NextResponse.next()
+  }
 
   // 👇 below only works for production
   const ipIdentifier = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
