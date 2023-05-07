@@ -18,9 +18,9 @@ export default async function middleware(
   event: NextFetchEvent
 ): Promise<Response | undefined> {
   const authorization = request.headers.get('Authorization')
-  if (isDev || authorization) {
-    return NextResponse.next()
-  }
+  // if (isDev || authorization) {
+  //   return NextResponse.next()
+  // }
 
   // 👇 below only works for production
   const ipIdentifier = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
@@ -44,8 +44,14 @@ export default async function middleware(
 }
 
 function runOutOfRatelimit(errorCode: number) {
-  return new NextResponse(JSON.stringify({ success: false, message: '' }), {
-    status: errorCode,
-    headers: { 'content-type': 'application/json' },
-  })
+  return new NextResponse(
+    JSON.stringify({
+      success: false,
+      message: '今天的免费次数。请登录后使用。',
+    }),
+    {
+      status: errorCode,
+      headers: { 'content-type': 'application/json' },
+    }
+  )
 }
