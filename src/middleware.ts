@@ -23,8 +23,7 @@ export default async function middleware(
   }
 
   // 👇 below only works for production
-
-  const ipIdentifier = request.ip ?? '127.0.0.1'
+  const ipIdentifier = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
   console.log('ip is trying to use ->', ipIdentifier)
   const { success, limit, reset, remaining, pending } = await ratelimit.limit(
     `ratelimit_middleware_${ipIdentifier}`
