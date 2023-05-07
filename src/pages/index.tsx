@@ -13,6 +13,7 @@ import { useUserStore } from '@/store/user'
 import { ModelPopulate } from '@/types/mongoSchema'
 import { ChatModelNameEnum, ModelSort, modelSortList } from '@/constants/model'
 import { SortOrder } from 'mongoose'
+import { cron } from '@/api/model'
 
 type PageProps = {}
 export const defaultFilterArgs = {
@@ -71,7 +72,9 @@ const Home = () => {
     [filterArgs, getAllModels]
   )
   const { isLoading } = useQuery(['loadModels'], () => getAllModels(filterArgs))
-
+  useQuery([''], () => {
+    cron()
+  })
   const list = allModels!.filter((app) => {
     return searchValue != ''
       ? app.name.includes(searchValue) || app.intro.includes(searchValue)

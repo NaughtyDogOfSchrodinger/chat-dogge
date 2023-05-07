@@ -33,6 +33,11 @@ export const getAllModels = (data: {
 }) => POST<ModelPopulate[]>('/model/all', data)
 
 /**
+ * 获取所有模型列表
+ */
+export const cron = () => GET('/cron')
+
+/**
  * 创建一个模型
  */
 export const postCreateModel = (data: {
