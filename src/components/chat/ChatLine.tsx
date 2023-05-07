@@ -86,7 +86,7 @@ export function ChatLine({
                     style={monoBlue}
                     language={match ? match[1] : ''}
                     PreTag="div"
-                    showLineNumbers
+                    // showLineNumbers
                     {...props}
                   >
                     {String(children).replace(/\n$/, '')}

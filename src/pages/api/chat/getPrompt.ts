@@ -176,22 +176,22 @@ export default async function handler(
         }
       }
 
-      if (formatRedisPrompt.length === 0) {
-        throw new Error('对不起，我没有找到你的问题')
-      }
+      // if (formatRedisPrompt.length === 0) {
+      //   throw new Error('对不起，我没有找到你的问题')
+      // }
 
       // textArr 筛选，最多 2800 tokens
       const systemPrompt = systemPromptFilter(formatRedisPrompt, 2800)
       prompts.unshift({
         obj: 'SYSTEM',
-        value: `${model.systemPrompt} 知识库内容是最新的,知识库内容为: "${systemPrompt}"`,
+        value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt} 以及知识库内容回答问题，知识库内容为: "${systemPrompt}"`,
       })
     } else {
       // 如果有系统提示词，自动插入
       if (model.systemPrompt) {
         prompts.unshift({
           obj: 'SYSTEM',
-          value: model.systemPrompt,
+          value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt}回答我的问题`,
         })
       }
     }

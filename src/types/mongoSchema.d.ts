@@ -33,6 +33,7 @@ export interface ModelSchema {
   hitCount: number
   favCount: number
   intro: string
+  howToUse: string
   userId: string
   status: `${ModelStatusEnum}`
   updateTime: number

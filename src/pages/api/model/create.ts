@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
 import { connectToDatabase } from '@/service/mongo'
-import { authToken } from '@/service/utils/tools'
+import { authToken, httpsAgent } from '@/service/utils/tools'
 import {
   ModelStatusEnum,
   modelList,
@@ -10,6 +10,7 @@ import {
   ChatModelNameMap,
 } from '@/constants/model'
 import { Model } from '@/service/models/model'
+import howToUse from '@/utils/howToUse'
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,13 +51,19 @@ export default async function handler(
     // if (authCount >= 20) {
     //   throw new Error('上限 20 个模型')
     // }
-
+    const how = await howToUse({
+      modelName: name,
+      modelType: modelItem.name,
+      userId,
+      description,
+    })
     // 创建模型
     const response = await Model.create({
       name,
       userId,
       intro: description,
       systemPrompt: prompt,
+      howToUse: how,
       status: ModelStatusEnum.running,
       service: {
         company: modelItem.serviceCompany,

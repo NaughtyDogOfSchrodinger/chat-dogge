@@ -5,7 +5,12 @@ import { ModelSchema } from '@/types/mongoSchema'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatModelNameEnum, modelList } from '@/constants/model'
 import { useQuery } from '@tanstack/react-query'
-import { clearChatRecord, delChatRecordByIndex, postSaveChat } from '@/api/chat'
+import {
+  clearChatRecord,
+  delChatRecordByIndex,
+  generateQ,
+  postSaveChat,
+} from '@/api/chat'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { ChatLine } from '@/components/chat/ChatLine'
 import { useRouter } from 'next/router'
@@ -20,6 +25,7 @@ import { createAvatar } from '@dicebear/core'
 import { adventurer, micah } from '@dicebear/collection'
 import download from 'downloadjs'
 import { toPng } from 'html-to-image'
+import { Readable } from 'stream'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
   return {
@@ -38,7 +44,6 @@ interface ChatType extends InitChatResponse {
 const ChatDogge = ({ modelId }: { modelId: string }) => {
   const [model, setModel] = useState<ModelSchema>()
   const [chat, setChat] = useState<InitChatResponse>()
-  const router = useRouter()
 
   const ChatBox = useRef<HTMLDivElement>(null)
   const TextareaDom = useRef<HTMLTextAreaElement>(null)
@@ -317,12 +322,12 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
 
   // 初始化聊天框
   useQuery(
-    ['init', model],
+    ['init'],
     () => {
       return getModelWithChatById(modelId)
     },
     {
-      onSuccess(res) {
+      async onSuccess(res) {
         setModel(res.model)
         setChat(res.chat)
         setChatData({
@@ -336,6 +341,67 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           setTimeout(() => {
             scrollToBottom()
           }, 500)
+        } else {
+          const newChatList: ChatSiteItemType[] = [
+            ...chatData.history,
+            {
+              obj: 'AI',
+              value: '',
+              status: 'loading',
+            },
+          ]
+
+          // 插入内容
+          setChatData((state) => ({
+            ...state,
+            history: newChatList,
+          }))
+
+          function sleep(ms: number) {
+            return new Promise((resolve) => setTimeout(resolve, ms))
+          }
+          const howToUse = res.model.howToUse
+          for (const char of howToUse.split('')) {
+            await sleep(Math.random() * 50)
+            setChatData((state) => ({
+              ...state,
+              history: state.history.map((item, index) => {
+                if (index !== state.history.length - 1) return item
+                return {
+                  ...item,
+                  value: item.value + char,
+                }
+              }),
+            }))
+          }
+          // 保存对话信息
+          try {
+            if (res.chat && res.chat.chatId) {
+              await postSaveChat({
+                chatId: res.chat.chatId,
+                prompts: [
+                  {
+                    obj: 'AI',
+                    value: howToUse,
+                  },
+                ],
+              })
+            }
+          } catch (err) {
+            toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
+              icon: '🔴',
+            })
+          }
+          setChatData((state) => ({
+            ...state,
+            history: state.history.map((item, index) => {
+              if (index !== state.history.length - 1) return item
+              return {
+                ...item,
+                status: 'finish',
+              }
+            }),
+          }))
         }
       },
       onError(e: any) {
@@ -454,15 +520,14 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         ]}
       />
 
-      <Breadcrumb pages={[]} />
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-center py-2">
         <main className="mt-12 flex w-full flex-1 flex-col items-center justify-center px-4 text-center sm:mt-20">
           <h1 className="max-w-[708px] text-2xl font-bold text-slate-900 sm:text-4xl">
             {model.name}
           </h1>
-          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
-            {model.intro}
-          </p>
+          {/*<p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">*/}
+          {/*  {model.intro}*/}
+          {/*</p>*/}
           <div className="flex w-full flex-col items-center ">
             <div className="mt-16 flex w-full flex-1 flex-col items-center text-center">
               <div

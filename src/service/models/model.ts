@@ -28,6 +28,11 @@ const ModelSchema = new Schema({
     type: String,
     default: '',
   },
+  howToUse: {
+    // 模型介绍
+    type: String,
+    default: '',
+  },
   status: {
     type: String,
     required: true,

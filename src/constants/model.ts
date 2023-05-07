@@ -161,6 +161,7 @@ export const defaultModel: ModelSchema = {
   trainingTimes: 0,
   systemPrompt: '',
   intro: '',
+  howToUse: '',
   temperature: 5,
   hitCount: 0,
   favCount: 0,

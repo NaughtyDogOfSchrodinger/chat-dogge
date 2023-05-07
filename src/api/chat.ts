@@ -35,6 +35,12 @@ export const postGPT3SendPrompt = ({
 /**
  * 存储一轮对话
  */
+export const generateQ = (data: { name: string }) =>
+  POST<[]>(`/chat/generateQ`, data)
+
+/**
+ * 存储一轮对话
+ */
 export const postSaveChat = (data: {
   chatId: string
   prompts: ChatItemType[]
