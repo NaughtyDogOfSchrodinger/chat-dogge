@@ -1,6 +1,6 @@
 import { getOpenAIApi } from '@/service/utils/chat'
 import { ChatCompletionRequestMessage } from 'openai'
-import { ChatModelNameEnum } from '@/constants/model'
+import { ChatModelNameEnum, ModelConstantsData } from '@/constants/model'
 import { httpsAgent } from '@/service/utils/tools'
 import { pushSplitDataBill } from '@/service/events/pushBill'
 import process from 'process'
@@ -26,12 +26,12 @@ function splitQ(text: string) {
 export default async function howToUse({
   modelName,
   userId,
-  modelType,
+  modelItem,
   description,
 }: {
   modelName: string
   userId?: string
-  modelType: string
+  modelItem: ModelConstantsData
   description: string
 }) {
   const chatAPI = getOpenAIApi(SYSTEM_KEY)
@@ -86,8 +86,14 @@ export default async function howToUse({
   }
   console.log(questions)
   return `
-          这是ChatDogge平台的\"${modelName}\"${modelType}应用
+          👉这是ChatDogge平台的\"${modelName}\"${modelItem.name}应用
           ${description}
+          😊${
+            modelItem.model == ChatModelNameEnum.VECTOR_GPT
+              ? modelItem.name +
+                '应用需要在编辑页面导入数据，才有更好的使用效果。\n'
+              : ''
+          }
 你可以这样问它：
 ${questions}
               `

@@ -5,12 +5,7 @@ import { ModelSchema } from '@/types/mongoSchema'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatModelNameEnum, modelList } from '@/constants/model'
 import { useQuery } from '@tanstack/react-query'
-import {
-  clearChatRecord,
-  delChatRecordByIndex,
-  generateQ,
-  postSaveChat,
-} from '@/api/chat'
+import { clearChatRecord, delChatRecordByIndex, postSaveChat } from '@/api/chat'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { ChatLine } from '@/components/chat/ChatLine'
 import { useRouter } from 'next/router'

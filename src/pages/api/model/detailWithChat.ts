@@ -57,7 +57,7 @@ export default async function handler(
       if (model.howToUse.trim().length == 0) {
         const how = await howToUse({
           modelName: model.name,
-          modelType: modelItem.name,
+          modelItem,
           userId,
           description: model.intro,
         })
@@ -84,7 +84,7 @@ export default async function handler(
       if (model.howToUse.trim().length == 0) {
         const how = await howToUse({
           modelName: model.name,
-          modelType: modelItem.name,
+          modelItem,
           userId: undefined,
           description: model.intro,
         })

@@ -53,7 +53,7 @@ export default async function handler(
     // }
     const how = await howToUse({
       modelName: name,
-      modelType: modelItem.name,
+      modelItem,
       userId,
       description,
     })

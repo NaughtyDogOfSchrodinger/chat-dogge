@@ -136,6 +136,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
         await putModelById(data._id, {
           name: data.name,
           systemPrompt: data.systemPrompt,
+          howToUse: data.howToUse,
           intro: data.intro,
           temperature: data.temperature,
           service: data.service,
@@ -302,11 +303,6 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     })}
                   />
                 </div>
-              </div>
-            </div>
-            {/*<div className="divider lg:divider-horizontal"></div>*/}
-            <div className="h-100 card rounded-box grid flex-grow place-items-center bg-white">
-              <div className="form-control w-full max-w-xs gap-3">
                 <div>
                   <label className="label">
                     <span className="label-text">发散能力</span>
@@ -327,6 +323,25 @@ const Edit = ({ modelId }: { modelId: string }) => {
                       越高发散能力越强，越低越严谨
                     </span>
                   </label>
+                </div>
+              </div>
+            </div>
+            {/*<div className="divider lg:divider-horizontal"></div>*/}
+            <div className="h-100 card rounded-box grid flex-grow place-items-center bg-white">
+              <div className="form-control w-full max-w-xs gap-3">
+                <div>
+                  <label className="label">
+                    <span className="label-text">使用指南</span>
+                  </label>
+                  <textarea
+                    className="textarea-bordered textarea h-40 w-full max-w-xs resize-none"
+                    {...register('howToUse')}
+                    placeholder={
+                      canTrain
+                        ? '训练的模型会根据知识库内容，生成一部分系统提示词，因此在对话时需要消耗更多的 tokens。你仍可以增加一些提示词，让其效果更精确。'
+                        : '模型默认的 prompt 词，通过调整该内容，可以生成一个限定范围的模型。\n\n注意，改功能会影响对话的整体朝向！'
+                    }
+                  />
                 </div>
                 <div>
                   <label className="label">

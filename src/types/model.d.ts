@@ -4,6 +4,7 @@ export interface ModelUpdateParams {
   name: string
   systemPrompt: string
   intro: string
+  howToUse: string
   temperature: number
   service: ModelSchema.service
   security: ModelSchema.security

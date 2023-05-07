@@ -11,8 +11,15 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
-    const { name, service, security, systemPrompt, intro, temperature } =
-      req.body as ModelUpdateParams
+    const {
+      name,
+      service,
+      security,
+      systemPrompt,
+      intro,
+      temperature,
+      howToUse,
+    } = req.body as ModelUpdateParams
     const { modelId } = req.query as { modelId: string }
     const { authorization } = req.headers
 
@@ -41,6 +48,7 @@ export default async function handler(
         intro,
         temperature,
         // service,
+        howToUse,
         security,
       }
     )
