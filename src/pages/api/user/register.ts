@@ -6,6 +6,7 @@ import { AuthCode } from '@/service/models/authCode'
 import { connectToDatabase } from '@/service/mongo'
 import { generateToken } from '@/service/utils/tools'
 import { EmailTypeEnum } from '@/constants/common'
+import { notifyRegister } from '@/service/utils/sendEmail'
 
 export default async function handler(
   req: NextApiRequest,
@@ -59,6 +60,9 @@ export default async function handler(
         user,
       },
     })
+    if (user) {
+      await notifyRegister(user, EmailTypeEnum.notifyRegister)
+    }
   } catch (err) {
     jsonRes(res, {
       code: 500,

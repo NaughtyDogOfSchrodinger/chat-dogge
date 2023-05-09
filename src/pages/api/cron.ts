@@ -25,6 +25,7 @@ const handler: NextApiHandler = async (req, res) => {
         modelItem,
         userId: undefined,
         description: model.intro,
+        query: true,
       })
       await Model.findByIdAndUpdate<ModelSchema>(model.id, {
         howToUse: how,

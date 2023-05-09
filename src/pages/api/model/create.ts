@@ -11,6 +11,8 @@ import {
 } from '@/constants/model'
 import { Model } from '@/service/models/model'
 import howToUse from '@/utils/howToUse'
+import { notifyCreateApp } from '@/service/utils/sendEmail'
+import { EmailTypeEnum } from '@/constants/common'
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,6 +58,7 @@ export default async function handler(
       modelItem,
       userId,
       description,
+      query: false,
     })
     // 创建模型
     const response = await Model.create({
@@ -74,11 +77,19 @@ export default async function handler(
     })
 
     // 根据 id 获取模型信息
-    const model = await Model.findById(response._id)
+    const model = await Model.findById(response._id).populate({
+      path: 'userId',
+      options: {
+        strictPopulate: false,
+      },
+    })
 
     jsonRes(res, {
       data: model,
     })
+    if (model) {
+      await notifyCreateApp(model, EmailTypeEnum.createApp)
+    }
   } catch (err) {
     jsonRes(res, {
       code: 500,

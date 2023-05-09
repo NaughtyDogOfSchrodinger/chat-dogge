@@ -60,6 +60,7 @@ export default async function handler(
           modelItem,
           userId,
           description: model.intro,
+          query: true,
         })
         model.howToUse = how
         await Model.findByIdAndUpdate<ModelSchema>(modelId, {
@@ -87,6 +88,7 @@ export default async function handler(
           modelItem,
           userId: undefined,
           description: model.intro,
+          query: true,
         })
         model.howToUse = how
         await Model.findByIdAndUpdate<ModelSchema>(modelId, {

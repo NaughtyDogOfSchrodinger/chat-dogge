@@ -9,12 +9,7 @@ import { connectRedis } from '../redis'
 import { VecModelDataPrefix } from '@/constants/redis'
 import { customAlphabet } from 'nanoid'
 import { ModelSplitDataSchema } from '@/types/mongoSchema'
-import {
-  authToken,
-  httpsAgent,
-  openaiChatFilter,
-  systemPromptFilter,
-} from '@/service/utils/tools'
+import { httpsAgent } from '@/service/utils/tools'
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 12)
 
 export async function generateQA(next = false): Promise<any> {
