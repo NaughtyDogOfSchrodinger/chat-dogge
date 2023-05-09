@@ -37,56 +37,56 @@ export default async function handler(
       req.body.mask = addBackgroundToPNG(req.body.mask)
     }
 
-    let prompts: ChatItemType[] = [
-      {
-        obj: 'SYSTEM',
-        value:
-          '现在你是一个英文翻译器，将我提供的所有文本翻译成英文，无需任何其他修饰词，标点。如果我提供的文本是英文直接返回原文，无需任何处理。',
-      },
-      {
-        obj: 'Human',
-        value: `${req.body.prompt}`,
-      },
-    ] as ChatItemType[]
-    const chatAPI = getOpenAIApi(SYSTEM_KEY)
-    // 控制在 tokens 数量，防止超出
-    const filterPrompts = openaiChatFilter(prompts, 7000)
-    // 格式化文本内容成 chatgpt 格式
-    const map = {
-      Human: ChatCompletionRequestMessageRoleEnum.User,
-      AI: ChatCompletionRequestMessageRoleEnum.Assistant,
-      SYSTEM: ChatCompletionRequestMessageRoleEnum.System,
-    }
-    const formatPrompts: ChatCompletionRequestMessage[] = filterPrompts.map(
-      (item: ChatItemType) => ({
-        role: map[item.obj],
-        content: item.value,
-      })
-    )
-    // 发出请求
-    const chatResponse = await chatAPI.createChatCompletion(
-      {
-        model: ChatModelNameEnum.GPT35,
-        temperature: 0.7,
-        // max_tokens: modelConstantsData.maxToken,
-        messages: formatPrompts,
-        frequency_penalty: 0.5, // 越大，重复内容越少
-        presence_penalty: -0.5, // 越大，越容易出现新内容
-        stream: false,
-        stop: ['.!?。'],
-      },
-      {
-        timeout: 5000,
-        httpsAgent: httpsAgent(true),
-      }
-    )
-
-    const promptsContent = formatPrompts.map((item) => item.content).join('')
-
+    // let prompts: ChatItemType[] = [
+    //   {
+    //     obj: 'SYSTEM',
+    //     value:
+    //       '现在你是一个英文翻译器，将我提供的所有文本翻译成英文，无需任何其他修饰词，标点。如果我提供的文本是英文直接返回原文，无需任何处理。',
+    //   },
+    //   {
+    //     obj: 'Human',
+    //     value: `${req.body.prompt}`,
+    //   },
+    // ] as ChatItemType[]
+    // const chatAPI = getOpenAIApi(SYSTEM_KEY)
+    // // 控制在 tokens 数量，防止超出
+    // const filterPrompts = openaiChatFilter(prompts, 7000)
+    // // 格式化文本内容成 chatgpt 格式
+    // const map = {
+    //   Human: ChatCompletionRequestMessageRoleEnum.User,
+    //   AI: ChatCompletionRequestMessageRoleEnum.Assistant,
+    //   SYSTEM: ChatCompletionRequestMessageRoleEnum.System,
+    // }
+    // const formatPrompts: ChatCompletionRequestMessage[] = filterPrompts.map(
+    //   (item: ChatItemType) => ({
+    //     role: map[item.obj],
+    //     content: item.value,
+    //   })
+    // )
+    // // 发出请求
+    // const chatResponse = await chatAPI.createChatCompletion(
+    //   {
+    //     model: ChatModelNameEnum.GPT35,
+    //     temperature: 0.7,
+    //     // max_tokens: modelConstantsData.maxToken,
+    //     messages: formatPrompts,
+    //     frequency_penalty: 0.5, // 越大，重复内容越少
+    //     presence_penalty: -0.5, // 越大，越容易出现新内容
+    //     stream: false,
+    //     stop: ['.!?。'],
+    //   },
+    //   {
+    //     timeout: 5000,
+    //     httpsAgent: httpsAgent(true),
+    //   }
+    // )
+    //
+    // const promptsContent = formatPrompts.map((item) => item.content).join('')
+    //
     const userId = await authToken(authorization)
-    const prompt =
-      chatResponse?.data?.choices[0]?.message?.content || req.body.prompt
-    req.body.prompt = prompt
+    // const prompt =
+    //   chatResponse?.data?.choices[0]?.message?.content || req.body.prompt
+    // req.body.prompt = prompt
     const body = JSON.stringify({
       // Pinned to a specific version of Stable Diffusion, fetched from:
       // https://replicate.com/stability-ai/stable-diffusion
@@ -123,13 +123,13 @@ export default async function handler(
       modelName: ChatModelNameEnum.IMAGE,
       userId,
     })
-    // 只有使用平台的 key 才计费
-    pushChatBill({
-      isPay: true,
-      modelName: ChatModelNameEnum.GPT35,
-      userId,
-      text: promptsContent + prompt,
-    })
+    // // 只有使用平台的 key 才计费
+    // pushChatBill({
+    //   isPay: true,
+    //   modelName: ChatModelNameEnum.GPT35,
+    //   userId,
+    //   text: promptsContent + prompt,
+    // })
   } catch (err) {
     jsonRes(res, {
       code: 500,
