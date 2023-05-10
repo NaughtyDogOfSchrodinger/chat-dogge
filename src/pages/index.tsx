@@ -1,21 +1,26 @@
 import AppList from '@/components/AppList'
 import AppListLoading from '@/components/AppListLoading'
 import { Button } from '@/components/Button'
-import { Footer } from '@/components/layout/Footer'
-import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/Hero'
 import { SearchInput } from '@/components/SearchInput'
 import type { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import * as R from 'ramda'
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useCallback, useState } from 'react'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useUserStore } from '@/store/user'
-import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
+import { ModelPopulate } from '@/types/mongoSchema'
+import { ChatModelNameEnum, ModelSort, modelSortList } from '@/constants/model'
+import { SortOrder } from 'mongoose'
+import { cron } from '@/api/model'
 
 type PageProps = {}
-
+export const defaultFilterArgs = {
+  hitCount: undefined,
+  favCount: undefined,
+  serviceModelName: undefined,
+}
 export const getStaticProps: GetStaticProps<PageProps> = async ({ locale }) => {
   return {
     props: {
@@ -29,21 +34,52 @@ export const getStaticProps: GetStaticProps<PageProps> = async ({ locale }) => {
 const Home = () => {
   const [searchValue, setSearchValue] = useState('')
   const [sizeToShow, setSizeToShow] = useState(100)
+  const [filterArgs, setFilterArgs] = useState<{
+    hitCount?: SortOrder
+    favCount?: SortOrder
+    serviceModelName?: `${ChatModelNameEnum}`
+  }>(defaultFilterArgs)
   // @ts-ignore
   const { t } = useTranslation('common')
 
   const { allModels, getAllModels } = useUserStore()
 
-  const { isLoading } = useQuery(['loadModels'], getAllModels)
-
-  const list = (
-    searchValue
-      ? allModels!.filter(
-          (app) =>
-            app.name.includes(searchValue) || app.intro.includes(searchValue)
-        )
-      : allModels
-  ) as ModelPopulate[]
+  const filterCallback = useCallback(
+    (name: string) => {
+      const sortItems = modelSortList.filter((item) => item.name == name)
+      const sortItem = sortItems ? sortItems[0] : undefined
+      console.log(`ssdadsadas${sortItem?.hitCount}`)
+      const args = {
+        hitCount: sortItem?.hitCount,
+        favCount: sortItem?.favCount,
+        serviceModelName: filterArgs.serviceModelName,
+      }
+      getAllModels(args)
+      setFilterArgs(args)
+    },
+    [filterArgs, getAllModels]
+  )
+  const modelSelect = useCallback(
+    (name?: ChatModelNameEnum) => {
+      const args = {
+        hitCount: filterArgs.hitCount,
+        favCount: filterArgs.favCount,
+        serviceModelName: name,
+      }
+      getAllModels(args)
+      setFilterArgs(args)
+    },
+    [filterArgs, getAllModels]
+  )
+  const { isLoading } = useQuery(['loadModels'], () => getAllModels(filterArgs))
+  useQuery([''], () => {
+    cron()
+  })
+  const list = allModels!.filter((app) => {
+    return searchValue != ''
+      ? app.name.includes(searchValue) || app.intro.includes(searchValue)
+      : true
+  }) as ModelPopulate[]
 
   const handleShowMore = () => {
     setSizeToShow(sizeToShow + 100)
@@ -59,8 +95,10 @@ const Home = () => {
               <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0 ">
                 <div />
                 <SearchInput
+                  modelSelect={modelSelect}
+                  filterCallBack={filterCallback}
                   setSearchValue={setSearchValue}
-                  placeholder={`Search ${allModels!.length} apps...`}
+                  placeholder={`搜索 ${allModels!.length} 个 GPT 应用`}
                 />
                 <div />
               </div>
@@ -78,15 +116,18 @@ const Home = () => {
         <Hero />
         <div className="w-full bg-slate-50 pb-20 pt-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0 ">
+            <div className="mb-10 grid grid-cols-1 items-center justify-between pt-10 sm:grid-cols-3 sm:pt-0">
               <div />
               <SearchInput
+                modelSelect={modelSelect}
+                filterCallBack={filterCallback}
                 setSearchValue={setSearchValue}
-                placeholder={`Search ${allModels!.length} apps...`}
+                placeholder={`搜索 ${allModels!.length} 个 GPT 应用`}
               />
               <div />
             </div>
             <AppList
+              filterArgs={filterArgs}
               list={R.take(sizeToShow, list)}
               models={getAllModels}
               isMy={false}
@@ -99,12 +140,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-        {/* <PrimaryFeatures /> */}
-        {/* <SecondaryFeatures /> */}
-        {/*<CallToAction />*/}
-        {/* <Testimonials /> */}
-        {/* <Pricing /> */}
-        {/* <Faqs /> */}
       </main>
     </>
   )

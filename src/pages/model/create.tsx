@@ -7,15 +7,17 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'next-i18next'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { postCreateModel } from '@/api/model'
-import { modelList } from '@/constants/model'
+import { ChatModelNameEnum, modelList } from '@/constants/model'
 import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
 import { useUserStore } from '@/store/user'
+import { InfoIcon } from 'lucide-react'
+import { createAvatar } from '@dicebear/core'
+import { adventurer } from '@dicebear/collection'
 
 interface CreateFormType {
-  avatar: string
   name: string
   serviceModelName: string
   description: string
@@ -30,7 +32,6 @@ const NewApp = () => {
   const {
     register,
     handleSubmit,
-    control,
     getValues,
     formState: { errors },
   } = useForm<CreateFormType>({
@@ -85,28 +86,28 @@ const NewApp = () => {
               <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
                 <div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
                   <div className="grid grid-cols-3 gap-6">
-                    <div className="col-span-3 sm:col-span-2">
-                      <label className="block text-sm font-medium leading-6 text-gray-900">
-                        {t('icon')}
-                      </label>
-                      <Controller
-                        name="avatar"
-                        control={control}
-                        defaultValue="🤖"
-                        render={({ field }) => (
-                          <EmojiField
-                            value={field.value}
-                            onChange={(value) => field.onChange(value)}
-                          />
-                        )}
-                      />
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.avatar && errors.avatar.message}
-                      </p>
-                      <p className="mt-2 text-sm text-gray-500">
-                        {t('pick_emoji_icon')}
-                      </p>
-                    </div>
+                    {/*<div className="col-span-3 sm:col-span-2">*/}
+                    {/*  <label className="block text-sm font-medium leading-6 text-gray-900">*/}
+                    {/*    {t('icon')}*/}
+                    {/*  </label>*/}
+                    {/*  <Controller*/}
+                    {/*    name="avatar"*/}
+                    {/*    control={control}*/}
+                    {/*    defaultValue="🤖"*/}
+                    {/*    render={({ field }) => (*/}
+                    {/*      <EmojiField*/}
+                    {/*        value={field.value}*/}
+                    {/*        onChange={(value) => field.onChange(value)}*/}
+                    {/*      />*/}
+                    {/*    )}*/}
+                    {/*  />*/}
+                    {/*  <p className="mt-2 text-sm text-red-500">*/}
+                    {/*    {errors.avatar && errors.avatar.message}*/}
+                    {/*  </p>*/}
+                    {/*  <p className="mt-2 text-sm text-gray-500">*/}
+                    {/*    {t('pick_emoji_icon')}*/}
+                    {/*  </p>*/}
+                    {/*</div>*/}
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="col-span-3 sm:col-span-2">
@@ -128,12 +129,22 @@ const NewApp = () => {
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="col-span-3 sm:col-span-2">
-                      <div className="form-control w-full max-w-xs">
-                        <label className="label">
-                          <span className="label-text">选择基础模型</span>
+                      <div className="form-control w-full gap-1">
+                        <label className="block flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
+                          选择应用类型
+                          <div
+                            className="tooltip"
+                            data-tip={`基础类型无需训练，可以直接使用。知识库类型，需要用户提供数据训练后，得到更好的效果`}
+                          >
+                            <InfoIcon
+                              width={20}
+                              height={20}
+                              className="text-red-400"
+                            />
+                          </div>
                         </label>
                         <select
-                          className="select-bordered select"
+                          className="select-bordered select font-normal"
                           {...register('serviceModelName', {
                             required: '底层模型不能为空',
                             onChange() {
@@ -141,11 +152,19 @@ const NewApp = () => {
                             },
                           })}
                         >
-                          {modelList.map((item) => (
-                            <option key={item.model} value={item.model}>
-                              {item.name}
-                            </option>
-                          ))}
+                          {modelList
+                            .filter(
+                              (item) => item.model != ChatModelNameEnum.IMAGE
+                            )
+                            .map((item) => (
+                              <option
+                                key={item.model}
+                                value={item.model}
+                                className="w-full max-w-xs "
+                              >
+                                {item.name}
+                              </option>
+                            ))}
                         </select>
                       </div>
                       <p className="mt-2 text-sm text-red-500">
@@ -175,8 +194,15 @@ const NewApp = () => {
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="col-span-3 sm:col-span-2">
-                      <label className="block text-sm font-medium leading-6 text-gray-900">
+                      <label className="block flex items-center gap-1 text-sm font-medium leading-6 text-gray-900">
                         {t('prompt')}
+                        <div className="tooltip" data-tip={t('prompt_desc')}>
+                          <InfoIcon
+                            width={20}
+                            height={20}
+                            className="text-red-400"
+                          />
+                        </div>
                       </label>
                       <div className="mt-2 flex rounded-md shadow-sm">
                         <textarea
@@ -190,21 +216,8 @@ const NewApp = () => {
                       <p className="mt-2 text-sm text-red-500">
                         {errors.prompt && errors.prompt.message}
                       </p>
-                      <p className="mt-2 text-sm text-gray-500">
-                        {t('prompt_desc')}
-                      </p>
                     </div>
                   </div>
-                  {/*<section className="flex flex-col gap-3 ">*/}
-                  {/*  <div className="lg:w-6/1 ">*/}
-                  {/*    <Chat*/}
-                  {/*      keyDown={false}*/}
-                  {/*      callback={async () => {*/}
-                  {/*        return getValues().prompt*/}
-                  {/*      }}*/}
-                  {/*    />*/}
-                  {/*  </div>*/}
-                  {/*</section>*/}
                 </div>
               </div>
 

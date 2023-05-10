@@ -63,6 +63,51 @@ export const pushChatBill = async ({
   }
 }
 
+export const pushImageBill = async ({
+  isPay,
+  modelName,
+  userId,
+}: {
+  isPay: boolean
+  modelName: string
+  userId: string
+}) => {
+  let billId
+
+  try {
+    if (isPay) {
+      await connectToDatabase()
+
+      // 获取模型单价格
+      const modelItem = modelList.find((item) => item.model === modelName)
+      // 计算价格
+      const price = modelItem?.price || 20000
+
+      try {
+        // 插入 Bill 记录
+        const res = await Bill.create({
+          userId,
+          type: 'image',
+          modelName,
+          textLen: 0,
+          tokenLen: 0,
+          price,
+        })
+        billId = res._id
+
+        // 账号扣费
+        await User.findByIdAndUpdate(userId, {
+          $inc: { balance: -price },
+        })
+      } catch (error) {
+        console.log('创建账单失败:', error)
+        billId && Bill.findByIdAndDelete(billId)
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 export const pushSplitDataBill = async ({
   isPay,
   userId,

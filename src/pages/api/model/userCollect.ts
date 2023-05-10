@@ -1,10 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
-import { connectToDatabase } from '@/service/mongo'
+import { connectToDatabase, Model } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { ModelUserRel } from '@/service/models/modelUserRel'
-import { ChatModelNameEnum } from '@/constants/model'
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,15 +28,20 @@ export default async function handler(
     const userId = await authToken(authorization)
 
     await connectToDatabase()
-    const rel = await ModelUserRel.findOne({ userId, modelId })
-
+    const rels = await ModelUserRel.find({ modelId })
+    const rel = rels.filter((rel) => rel.userId == userId)
+    let favCount = rels.length
     if (like) {
-      if (!rel) {
+      if (rel.length == 0) {
+        favCount = favCount + 1
+        await Model.findByIdAndUpdate(modelId, { favCount })
         await ModelUserRel.create({ userId, modelId })
       }
     } else {
-      if (rel) {
-        await ModelUserRel.findByIdAndDelete(rel._id)
+      if (rel.length != 0) {
+        favCount = favCount - 1
+        await Model.findByIdAndUpdate(modelId, { favCount })
+        await ModelUserRel.findByIdAndDelete(rel[0]?._id)
       }
     }
     jsonRes(res, {})

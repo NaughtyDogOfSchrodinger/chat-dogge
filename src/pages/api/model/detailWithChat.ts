@@ -4,7 +4,8 @@ import { Chat, connectToDatabase, User } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 import { Model } from '@/service/models/model'
 import type { ModelSchema } from '@/types/mongoSchema'
-import { ChatPopulate } from '@/types/mongoSchema'
+import howToUse from '@/utils/howToUse'
+import { modelList } from '@/constants/model'
 
 /* 获取我的模型 */
 export default async function handler(
@@ -19,6 +20,7 @@ export default async function handler(
     if (!modelId) {
       throw new Error('参数错误')
     }
+
     await connectToDatabase()
     // 根据 userId 获取模型信息
     const model = await Model.findOne<ModelSchema>({
@@ -26,6 +28,14 @@ export default async function handler(
     })
 
     if (!model) {
+      throw new Error('模型不存在')
+    }
+
+    const modelItem = modelList.find(
+      (item) => item.model === model.service.modelName
+    )
+
+    if (!modelItem) {
       throw new Error('模型不存在')
     }
     if (authorization) {
@@ -44,6 +54,19 @@ export default async function handler(
       }
 
       chat.content = chat.content.filter((item) => item.deleted !== true)
+      if (model.howToUse.trim().length == 0) {
+        const how = await howToUse({
+          modelName: model.name,
+          modelItem,
+          userId,
+          description: model.intro,
+          query: true,
+        })
+        model.howToUse = how
+        await Model.findByIdAndUpdate<ModelSchema>(modelId, {
+          howToUse: how,
+        })
+      }
       jsonRes(res, {
         data: {
           model,
@@ -51,7 +74,6 @@ export default async function handler(
             chatId: chat._id,
             modelId: model._id,
             name: model.name,
-            avatar: model.avatar,
             intro: model.intro,
             modelName: model.service.modelName,
             chatModel: model.service.chatModel,
@@ -60,6 +82,19 @@ export default async function handler(
         },
       })
     } else {
+      if (model.howToUse.trim().length == 0) {
+        const how = await howToUse({
+          modelName: model.name,
+          modelItem,
+          userId: undefined,
+          description: model.intro,
+          query: true,
+        })
+        model.howToUse = how
+        await Model.findByIdAndUpdate<ModelSchema>(modelId, {
+          howToUse: how,
+        })
+      }
       jsonRes(res, {
         data: {
           model,
@@ -67,7 +102,6 @@ export default async function handler(
             chatId: undefined,
             modelId: model._id,
             name: model.name,
-            avatar: model.avatar,
             intro: model.intro,
             modelName: model.service.modelName,
             chatModel: model.service.chatModel,

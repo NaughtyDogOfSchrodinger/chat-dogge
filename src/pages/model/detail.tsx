@@ -1,34 +1,26 @@
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { NextSeo } from 'next-seo'
-import {
-  getChatGptData,
-  getModelWithChatById,
-  getPrompt,
-  hitCount,
-} from '@/api/model'
+import { getModelWithChatById } from '@/api/model'
 import { ModelSchema } from '@/types/mongoSchema'
-import { useGlobalStore } from '@/store/global'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ChatModelNameEnum, defaultModel, modelList } from '@/constants/model'
+import { ChatModelNameEnum, modelList } from '@/constants/model'
 import { useQuery } from '@tanstack/react-query'
-import {
-  clearChatRecord,
-  delChatRecordByIndex,
-  getChatSiteId,
-  getInitChatSiteInfo,
-  postSaveChat,
-} from '@/api/chat'
+import { clearChatRecord, delChatRecordByIndex, postSaveChat } from '@/api/chat'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { ChatLine } from '@/components/chat/ChatLine'
 import { useRouter } from 'next/router'
-import { useDisclosure } from '@chakra-ui/react'
 import { useCopyData } from '@/utils/tools'
 import { useChatStore } from '@/store/chat'
 import { toast } from 'react-hot-toast'
 import { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
-import { TrashIcon } from 'lucide-react'
-import { formatPrice, getToken } from '@/utils/user'
+import { streamFetch } from '@/api/fetch'
+import InputMessage from '@/components/chat/InputMessage'
+import { createAvatar } from '@dicebear/core'
+import { adventurer, micah } from '@dicebear/collection'
+import download from 'downloadjs'
+import { toPng } from 'html-to-image'
+import { Readable } from 'stream'
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
   return {
@@ -44,44 +36,9 @@ interface ChatType extends InitChatResponse {
   history: ChatSiteItemType[]
 }
 
-export const InputMessage = ({
-  input,
-  sendPrompt,
-  textChange,
-  isChatting,
-  clearHistory,
-}: any) => (
-  <div className="modal-middle clear-both mt-6 flex gap-2">
-    <button className="badge badge-lg" onClick={() => clearHistory()}>
-      <TrashIcon className="text-slate-7 float-right h-4 w-4 hover:fill-black " />
-    </button>
-    <input
-      type="text"
-      aria-label="chat input"
-      className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 sm:text-sm"
-      value={input}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          sendPrompt()
-        }
-      }}
-      onChange={textChange}
-    />
-    <button
-      disabled={isChatting}
-      className="btn-sm btn ml-4 flex-none"
-      onClick={() => {
-        sendPrompt()
-      }}
-    >
-      发送
-    </button>
-  </div>
-)
 const ChatDogge = ({ modelId }: { modelId: string }) => {
   const [model, setModel] = useState<ModelSchema>()
   const [chat, setChat] = useState<InitChatResponse>()
-  const router = useRouter()
 
   const ChatBox = useRef<HTMLDivElement>(null)
   const TextareaDom = useRef<HTMLTextAreaElement>(null)
@@ -99,17 +56,11 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     history: [],
   }) // 聊天框整体数据
   const [inputVal, setInputVal] = useState('') // 输入的内容
-  const [messages, setMessages] = useState<[]>([])
 
   const isChatting = useMemo(
     () => chatData.history[chatData.history.length - 1]?.status === 'loading',
     [chatData.history]
   )
-  const {
-    isOpen: isOpenSlider,
-    onClose: onCloseSlider,
-    onOpen: onOpenSlider,
-  } = useDisclosure()
 
   const { copyData } = useCopyData()
   const { pushChatHistory } = useChatStore()
@@ -137,17 +88,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     }, 100)
   }, [])
 
-  // 重载对话
-  const resetChat = useCallback(async () => {
-    if (!chatData) return
-    try {
-      router.replace(`/chat?chatId=${await getChatSiteId(chatData.modelId)}`)
-    } catch (error: any) {
-      toast(error?.message || '生成新对话失败', { icon: '🔴' })
-    }
-    onCloseSlider()
-  }, [chatData, onCloseSlider, router])
-
   // gpt 对话
   const gptChatPrompt = useCallback(
     async (prompts: ChatSiteItemType) => {
@@ -160,7 +100,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
       if (!urlMap[chatData.modelName]) return Promise.reject('找不到模型')
 
       let prompt
-      console.log(`chat: ${chat?.chatId}`)
       if (chat?.chatId === undefined) {
         // @ts-ignore
         prompt = [
@@ -175,46 +114,29 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           },
         ] as ChatItemType[]
       }
-      const payload = await getPrompt({
-        prompt,
-        chatOrModelId: chat?.chatId || modelId,
-      })
-      const response = await fetch('/api/chat/openAI', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: getToken() || '',
-        },
-        body: JSON.stringify(payload),
-        // signal: controller.current,
-      })
-      const data = response.body
-      if (!data) {
-        return
-      }
 
-      const reader = data.getReader()
-      const decoder = new TextDecoder()
-      let done = false
-      let count = 0
-      let lastMessage = ''
-      while (!done) {
-        const { value, done: doneReading } = await reader.read()
-        done = doneReading
-        const chunkValue = decoder.decode(value)
-        lastMessage = lastMessage + chunkValue
-        count++
-        setChatData((state) => ({
-          ...state,
-          history: state.history.map((item, index) => {
-            if (index !== state.history.length - 1) return item
-            return {
-              ...item,
-              value: item.value + chunkValue,
-            }
-          }),
-        }))
-      }
+      // 流请求，获取数据
+      const res = await streamFetch({
+        url: '/api/chat/getPrompt',
+        data: {
+          prompt,
+          chatOrModelId: chat?.chatId || modelId,
+        },
+        onMessage: (text: string) => {
+          setChatData((state) => ({
+            ...state,
+            history: state.history.map((item, index) => {
+              if (index !== state.history.length - 1) return item
+              return {
+                ...item,
+                value: item.value + text,
+              }
+            }),
+          }))
+        },
+        abortSignal: controller.current,
+        stop,
+      })
 
       // 保存对话信息
       try {
@@ -225,7 +147,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
               ...prompt,
               {
                 obj: 'AI',
-                value: lastMessage as string,
+                value: res as string,
               },
             ],
           })
@@ -395,12 +317,12 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
 
   // 初始化聊天框
   useQuery(
-    ['init', model],
+    ['init'],
     () => {
       return getModelWithChatById(modelId)
     },
     {
-      onSuccess(res) {
+      async onSuccess(res) {
         setModel(res.model)
         setChat(res.chat)
         setChatData({
@@ -414,6 +336,67 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
           setTimeout(() => {
             scrollToBottom()
           }, 500)
+        } else {
+          const newChatList: ChatSiteItemType[] = [
+            ...chatData.history,
+            {
+              obj: 'AI',
+              value: '',
+              status: 'loading',
+            },
+          ]
+
+          // 插入内容
+          setChatData((state) => ({
+            ...state,
+            history: newChatList,
+          }))
+
+          function sleep(ms: number) {
+            return new Promise((resolve) => setTimeout(resolve, ms))
+          }
+          const howToUse = res.model.howToUse
+          for (const char of howToUse.split('')) {
+            await sleep(Math.random() * 50)
+            setChatData((state) => ({
+              ...state,
+              history: state.history.map((item, index) => {
+                if (index !== state.history.length - 1) return item
+                return {
+                  ...item,
+                  value: item.value + char,
+                }
+              }),
+            }))
+          }
+          // 保存对话信息
+          try {
+            if (res.chat && res.chat.chatId) {
+              await postSaveChat({
+                chatId: res.chat.chatId,
+                prompts: [
+                  {
+                    obj: 'AI',
+                    value: howToUse,
+                  },
+                ],
+              })
+            }
+          } catch (err) {
+            toast('对话出现异常, 继续对话会导致上下文丢失，请刷新页面', {
+              icon: '🔴',
+            })
+          }
+          setChatData((state) => ({
+            ...state,
+            history: state.history.map((item, index) => {
+              if (index !== state.history.length - 1) return item
+              return {
+                ...item,
+                status: 'finish',
+              }
+            }),
+          }))
         }
       },
       onError(e: any) {
@@ -438,6 +421,85 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     setInputVal(textarea.value)
   }, [])
 
+  const bottomRef = useRef<null | HTMLDivElement>(null)
+  const copyRef = useRef<null | HTMLDivElement>(null)
+  const touchYRef = useRef(0)
+
+  useEffect(() => {
+    if (bottomRef.current && chatData.history.length > 2) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [chatData])
+
+  function handleTochMove(e: TouchEvent) {
+    // @ts-ignore
+    const touchY = e.touches[0].clientY
+    if (touchY > touchYRef.current) {
+      bottomRef.current = null
+    }
+    touchYRef.current = touchY
+  }
+
+  function handleWheelEvent(e: WheelEvent) {
+    if (e.deltaY < 0) {
+      bottomRef.current = null
+    }
+  }
+
+  useEffect(() => {
+    copyRef.current = bottomRef.current
+  }, [])
+
+  useEffect(() => {
+    bottomRef.current = copyRef.current
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      document.addEventListener('touchmove', handleTochMove)
+    } else {
+      document.addEventListener('wheel', handleWheelEvent)
+    }
+
+    return () => {
+      document.removeEventListener('touchmove', handleTochMove)
+      document.removeEventListener('wheel', handleWheelEvent)
+    }
+  }, [chatData.history.length])
+  const [saving, setSaving] = useState(false)
+
+  const stop = useRef(false)
+
+  function handleStop() {
+    stop.current = true
+    setChatData((state) => ({
+      ...state,
+      history: state.history.map((item, index) => {
+        if (index !== state.history.length - 1) return item
+        return {
+          ...item,
+          status: 'finish',
+        }
+      }),
+    }))
+  }
+  function handleSave() {
+    // cause we always have a system message at the first
+    if (chatData.history.length < 2) return
+    setSaving(true)
+    // updateSavingStatus(true);
+
+    const node = document.getElementById('save-as-image')
+    if (node) {
+      toPng(node)
+        .then(function (dataUrl) {
+          setSaving(false)
+          download(dataUrl, 'conversations.png')
+        })
+        .catch(function (error) {
+          setSaving(false)
+          toast(error.message || '保存图片异常', { icon: `🔴` })
+        })
+    }
+  }
+
   return model ? (
     <>
       <NextSeo
@@ -446,55 +508,53 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${model.avatar}</text></svg>`,
+            href: `${createAvatar(adventurer, {
+              seed: model.name,
+            }).toDataUriSync()}`,
           },
         ]}
       />
 
-      <Breadcrumb pages={[]} />
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-center py-2">
         <main className="mt-12 flex w-full flex-1 flex-col items-center justify-center px-4 text-center sm:mt-20">
           <h1 className="max-w-[708px] text-2xl font-bold text-slate-900 sm:text-4xl">
             {model.name}
           </h1>
-          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
-            {model.intro}
-          </p>
-          <p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">
-            {formatPrice(
-              modelList.find((item) => item.model === model.service.modelName)
-                ?.price || 0,
-              1000
-            )}
-            元/1K tokens(包括上下文和回答)
-          </p>
-          <div className="w-full max-w-xl">
-            <section className="flex flex-col gap-3 ">
-              <div className="lg:w-6/1 ">
-                <div className="rounded-2xl border-zinc-100  bg-[#f5f5f7] lg:border lg:p-6">
-                  {chatData.history.map((content, index) => (
-                    <ChatLine
-                      key={index}
-                      index={index}
-                      chatMsg={content}
-                      onDelete={delChatRecord}
-                      onCopy={onclickCopy}
-                    />
-                  ))}
-
-                  {/*{loading && <LoadingChatLine />}*/}
-
-                  <InputMessage
-                    input={inputVal}
-                    setInput={setInputVal}
-                    sendPrompt={sendPrompt}
-                    textChange={textChange}
-                    isChatting={isChatting}
-                    clearHistory={clearHistory}
+          {/*<p className="mt-6 w-9/12 text-lg font-semibold leading-8 text-gray-600">*/}
+          {/*  {model.intro}*/}
+          {/*</p>*/}
+          <div className="flex w-full flex-col items-center ">
+            <div className="mt-16 flex w-full flex-1 flex-col items-center text-center">
+              <div
+                className="w-full max-w-5xl text-left font-sans leading-tight dark:text-slate-200"
+                ref={bottomRef}
+                id="save-as-image"
+              >
+                {chatData.history.map((content, index) => (
+                  <ChatLine
+                    key={index}
+                    index={index}
+                    chatMsg={content}
+                    onDelete={delChatRecord}
+                    onCopy={onclickCopy}
+                    saving={saving}
                   />
-                </div>
+                ))}
+
+                {/*{loading && <LoadingChatLine />}*/}
+
+                <InputMessage
+                  saving={saving}
+                  handleSave={handleSave}
+                  input={inputVal}
+                  handleStop={handleStop}
+                  sendPrompt={sendPrompt}
+                  textChange={textChange}
+                  isChatting={isChatting}
+                  clearHistory={clearHistory}
+                />
               </div>
-            </section>
+            </div>
           </div>
         </main>
       </div>

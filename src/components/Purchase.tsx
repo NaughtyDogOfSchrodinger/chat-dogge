@@ -1,47 +1,19 @@
-import { FREE_TOKEN_COUNT, RATE_LIMIT_COUNT } from '@/utils/constants'
-import { useEffect, useMemo, useState } from 'react'
+import { RATE_LIMIT_COUNT } from '@/utils/constants'
+import { useMemo, useState } from 'react'
 
 import { LicenseForm } from '@/components/LicenseForm'
 import { PurchaseAction } from '@/components/PurchaseAction'
-import { clientValidateLicenseKey } from '@/utils/lemon'
-import { loadLicenseKey, saveLicenseKey } from '@/utils/localData'
 import { CheckIcon } from '@heroicons/react/20/solid'
-import { useRouter } from 'next/router'
-import { toast } from 'react-hot-toast'
 import { useTranslation } from 'next-i18next'
 
 export const Purchase = () => {
   const [shouldShowLicense, setShouldShowLicense] = useState(false)
-  const router = useRouter()
   // @ts-ignore
   const { t } = useTranslation('common')
 
   const includedFeatures = useMemo(() => {
     return [t('feature_1'), t('feature_2')]
   }, [t])
-
-  useEffect(() => {
-    const newLicenseKey = router.query.license_key as string
-    console.log({ newLicenseKey })
-
-    if (newLicenseKey) {
-      clientValidateLicenseKey(newLicenseKey)
-        .then(({ isValid }) => {
-          if (isValid) {
-            saveLicenseKey(newLicenseKey)
-            toast(t('thanks_to_buy'), { icon: '✅' })
-          }
-        })
-        .then(() => {
-          setShouldShowLicense(true)
-        })
-    } else {
-      if (loadLicenseKey()) {
-        setShouldShowLicense(true)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.license_key])
 
   return (
     <div className="bg-white py-24 sm:py-32">

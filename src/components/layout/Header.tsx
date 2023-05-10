@@ -1,20 +1,11 @@
-import { Popover, Transition, Menu } from '@headlessui/react'
+import { Popover, Transition } from '@headlessui/react'
 
 import clsx from 'clsx'
 import Link from 'next/link'
-import {
-  Dispatch,
-  Fragment,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
+import { Fragment, useCallback, useMemo } from 'react'
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/layout/Logo'
 import { NavLink } from '@/components/layout/NavLink'
 import { useTranslation } from 'next-i18next'
-import { LanguageSelector } from './LanguageSelector'
 import { useSignInModal } from '@/components/layout/sign-in-modal'
 import { AnimatePresence, motion } from 'framer-motion'
 import UserDropdown from '@/components/layout/user-dropdown'
@@ -23,6 +14,8 @@ import { useUserStore } from '@/store/user'
 import { clearToken } from '@/utils/user'
 import { ResLogin } from '@/api/response/user'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
+import { defaultFilterArgs } from '@/pages'
 
 function MobileNavLink({
   href,
@@ -80,12 +73,16 @@ const useHeaders = () => {
     useMemo(
       () => [
         {
-          href: '/myApp',
-          label: t('🐚️ 我的应用'),
+          href: '/image',
+          label: t('🎨 画图'),
         },
         {
           href: '/usage',
           label: t('💰️ 定价'),
+        },
+        {
+          href: '/model/detail?modelId=6445f34ef691e2c63acac089',
+          label: t('💁 客服'),
         },
       ],
       [t]
@@ -152,7 +149,7 @@ export function Header() {
     (res: ResLogin) => {
       clearUserInfo()
       clearMyModels()
-      getAllModels()
+      getAllModels(defaultFilterArgs)
       clearToken()
       router.push('/')
     },
@@ -167,7 +164,8 @@ export function Header() {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Link href="/" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              {/*<Logo className="h-10 w-auto" />*/}
+              <Image src="/favicon.svg" alt="Logo" width={40} height={40} />
             </Link>
             <div className="hidden md:flex md:gap-x-6">
               {HEADER_LINKS.map(({ href, label, target }) => (

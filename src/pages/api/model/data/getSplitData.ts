@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
-import { connectToDatabase, SplitData, Model } from '@/service/mongo'
+import { connectToDatabase, SplitData } from '@/service/mongo'
 import { authToken } from '@/service/utils/tools'
 
 /* 拆分数据成QA */

@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next'
 export const Breadcrumb = (props: {
   pages: Array<{ name: string; href: string; current: boolean }>
 }) => {
+  // @ts-ignore
   const { t } = useTranslation('common')
 
   return (

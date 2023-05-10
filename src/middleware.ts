@@ -1,10 +1,8 @@
 import { RATE_LIMIT_COUNT } from '@/utils/constants'
-import { GenerateApiInput } from '@/utils/types'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 import { isDev } from './utils/isDev'
-import { getToken } from '@/utils/user'
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -12,7 +10,7 @@ const ratelimit = new Ratelimit({
   analytics: true, // <- Enable analytics
 })
 export const config = {
-  matcher: ['/api/chat/openAI'],
+  matcher: ['/api/chat/getPrompt'],
 }
 
 export default async function middleware(
@@ -25,8 +23,7 @@ export default async function middleware(
   }
 
   // 👇 below only works for production
-
-  const ipIdentifier = request.ip ?? '127.0.0.1'
+  const ipIdentifier = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
   console.log('ip is trying to use ->', ipIdentifier)
   const { success, limit, reset, remaining, pending } = await ratelimit.limit(
     `ratelimit_middleware_${ipIdentifier}`
@@ -47,8 +44,14 @@ export default async function middleware(
 }
 
 function runOutOfRatelimit(errorCode: number) {
-  return new NextResponse(JSON.stringify('今日免费次数已用尽'), {
-    status: errorCode,
-    headers: { 'content-type': 'application/json' },
-  })
+  return new NextResponse(
+    JSON.stringify({
+      success: false,
+      message: '今天的免费次数。请登录后使用。',
+    }),
+    {
+      status: errorCode,
+      headers: { 'content-type': 'application/json' },
+    }
+  )
 }

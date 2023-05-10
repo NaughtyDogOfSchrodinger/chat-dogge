@@ -16,7 +16,7 @@ const ModelSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: '😑',
+    default: '',
   },
   systemPrompt: {
     // 系统提示词
@@ -24,6 +24,11 @@ const ModelSchema = new Schema({
     default: '',
   },
   intro: {
+    // 模型介绍
+    type: String,
+    default: '',
+  },
+  howToUse: {
     // 模型介绍
     type: String,
     default: '',
@@ -48,6 +53,10 @@ const ModelSchema = new Schema({
     default: 4,
   },
   hitCount: {
+    type: Number,
+    default: 0,
+  },
+  favCount: {
     type: Number,
     default: 0,
   },

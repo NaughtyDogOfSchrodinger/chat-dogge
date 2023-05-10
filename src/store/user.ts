@@ -2,11 +2,12 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { UserType, UserUpdateParams } from '@/types/user'
-import type { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
-import { getToken, setToken } from '@/utils/user'
-import { getAllModels, getMyModels } from '@/api/model'
-import { formatPrice } from '@/utils/user'
+import type { ModelPopulate } from '@/types/mongoSchema'
+import { setToken } from '@/utils/user'
+import { getAllModels, getMyFavModels, getMyModels } from '@/api/model'
 import { getTokenLogin } from '@/api/user'
+import { SortOrder } from 'mongoose'
+import { ChatModelNameEnum } from '@/constants/model'
 
 type State = {
   userInfo: UserType | null
@@ -15,9 +16,15 @@ type State = {
   updateUserInfo: (user: UserUpdateParams) => void
   clearUserInfo: () => void
   myModels: ModelPopulate[]
+  myFavModels: ModelPopulate[]
   allModels: ModelPopulate[]
-  getMyModels: () => void
-  getAllModels: () => void
+  getMyModels: (userId: string) => void
+  getAllModels: (data: {
+    hitCount?: SortOrder
+    favCount?: SortOrder
+    serviceModelName?: `${ChatModelNameEnum}`
+  }) => void
+  getMyFavModels: (userId: string) => void
   setMyModels: (data: ModelPopulate[]) => void
   clearMyModels: () => void
   clear: () => void
@@ -39,7 +46,7 @@ export const useUserStore = create<State>()(
         set((state) => {
           state.userInfo = {
             ...user,
-            balance: formatPrice(user.balance),
+            balance: user.balance,
           }
         })
         token && setToken(token)
@@ -61,17 +68,29 @@ export const useUserStore = create<State>()(
       },
       myModels: [],
       allModels: [],
-      getMyModels: () =>
-        getMyModels().then((res) => {
+      myFavModels: [],
+      getMyModels: (userId: string) =>
+        getMyModels(userId).then((res) => {
           set((state) => {
             state.myModels = res
           })
           return res
         }),
-      getAllModels: () =>
-        getAllModels().then((res) => {
+      getAllModels: (data: {
+        hitCount?: SortOrder
+        favCount?: SortOrder
+        serviceModelName?: `${ChatModelNameEnum}`
+      }) =>
+        getAllModels(data).then((res) => {
           set((state) => {
             state.allModels = res
+          })
+          return res
+        }),
+      getMyFavModels: (userId: string) =>
+        getMyFavModels(userId).then((res) => {
+          set((state) => {
+            state.myFavModels = res
           })
           return res
         }),

@@ -1,12 +1,5 @@
 import React, { useState, Dispatch, useCallback } from 'react'
-import {
-  FormControl,
-  Flex,
-  Input,
-  Button,
-  FormErrorMessage,
-  Box,
-} from '@chakra-ui/react'
+import { FormControl, FormErrorMessage } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { PageTypeEnum } from '@/constants/user'
 import { postLogin } from '@/api/user'
@@ -15,8 +8,6 @@ import { LoadingDots } from '@/components/share/icons'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { EMAIL_REG } from '@/constants/common'
-import { useUserStore } from '@/store/user'
-import { useQuery } from '@tanstack/react-query'
 
 interface Props {
   setPageType: Dispatch<`${PageTypeEnum}`>

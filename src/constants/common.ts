@@ -1,6 +1,8 @@
 export enum EmailTypeEnum {
   register = 'register',
   findPassword = 'findPassword',
+  createApp = 'createApp',
+  notifyRegister = 'notifyRegister',
 }
 
 export const PRICE_SCALE = 100000

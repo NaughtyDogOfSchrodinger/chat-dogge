@@ -1,12 +1,5 @@
 import React, { useState, Dispatch, useCallback } from 'react'
-import {
-  FormControl,
-  Box,
-  Input,
-  Button,
-  FormErrorMessage,
-  Flex,
-} from '@chakra-ui/react'
+import { FormControl, FormErrorMessage } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { PageTypeEnum } from '@/constants/user'
 import { postRegister } from '@/api/user'

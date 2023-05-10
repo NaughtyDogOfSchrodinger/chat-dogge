@@ -1,27 +1,41 @@
 import { GET, POST, DELETE, PUT } from './request'
-import type {
-  ModelSchema,
-  ModelDataSchema,
-  ModelSplitDataSchema,
-  ChatSchema,
-} from '@/types/mongoSchema'
+import type { ModelSchema, ModelDataSchema } from '@/types/mongoSchema'
 import { ModelUpdateParams } from '@/types/model'
-import { TrainingItemType } from '../types/training'
-import { RequestPaging } from '../types/index'
+import { TrainingItemType } from '@/types/training'
+import { RequestPaging } from '@/types'
 import { Obj2Query } from '@/utils/tools'
 import { ModelPopulate } from '@/types/mongoSchema'
-import { ChatItemType, ChatSiteItemType } from '@/types/chat'
+import { ChatItemType } from '@/types/chat'
 import { InitChatResponse } from '@/api/response/chat'
+import { GetImage } from '@/pages/paint'
+import { SortOrder } from 'mongoose'
+import { ChatModelNameEnum } from '@/constants/model'
 
 /**
  * 获取我的模型列表
  */
-export const getMyModels = () => GET<ModelPopulate[]>('/model/list')
+export const getMyModels = (userId: string) =>
+  GET<ModelPopulate[]>(`/model/icreated?userId=${userId}`)
+
+/**
+ * 获取我收藏的模型列表
+ */
+export const getMyFavModels = (userId: string) =>
+  GET<ModelPopulate[]>(`/model/icollected?userId=${userId}`)
 
 /**
  * 获取所有模型列表
  */
-export const getAllModels = () => GET<ModelPopulate[]>('/model/all')
+export const getAllModels = (data: {
+  hitCount?: SortOrder
+  favCount?: SortOrder
+  serviceModelName?: `${ChatModelNameEnum}`
+}) => POST<ModelPopulate[]>('/model/all', data)
+
+/**
+ * 获取所有模型列表
+ */
+export const cron = () => GET('/cron')
 
 /**
  * 创建一个模型
@@ -76,6 +90,16 @@ export const getPrompt = (data: {
   prompt: ChatItemType[]
   chatOrModelId: string
 }) => POST<string>(`/chat/getPrompt`, data)
+
+/**
+ * 生成图片
+ */
+export const getImage = (data: GetImage) => POST<any>(`/predictions`, data)
+
+/**
+ *  查询图片
+ */
+export const getImageById = (id: string) => POST<any>(`/predictions/${id}`)
 /**
  * 根据 ID 更新模型
  */

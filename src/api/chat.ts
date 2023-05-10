@@ -1,4 +1,4 @@
-import { GET, POST, DELETE } from './request'
+import { GET, POST } from './request'
 import type { ChatItemType, ChatSiteItemType } from '@/types/chat'
 import type { InitChatResponse } from './response/chat'
 
@@ -31,6 +31,12 @@ export const postGPT3SendPrompt = ({
       value: item.value,
     })),
   })
+
+/**
+ * 存储一轮对话
+ */
+export const generateQ = (data: { name: string }) =>
+  POST<[]>(`/chat/generateQ`, data)
 
 /**
  * 存储一轮对话

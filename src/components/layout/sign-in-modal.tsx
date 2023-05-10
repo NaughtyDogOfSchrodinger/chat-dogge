@@ -5,9 +5,7 @@ import React, {
   SetStateAction,
   useCallback,
   useMemo,
-  useEffect,
 } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { PageTypeEnum } from '@/constants/user'
 import { useUserStore } from '@/store/user'
@@ -15,7 +13,7 @@ import { ResLogin } from '@/api/response/user'
 import LoginForm from '@/components/layout/login/LoginForm'
 import RegisterForm from '@/components/layout/login/RegisterForm'
 import ForgetPasswordForm from '@/components/layout/login/ForgetPasswordForm'
-import { useQuery } from '@tanstack/react-query'
+import { defaultFilterArgs } from '@/pages'
 
 const SignInModal = ({
   showSignInModal,
@@ -33,7 +31,7 @@ const SignInModal = ({
   const loginSuccess = useCallback(
     (res: ResLogin) => {
       setUserInfo(res.user, res.token)
-      getAllModels()
+      getAllModels(defaultFilterArgs)
       setShowSignInModal(false)
       router.push('/')
     },
@@ -51,11 +49,6 @@ const SignInModal = ({
 
     return <Component setPageType={setPageType} loginSuccess={loginSuccess} />
   }
-
-  useEffect(() => {
-    getAllModels()
-  }, [getAllModels, router])
-
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
       <div className="container card mx-auto w-96 bg-[#f0f2f5] text-neutral-content">

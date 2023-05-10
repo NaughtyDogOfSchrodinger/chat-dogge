@@ -8,8 +8,11 @@ import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
 const authPage: { [key: string]: boolean } = {
   '/model/create': true,
-  '/myApp': true,
   '/model/edit': true,
+  '/image': true,
+  '/paint': true,
+  '/iCollected': true,
+  '/iCreated': true,
 }
 const Layout = (props: { children?: JSX.Element | JSX.Element[] }) => {
   const router = useRouter()

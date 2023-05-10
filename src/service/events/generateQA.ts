@@ -1,6 +1,5 @@
 import { SplitData } from '@/service/mongo'
 import { getOpenAIApi } from '@/service/utils/chat'
-import { httpsAgent } from '@/service/utils/tools'
 import { getOpenApiKey } from '../utils/openai'
 import type { ChatCompletionRequestMessage } from 'openai'
 import { ChatModelNameEnum } from '@/constants/model'
@@ -10,6 +9,7 @@ import { connectRedis } from '../redis'
 import { VecModelDataPrefix } from '@/constants/redis'
 import { customAlphabet } from 'nanoid'
 import { ModelSplitDataSchema } from '@/types/mongoSchema'
+import { httpsAgent } from '@/service/utils/tools'
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 12)
 
 export async function generateQA(next = false): Promise<any> {
@@ -91,7 +91,7 @@ export async function generateQA(next = false): Promise<any> {
             },
             {
               timeout: 180000,
-              // httpsAgent: httpsAgent(!userApiKey),
+              httpsAgent: httpsAgent(true),
             }
           )
           .then((res) => {

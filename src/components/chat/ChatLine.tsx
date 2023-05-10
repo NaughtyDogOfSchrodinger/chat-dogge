@@ -1,26 +1,15 @@
-import clsx from 'clsx'
-import Balancer from 'react-wrap-balancer'
-import md from './markdown-it'
-import {
-  ClipboardCopyIcon,
-  Copy,
-  Dog,
-  DogIcon,
-  LucideClipboardCopy,
-  Redo,
-  RefreshCw,
-  TrashIcon,
-} from 'lucide-react'
 import { ChatSiteItemType } from '@/types/chat'
-
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { Copy, TrashIcon, UserIcon } from 'lucide-react'
+import Image from 'next/image'
+import { monoBlue } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+import { useUserStore } from '@/store/user'
+import { createAvatar } from '@dicebear/core'
+import { adventurer, micah } from '@dicebear/collection'
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
-const BalancerWrapper = (props: any) => <Balancer {...props} />
 type ChatGPTAgent = 'Human' | 'AI' | 'SYSTEM'
-
-export interface ChatGPTMessage {
-  role: ChatGPTAgent
-  content: string
-}
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
@@ -44,33 +33,94 @@ export function ChatLine({
   chatMsg,
   onDelete,
   onCopy,
+  saving,
 }: {
   index: number
   chatMsg: ChatSiteItemType
   onDelete: any
   onCopy: any
+  saving: boolean
 }) {
+  const { userInfo } = useUserStore()
+  const { email } = userInfo || {}
   return (
-    <div className=" roup sm:hover:bg-slate/6 dark:sm:hover:bg-slate/5 message-item relative mx--4 flex gap-3 rounded-lg px-4 transition-colors">
-      <div className="flex-start col-span-1 mb-5 flex w-full justify-between rounded-lg bg-white px-2 py-2 shadow-lg ring-1 ring-zinc-100 sm:px-4">
-        <div className="message prose-slate dark:prose-invert dark:text-slate prose overflow-hidden break-words">
-          <div
-            className="flex-1 gap-4 text-left"
+    <div
+      key={index}
+      className={`w-full px-4 py-5 text-slate-100 ${
+        chatMsg.obj === 'Human'
+          ? 'bg-white text-slate-800 '
+          : 'bg-gray-100 text-slate-800 '
+      }`}
+    >
+      <div className="flex items-start">
+        {chatMsg.obj === 'Human' ? (
+          <p
             dangerouslySetInnerHTML={{
-              __html: md.render(chatMsg.value),
+              __html: `${createAvatar(micah, {
+                size: 20,
+                seed: email,
+              }).toString()}`,
             }}
-          ></div>
-        </div>
-        <div className="<sm:top--4 <sm:right-0 text-slate-7 dark:text-slate dark:bg-#292B32 bg-#E7EBF0 absolute top-2 right-6 flex items-center justify-between rounded text-sm opacity-0 hover:opacity-100">
-          <Copy
-            className="text-slate-7 h-4 w-4 hover:fill-black"
-            onClick={() => onCopy(chatMsg.value)}
           />
-          <TrashIcon
-            className="text-slate-7 h-4 w-4 hover:fill-black"
-            onClick={() => onDelete(index)}
-          />
-        </div>
+        ) : (
+          <Image alt={`logo`} src="/favicon.svg" width={20} height={20} />
+        )}
+        <ReactMarkdown
+          className={`ml-2 flex-grow overflow-x-auto overflow-y-hidden whitespace-pre-wrap ${
+            chatMsg.value.startsWith('ERROR MESSAGE:') ? 'text-red-500' : ''
+          }`}
+          linkTarget="_blank"
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || '')
+              return !inline ? (
+                <div className="relative">
+                  <SyntaxHighlighter
+                    //@ts-ignore
+                    style={monoBlue}
+                    language={match ? match[1] : ''}
+                    PreTag="div"
+                    // showLineNumbers
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                  {!saving && (
+                    <div className="absolute right-0 top-1 mr-1 cursor-pointer rounded bg-slate-50 p-1 ">
+                      <Copy
+                        className="text-slate-7 h-4 w-4 hover:fill-black"
+                        onClick={() =>
+                          onCopy(String(children).replace(/\n$/, ''))
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              )
+            },
+          }}
+        >
+          {chatMsg.value.replace(/^\s+/, '').replace(/\n\n/g, '\n')}
+        </ReactMarkdown>
+        {!saving && (
+          <div className="ml-1 mr-2 flex cursor-pointer">
+            <Copy
+              className="text-slate-7 h-4 w-4 hover:fill-black"
+              onClick={() =>
+                onCopy(chatMsg.value.replace(/^\s+/, '').replace(/\n\n/g, '\n'))
+              }
+            />
+            <TrashIcon
+              className="text-slate-7 h-4 w-4 hover:fill-black"
+              onClick={() => onDelete(index)}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -4,22 +4,15 @@ import { type AppType } from 'next/app'
 
 import '@/styles/globals.css'
 import { DEFAULT_SEO_CONFIG } from '@/utils/seoConfig'
-import { toast, Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 import { appWithTranslation } from 'next-i18next'
 import Layout from '@/components/layout/Layout'
-import { useRouter } from 'next/router'
-import { useUserStore } from '@/store/user'
-import { useGlobalStore } from '@/store/global'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import Script from 'next/script'
 import NProgress from 'nprogress' //nprogress module
 import 'nprogress/nprogress.css'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
@@ -34,16 +27,32 @@ const queryClient = new QueryClient({
   },
 })
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
+  const router = useRouter()
+  const { pathname } = router
   return (
     <>
       <Analytics />
       <DefaultSeo {...DEFAULT_SEO_CONFIG} />
       <QueryClientProvider client={queryClient}>
-        <Layout>
-          <Script src="/js/qrcode.min.js" strategy="afterInteractive"></Script>
-          <Script src="/js/pdf.js" strategy="afterInteractive"></Script>
-          <Component {...pageProps} />
-        </Layout>
+        {pathname == '/me' || pathname == '/user' ? (
+          <>
+            <Script
+              src="/js/qrcode.min.js"
+              strategy="afterInteractive"
+            ></Script>
+            <Script src="/js/pdf.js" strategy="afterInteractive"></Script>
+            <Component {...pageProps} />
+          </>
+        ) : (
+          <Layout>
+            <Script
+              src="/js/qrcode.min.js"
+              strategy="afterInteractive"
+            ></Script>
+            <Script src="/js/pdf.js" strategy="afterInteractive"></Script>
+            <Component {...pageProps} />
+          </Layout>
+        )}
       </QueryClientProvider>
 
       <Toaster

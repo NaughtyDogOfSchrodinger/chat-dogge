@@ -29,7 +29,7 @@ export const usePagination = <T = any,>({
         setTotal(res.total)
         setData(res.data)
       } catch (error: any) {
-        toast(error?.message || '获取数据异常', { icon: `🔴` })
+        // toast(error?.message || '获取数据异常', { icon: `🔴` })
         console.log(error)
       }
     },

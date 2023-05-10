@@ -16,6 +16,8 @@ export const sendCodeToEmail = ({
 }) => GET('/user/sendEmail', { email, type })
 
 export const getTokenLogin = () => GET<UserType>('/user/tokenLogin')
+export const getUserById = (userId: string) =>
+  GET<UserType>(`/user/getUserById?userId=${userId}`)
 
 export const postRegister = ({
   email,

@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { ModelSchema } from '@/types/mongoSchema'
 import {
   ChatModelNameEnum,
@@ -24,17 +23,14 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { NextSeo } from 'next-seo'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
-import { useDisclosure } from '@chakra-ui/react'
-import { Breadcrumb } from '@/components/Breadcrumb'
-
-// const InputModel = dynamic(() => import('./components/InputDataModal'))
-// const SelectFileModel = dynamic(() => import('./components/SelectFileModal'))
-// const SelectUrlModel = dynamic(() => import('./components/SelectUrlModal'))
-// const SelectJsonModel = dynamic(() => import('./components/SelectJsonModal'))
 import { useSelectFile } from '@/components/dataImport/select-file-modal'
 import { useSelectUrl } from '@/components/dataImport/select-url-modal'
 import { usePagination } from '@/hooks/usePagination'
 import { RedisModelDataItemType } from '@/types/redis'
+import {
+  FormData,
+  useInputData,
+} from '@/components/dataImport/input-data-modal'
 
 export async function getServerSideProps(context: any) {
   const modelId = context.query?.modelId || ''
@@ -140,6 +136,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
         await putModelById(data._id, {
           name: data.name,
           systemPrompt: data.systemPrompt,
+          howToUse: data.howToUse,
           intro: data.intro,
           temperature: data.temperature,
           service: data.service,
@@ -172,23 +169,6 @@ const Edit = ({ modelId }: { modelId: string }) => {
   //   content: '确认删除该模型?'
   // });
   const { register, setValue, getValues } = formHooks
-  const [refresh, setRefresh] = useState(false)
-
-  const {
-    isOpen: isOpenSelectFileModal,
-    onOpen: onOpenSelectFileModal,
-    onClose: onCloseSelectFileModal,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenSelectUrlModal,
-    onOpen: onOpenSelectUrlModal,
-    onClose: onCloseSelectUrlModal,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenSelectJsonModal,
-    onOpen: onOpenSelectJsonModal,
-    onClose: onCloseSelectJsonModal,
-  } = useDisclosure()
 
   const { FileModal, setShowFileModal } = useSelectFile({
     modelId: model._id,
@@ -196,6 +176,13 @@ const Edit = ({ modelId }: { modelId: string }) => {
 
   const { UrlModal, setShowUrlModal } = useSelectUrl({
     modelId: model._id,
+  })
+
+  const [editInputData, setEditInputData] = useState<FormData>()
+
+  const { InputModal, setShowInputModal } = useInputData({
+    modelId: model._id,
+    defaultValues: editInputData,
   })
 
   const {
@@ -235,6 +222,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
     <>
       <FileModal />
       <UrlModal />
+      <InputModal />
       <NextSeo
         title={model.name}
         description={model.intro}
@@ -280,7 +268,12 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     type="text"
                     placeholder="底层模型名称"
                     className="input-bordered input w-full max-w-xs"
-                    value={getValues('service.modelName')}
+                    value={
+                      // @ts-ignore
+                      modelList.find(
+                        (item) => item.model === getValues('service.modelName')
+                      ).name
+                    }
                     disabled={true}
                   />
                 </div>
@@ -310,14 +303,9 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     })}
                   />
                 </div>
-              </div>
-            </div>
-            {/*<div className="divider lg:divider-horizontal"></div>*/}
-            <div className="h-100 card rounded-box grid flex-grow place-items-center bg-white">
-              <div className="form-control w-full max-w-xs gap-3">
                 <div>
                   <label className="label">
-                    <span className="label-text">Temprature</span>
+                    <span className="label-text">发散能力</span>
                   </label>
                   <input
                     type="range"
@@ -335,6 +323,25 @@ const Edit = ({ modelId }: { modelId: string }) => {
                       越高发散能力越强，越低越严谨
                     </span>
                   </label>
+                </div>
+              </div>
+            </div>
+            {/*<div className="divider lg:divider-horizontal"></div>*/}
+            <div className="h-100 card rounded-box grid flex-grow place-items-center bg-white">
+              <div className="form-control w-full max-w-xs gap-3">
+                <div>
+                  <label className="label">
+                    <span className="label-text">使用指南</span>
+                  </label>
+                  <textarea
+                    className="textarea-bordered textarea h-40 w-full max-w-xs resize-none"
+                    {...register('howToUse')}
+                    placeholder={
+                      canTrain
+                        ? '训练的模型会根据知识库内容，生成一部分系统提示词，因此在对话时需要消耗更多的 tokens。你仍可以增加一些提示词，让其效果更精确。'
+                        : '模型默认的 prompt 词，通过调整该内容，可以生成一个限定范围的模型。\n\n注意，改功能会影响对话的整体朝向！'
+                    }
+                  />
                 </div>
                 <div>
                   <label className="label">
@@ -383,7 +390,7 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     {/*<div>*/}
                     {/*  <button className="btn-xs btn ">导出</button>*/}
                     {/*</div>*/}
-                    <div className="dropdown-end dropdown ">
+                    <div className="dropdown dropdown-end ">
                       <label
                         tabIndex={0}
                         className="btn-xs btn"
@@ -396,6 +403,18 @@ const Edit = ({ modelId }: { modelId: string }) => {
                           tabIndex={0}
                           className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
                         >
+                          <li>
+                            <button
+                              className="justify-between active:bg-black"
+                              onClick={() => {
+                                setEditInputData(undefined)
+                                toggleOpen(false)
+                                setShowInputModal(true)
+                              }}
+                            >
+                              手动输入
+                            </button>
+                          </li>
                           <li>
                             <label
                               htmlFor="my-modal-3"
@@ -434,8 +453,8 @@ const Edit = ({ modelId }: { modelId: string }) => {
                     </div>
                   </div>
                 </div>
-                <div className="h-1/2">
-                  <table className="table-compact table w-full">
+                <div className="h-1/2 overflow-x-auto">
+                  <table className="table-responsive table-compact table table-auto">
                     {/* head */}
                     <thead>
                       <tr>
@@ -458,12 +477,19 @@ const Edit = ({ modelId }: { modelId: string }) => {
                             {ModelDataStatusMap[item.status]}
                           </td>
                           <th className="h-8 border px-1 text-center text-sm">
-                            <Link
+                            <button
                               className="link-neutral link"
-                              href="src/pages#"
+                              onClick={() => {
+                                setEditInputData({
+                                  dataId: item.id,
+                                  q: item.q,
+                                  text: item.text,
+                                })
+                                setShowInputModal(true)
+                              }}
                             >
                               编辑
-                            </Link>
+                            </button>
                           </th>
                           <th className="h-8 border px-1 text-center text-sm">
                             <button

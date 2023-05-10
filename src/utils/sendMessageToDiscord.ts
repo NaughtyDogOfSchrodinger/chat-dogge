@@ -15,11 +15,11 @@ export function sendMessageToDiscord(v: {
   }
   if (DISCORD_WEBHOOK_URL) {
     return fetchPost(DISCORD_WEBHOOK_URL, {
-      username: 'OpenGpt 机器人',
+      username: 'Chatdogge 机器人',
       embeds: [
         {
           author: {
-            name: 'OpenGpt',
+            name: 'Chatdogge',
             url: 'https://open-gpt-app.vercel.app/',
             icon_url: 'https://avatars.githubusercontent.com/u/6268441?v=4',
           },

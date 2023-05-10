@@ -8,6 +8,7 @@ export interface UserType {
   email: string
   openaiKey: string
   balance: number
+  createTime: Date
 }
 
 export interface UserUpdateParams {
@@ -18,7 +19,7 @@ export interface UserUpdateParams {
 export interface UserBillType {
   id: string
   time: string
-  type: 'chat' | 'splitData' | 'return'
+  type: 'chat' | 'splitData' | 'return' | 'image'
   textLen: number
   tokenLen: number
   userId: string

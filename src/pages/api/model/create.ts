@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { jsonRes } from '@/service/response'
 import { connectToDatabase } from '@/service/mongo'
-import { authToken } from '@/service/utils/tools'
+import { authToken, httpsAgent } from '@/service/utils/tools'
 import {
   ModelStatusEnum,
   modelList,
@@ -10,20 +10,21 @@ import {
   ChatModelNameMap,
 } from '@/constants/model'
 import { Model } from '@/service/models/model'
+import howToUse from '@/utils/howToUse'
+import { notifyCreateApp } from '@/service/utils/sendEmail'
+import { EmailTypeEnum } from '@/constants/common'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   try {
-    const { avatar, name, serviceModelName, description, prompt } =
-      req.body as {
-        avatar: string
-        name: string
-        serviceModelName: `${ChatModelNameEnum}`
-        description: string
-        prompt: string
-      }
+    const { name, serviceModelName, description, prompt } = req.body as {
+      name: string
+      serviceModelName: `${ChatModelNameEnum}`
+      description: string
+      prompt: string
+    }
     const { authorization } = req.headers
 
     if (!authorization) {
@@ -46,20 +47,26 @@ export default async function handler(
     await connectToDatabase()
 
     // 上限校验
-    const authCount = await Model.countDocuments({
+    // const authCount = await Model.countDocuments({
+    //   userId,
+    // })
+    // if (authCount >= 20) {
+    //   throw new Error('上限 20 个模型')
+    // }
+    const how = await howToUse({
+      modelName: name,
+      modelItem,
       userId,
+      description,
+      query: false,
     })
-    if (authCount >= 20) {
-      throw new Error('上限 20 个模型')
-    }
-
     // 创建模型
     const response = await Model.create({
       name,
       userId,
-      avatar,
       intro: description,
       systemPrompt: prompt,
+      howToUse: how,
       status: ModelStatusEnum.running,
       service: {
         company: modelItem.serviceCompany,
@@ -70,11 +77,19 @@ export default async function handler(
     })
 
     // 根据 id 获取模型信息
-    const model = await Model.findById(response._id)
+    const model = await Model.findById(response._id).populate({
+      path: 'userId',
+      options: {
+        strictPopulate: false,
+      },
+    })
 
     jsonRes(res, {
       data: model,
     })
+    if (model) {
+      await notifyCreateApp(model, EmailTypeEnum.createApp)
+    }
   } catch (err) {
     jsonRes(res, {
       code: 500,

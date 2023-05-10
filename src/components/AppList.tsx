@@ -1,21 +1,25 @@
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
-import { useTranslation } from 'next-i18next'
 import { FlameIcon, HeartIcon } from 'lucide-react'
-import { ModelPopulate, ModelSchema } from '@/types/mongoSchema'
-import { useUserStore } from '@/store/user'
+import { ModelPopulate } from '@/types/mongoSchema'
 import React, { useCallback } from 'react'
-import { postCreateModel, userCollect } from '@/api/model'
-import { getChatSiteId } from '@/api/chat'
-
+import { userCollect } from '@/api/model'
+import { createAvatar } from '@dicebear/core'
+import { adventurer, micah } from '@dicebear/collection'
+import Image from 'next/image'
+import useWindowSize from '@/hooks/use-window-size'
+import { useRouter } from 'next/router'
 interface AppListProps {
   list: Array<ModelPopulate>
   models: any
   isMy: boolean
+  filterArgs: any
 }
 const AppList = (props: AppListProps) => {
-  // @ts-ignore
-  const { t } = useTranslation('common')
+  const router = useRouter()
+
+  const { filterArgs } = props
+  const { isDesktop } = useWindowSize()
 
   const getAllModels = props.models
 
@@ -24,14 +28,14 @@ const AppList = (props: AppListProps) => {
       try {
         await userCollect({ modelId, like })
         toast(like ? '收藏成功' : '取消收藏成功', { icon: '✅' })
-        getAllModels()
+        getAllModels(filterArgs)
       } catch (err: any) {
         toast(typeof err === 'string' ? err : err.message || '出现了意外', {
           icon: '🔴',
         })
       }
     },
-    [getAllModels]
+    [filterArgs, getAllModels]
   )
   return (
     <ul
@@ -39,18 +43,45 @@ const AppList = (props: AppListProps) => {
       className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
     >
       {props.list.map((app) => (
-        <div key={app._id} className="card w-auto bg-base-100 shadow-xl">
+        <Link
+          id={app._id}
+          key={app._id}
+          href={`${
+            props.isMy
+              ? '/model/edit?modelId=' + app._id
+              : '/model/detail?modelId=' + app._id
+          }`}
+          className={`${
+            isDesktop ? 'hover:scale-105' : ''
+          } card w-auto bg-base-100 shadow-xl `}
+        >
           <div className="card-body">
+            {/*<div*/}
+            {/*  className="mx-auto flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-3xl"*/}
+            {/*  dangerouslySetInnerHTML={{*/}
+            {/*    __html: `${createAvatar(adventurer, {*/}
+            {/*      size: 66,*/}
+            {/*      seed: app.name,*/}
+            {/*    })}`,*/}
+            {/*  }}*/}
+            {/*/>*/}
             <div className="mx-auto flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-3xl">
-              {app.avatar}
+              <Image
+                src={`${createAvatar(adventurer, {
+                  size: 66,
+                  seed: app.name,
+                }).toDataUriSync()}`}
+                alt={app.name}
+                width={66}
+                height={66}
+              />
             </div>
             <div className="card-title justify-between">
               {app.name}
               <div className="badge-secondary badge badge-xs modal-middle border-white bg-white text-black">
-                <FlameIcon className="h-8 w-8 fill-[#f25207] text-[#f25207]" />
+                <FlameIcon className="h-6 w-6 fill-[#f25207] text-[#f25207]" />
                 <p className="text-sm text-black"> {app.hitCount}</p>
               </div>
-              {/*<div className="badge-secondary badge">NEW</div>*/}
             </div>
             <p className="text-sm text-gray-500">
               {app.intro.length > 40
@@ -58,41 +89,36 @@ const AppList = (props: AppListProps) => {
                 : app.intro}
             </p>
             <div className="card-actions modal-middle justify-between">
-              <div>
+              <button
+                className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-7 sm:w-7"
+                dangerouslySetInnerHTML={{
+                  __html: `${createAvatar(micah, {
+                    size: 20,
+                    seed: app.userId.email,
+                  })}`,
+                }}
+                onClick={(event) => {
+                  event.preventDefault()
+                  router.push(`/user?userId=${app.userId._id}`)
+                }}
+              />
+              {/*<p className="text-xs text-black"> {app.userId.email}</p>*/}
+              <div className="flex gap-1">
                 <HeartIcon
-                  onClick={() => handleUserCollect(app._id, !app.like)}
+                  onClick={(event) => {
+                    event.preventDefault()
+                    handleUserCollect(app._id, !app.like)
+                  }}
                   className={`${
                     app.like ? 'fill-[#eb3313]' : 'hover:fill-[#eb3313]'
-                  } h-5 w-5 text-[#eb3313]`}
+                  } h-5 w-5 text-[#eb3313] hover:scale-110`}
                   aria-hidden="true"
                 />
+                <p className="text-sm text-black"> {app.favCount}</p>
               </div>
-              {props.isMy ? (
-                <div className="flex justify-end gap-1">
-                  <Link
-                    href={'/model/edit?modelId=' + `${app._id}`}
-                    className="btn-sm btn bg-black text-white"
-                  >
-                    编辑
-                  </Link>
-                  <Link
-                    href={'/model/detail?modelId=' + `${app._id}`}
-                    className="btn-sm btn bg-black text-white"
-                  >
-                    {t('run')}
-                  </Link>
-                </div>
-              ) : (
-                <Link
-                  href={'/model/detail?modelId=' + `${app._id}`}
-                  className="btn-sm btn bg-black text-white"
-                >
-                  {t('run')}
-                </Link>
-              )}
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </ul>
   )
