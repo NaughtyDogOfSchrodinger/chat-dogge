@@ -5,7 +5,6 @@ import React, {
   SetStateAction,
   useCallback,
   useMemo,
-  useEffect,
 } from 'react'
 import { useRouter } from 'next/router'
 import { PageTypeEnum } from '@/constants/user'

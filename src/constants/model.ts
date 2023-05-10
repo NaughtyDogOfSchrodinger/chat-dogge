@@ -1,8 +1,4 @@
-import type {
-  ServiceName,
-  ModelDataType,
-  ModelSchema,
-} from '@/types/mongoSchema'
+import type { ServiceName, ModelSchema } from '@/types/mongoSchema'
 import type { RedisModelDataItemType } from '@/types/redis'
 import { SortOrder } from 'mongoose'
 

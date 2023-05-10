@@ -11,11 +11,6 @@ import { adventurer, micah } from '@dicebear/collection'
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 type ChatGPTAgent = 'Human' | 'AI' | 'SYSTEM'
 
-export interface ChatGPTMessage {
-  role: ChatGPTAgent
-  content: string
-}
-
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
   <div className="flex min-w-full animate-pulse px-4 py-5 sm:px-6">

@@ -1,4 +1,3 @@
-import { ModelStatusEnum } from '@/constants/model'
 import type { ModelSchema } from './mongoSchema'
 export interface ModelUpdateParams {
   name: string

@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react'
 import { sendCodeToEmail } from '@/api/user'
 import { EmailTypeEnum } from '@/constants/common'
 let timer: any
-// import { useToast } from './useToast'
 import { toast } from 'react-hot-toast'
 export const useSendCode = () => {
   // const { toast } = useToast()

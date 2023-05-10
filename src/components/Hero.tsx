@@ -5,7 +5,6 @@ import Balancer from 'react-wrap-balancer'
 import { motion } from 'framer-motion'
 import { FADE_DOWN_ANIMATION_VARIANTS } from '@/utils/constants'
 import Link from 'next/link'
-import Image from 'next/image'
 export function Hero() {
   // @ts-ignore
   const { t } = useTranslation('common')
