@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Canvas from '@/components/paint/canvas'
 import PromptForm from '@/components/paint/prompt-form'
 import Dropzone from '@/components/paint/dropzone'
@@ -7,10 +7,17 @@ import { XCircle as StartOverIcon } from 'lucide-react'
 import { getImage, getImageById } from '@/api/model'
 import { NextSeo } from 'next-seo'
 import { toast } from 'react-hot-toast'
+import { Text2ImgInput } from '@/constants/model'
 
 const sleep = (ms: any) => new Promise((r) => setTimeout(r, ms))
 
 export interface GetImage {
+  width: number
+  height: number
+  num_outputs: number
+  num_inference_steps: number
+  guidance_scale: number
+  seed: number
   prompt: string
   init_image: any
   mask: any
@@ -40,7 +47,8 @@ export default function Home() {
         ? prevPredictionOutput
         : null,
       mask: maskImage,
-    }
+      ...input,
+    } as GetImage
 
     try {
       let prediction = await getImage(body)
@@ -75,6 +83,8 @@ export default function Home() {
     setUserUploadedImage(null)
   }
 
+  const [input, setInput] = useState<Text2ImgInput>()
+
   return (
     <div>
       <NextSeo
@@ -98,8 +108,8 @@ export default function Home() {
             userUploadedImage={userUploadedImage}
           />
           <div
-            className="relative flex max-h-[512px] w-full items-stretch bg-gray-50"
-            // style={{ height: 0, paddingBottom: "100%" }}
+            className="relative flex max-h-[512px] w-full items-stretch bg-white"
+            // style={{ height: 0, paddingBottom: '100%' }}
           >
             <Canvas
               predictions={predictions}
@@ -110,7 +120,7 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-[512px]">
-          <PromptForm onSubmit={handleSubmit} />
+          <PromptForm onSubmit={handleSubmit} setInput={setInput} />
 
           <div className="text-center">
             {((predictions.length > 0 && // @ts-ignore

@@ -1,34 +1,75 @@
-import { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
-const samplePrompts = [
-  '19世纪肖像画中的绅士水獭',
-  '漫画风格的拉面碗',
-  '让-雅克·塞姆佩笔下的花田',
-  '以R·克拉姆布风格插画的出租车',
-  '多彩超空间',
-  '一幅以雷蒙兹·斯塔普兰斯风格为主题的桌上水果绘画',
-  '一幅铅笔素描，描绘了机器人在玩扑克牌',
-  '一张描绘宇航员骑马的照片',
-]
 // @ts-ignore
 import sample from 'lodash/sample'
+import {
+  defaultText2ImgModel,
+  Text2ImgInput,
+  Text2ImgModel,
+  text2ImgModelList,
+} from '@/constants/model'
+import { toast } from 'react-hot-toast'
 
 export default function PromptForm(props: any) {
-  const [prompt] = useState(sample(samplePrompts))
+  const [model, setModel] = useState<Text2ImgModel>(defaultText2ImgModel)
+  const [promptList, setPromptList] = useState<Text2ImgInput[]>(
+    model.promptList
+  )
+  const [prompt, setPrompt] = useState<string>(sample(promptList).prompt)
+  props.setInput(prompt)
 
+  const modelSelect = useCallback(
+    (version: string) => {
+      const modelItem = text2ImgModelList.find(
+        (item) => item.version === version
+      )
+      if (!modelItem) {
+        toast('text2Img模型不存在', { icon: `🔴` })
+        return
+      }
+      setModel(modelItem)
+      setPromptList(modelItem.promptList)
+      const p = sample(modelItem.promptList)
+      setPrompt(p.prompt)
+      props.setInput(p)
+    },
+    [props]
+  )
   return (
     <form
       onSubmit={props.onSubmit}
       className="py-5 animate-in fade-in duration-700"
     >
-      <div className="flex max-w-[512px]">
-        <input
-          type="text"
-          defaultValue={prompt}
-          name="prompt"
-          placeholder="输入提示词..."
-          className="w-full rounded-md border-2 border-black p-3 text-black shadow-sm focus:border-black focus:outline-0 "
-        />
+      <div className=" max-w-[512px]">
+        <div>
+          <label className="label">
+            <span className="label-text-alt">{model.description}</span>
+          </label>
+          <select
+            defaultValue={undefined}
+            className="select-bordered select select-xs h-full w-full font-normal"
+            onChange={(e) => {
+              modelSelect(e.target.value)
+            }}
+          >
+            {text2ImgModelList.map((item) => (
+              <option key={item.version} value={item.version}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label">
+            <span className="label-text-alt">提示词</span>
+          </label>
+          <textarea
+            className="textarea-bordered textarea h-40 w-full resize-none"
+            defaultValue={prompt}
+            name="prompt"
+            placeholder="输入提示词..."
+          />
+        </div>
 
         <button
           className="text-small btn inline-block flex-none rounded-r-md bg-black px-3 text-white"

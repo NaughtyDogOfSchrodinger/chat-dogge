@@ -113,87 +113,92 @@ export default async function handler(
     // 获取 chatAPI
     const chatAPI = getOpenAIApi(SYSTEM_KEY)
 
-    if (modelConstantsData.model == ChatModelNameEnum.VECTOR_GPT) {
-      const redis = await connectRedis()
-      // @ts-ignore
-      const text = prompt[prompt.length - 1].value
-      // 把输入的内容转成向量
-      const res = await chatAPI
-        .createEmbedding(
-          {
-            model: ChatModelNameEnum.VECTOR,
-            input: text,
-          },
-          {
-            timeout: 5000,
-            httpsAgent: httpsAgent(true),
-          }
-        )
-        .then((res) => ({
-          tokenLen: res.data.usage.total_tokens || 0,
-          vector: res?.data?.data?.[0]?.embedding || [],
-        }))
-      if (authorization) {
-        // 凭证校验
-        const userId = await authToken(authorization)
-        pushGenerateVectorBill({
-          isPay,
-          userId,
-          text,
-          tokenLen: res.tokenLen,
-        })
-      }
-
-      // 搜索系统提示词, 按相似度从 redis 中搜出相关的 q 和 text
-      const redisData: any[] = await redis.sendCommand([
-        'FT.SEARCH',
-        `idx:${VecModelDataPrefix}:hash`,
-        `@modelId:{${String(
-          model._id
-        )}} @vector:[VECTOR_RANGE 0.24 $blob]=>{$YIELD_DISTANCE_AS: score}`,
-        'RETURN',
-        '1',
-        'text',
-        'SORTBY',
-        'score',
-        'PARAMS',
-        '2',
-        'blob',
-        vectorToBuffer(res.vector),
-        'LIMIT',
-        '0',
-        '30',
-        'DIALECT',
-        '2',
-      ])
-
-      const formatRedisPrompt: string[] = []
-      // 格式化响应值，获取 qa
-      for (let i = 2; i < 61; i += 2) {
-        const text = redisData[i]?.[1]
-        if (text) {
-          formatRedisPrompt.push(text)
+    switch (modelConstantsData.model) {
+      case ChatModelNameEnum.VECTOR_GPT:
+        const redis = await connectRedis()
+        // @ts-ignore
+        const text = prompt[prompt.length - 1].value
+        // 把输入的内容转成向量
+        const res = await chatAPI
+          .createEmbedding(
+            {
+              model: ChatModelNameEnum.VECTOR,
+              input: text,
+            },
+            {
+              timeout: 5000,
+              httpsAgent: httpsAgent(true),
+            }
+          )
+          .then((res) => ({
+            tokenLen: res.data.usage.total_tokens || 0,
+            vector: res?.data?.data?.[0]?.embedding || [],
+          }))
+        if (authorization) {
+          // 凭证校验
+          const userId = await authToken(authorization)
+          pushGenerateVectorBill({
+            isPay,
+            userId,
+            text,
+            tokenLen: res.tokenLen,
+          })
         }
-      }
 
-      // if (formatRedisPrompt.length === 0) {
-      //   throw new Error('对不起，我没有找到你的问题')
-      // }
+        // 搜索系统提示词, 按相似度从 redis 中搜出相关的 q 和 text
+        const redisData: any[] = await redis.sendCommand([
+          'FT.SEARCH',
+          `idx:${VecModelDataPrefix}:hash`,
+          `@modelId:{${String(
+            model._id
+          )}} @vector:[VECTOR_RANGE 0.24 $blob]=>{$YIELD_DISTANCE_AS: score}`,
+          'RETURN',
+          '1',
+          'text',
+          'SORTBY',
+          'score',
+          'PARAMS',
+          '2',
+          'blob',
+          vectorToBuffer(res.vector),
+          'LIMIT',
+          '0',
+          '30',
+          'DIALECT',
+          '2',
+        ])
 
-      // textArr 筛选，最多 2800 tokens
-      const systemPrompt = systemPromptFilter(formatRedisPrompt, 2800)
-      prompts.unshift({
-        obj: 'SYSTEM',
-        value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt} 以及知识库内容回答问题，知识库内容为: "${systemPrompt}"`,
-      })
-    } else {
-      // 如果有系统提示词，自动插入
-      if (model.systemPrompt) {
+        const formatRedisPrompt: string[] = []
+        // 格式化响应值，获取 qa
+        for (let i = 2; i < 61; i += 2) {
+          const text = redisData[i]?.[1]
+          if (text) {
+            formatRedisPrompt.push(text)
+          }
+        }
+
+        // if (formatRedisPrompt.length === 0) {
+        //   throw new Error('对不起，我没有找到你的问题')
+        // }
+
+        // textArr 筛选，最多 2800 tokens
+        const systemPrompt = systemPromptFilter(formatRedisPrompt, 2800)
         prompts.unshift({
           obj: 'SYSTEM',
-          value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt}回答我的问题`,
+          value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt} 以及知识库内容回答问题，知识库内容为: "${systemPrompt}"`,
         })
-      }
+        break
+      case ChatModelNameEnum.IMAGE:
+        break
+      default:
+        // 如果有系统提示词，自动插入
+        if (model.systemPrompt) {
+          prompts.unshift({
+            obj: 'SYSTEM',
+            value: `你是${model.name}GPT应用，你根据系统指令：${model.systemPrompt}回答我的问题`,
+          })
+        }
+        break
     }
 
     // 控制在 tokens 数量，防止超出

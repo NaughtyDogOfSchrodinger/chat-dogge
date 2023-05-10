@@ -153,9 +153,9 @@ const NewApp = () => {
                           })}
                         >
                           {modelList
-                            .filter(
-                              (item) => item.model != ChatModelNameEnum.IMAGE
-                            )
+                            // .filter(
+                            //   (item) => item.model != ChatModelNameEnum.IMAGE
+                            // )
                             .map((item) => (
                               <option
                                 key={item.model}

@@ -100,6 +100,7 @@ specifiers:
   rehype-katex: ^6.0.2
   remark-gfm: ^3.0.1
   remark-math: ^5.1.1
+  replicate: ^0.12.0
   sass: ^1.61.0
   sharp: ^0.32.0
   solid-js: ^1.7.3
@@ -184,6 +185,7 @@ dependencies:
   rehype-katex: registry.npmmirror.com/rehype-katex/6.0.2
   remark-gfm: registry.npmmirror.com/remark-gfm/3.0.1
   remark-math: registry.npmmirror.com/remark-math/5.1.1
+  replicate: registry.npmmirror.com/replicate/0.12.0
   sass: registry.npmmirror.com/sass/1.61.0
   sharp: registry.npmmirror.com/sharp/0.32.0
   solid-js: registry.npmmirror.com/solid-js/1.7.3
@@ -8802,6 +8804,12 @@ packages:
       '@types/mdast': registry.npmmirror.com/@types/mdast/3.0.11
       mdast-util-to-hast: registry.npmmirror.com/mdast-util-to-hast/12.3.0
       unified: registry.npmmirror.com/unified/10.1.2
+    dev: false
+
+  registry.npmmirror.com/replicate/0.12.0:
+    resolution: {integrity: sha512-QUCimgVNY7afuaOwUXivFI9Rs/S8qpKYVDGOWpxyxn5x1JYOFDKIMX4rEyIBPqJzdJRenXdeZj7bo6dKz5wn0A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/replicate/-/replicate-0.12.0.tgz}
+    name: replicate
+    version: 0.12.0
     dev: false
 
   registry.npmmirror.com/resolve-from/4.0.0:
