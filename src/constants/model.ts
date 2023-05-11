@@ -115,6 +115,9 @@ export enum Text2ImgSchedulerEnum {
   PNDM = 'PNDM',
   KLMS = 'KLMS',
   EULERa = 'EULERa',
+  ddim_sampler = 'ddim_sampler',
+  p_sampler = 'p_sampler',
+  plms_sampler = 'plms_sampler',
 }
 
 export type Text2ImgInput = {
@@ -124,10 +127,13 @@ export type Text2ImgInput = {
   height?: WidthOrHeight
   ori_width?: WidthOrHeight
   ori_height?: WidthOrHeight
+  prior_cf_scale?: number
+  prior_steps?: number
   image_dimensions?: string
   num_outputs?: number
   num_inference_steps?: number
   guidance_scale?: number
+  batch_size?: number
   scale?: number
   steps?: number
   scheduler?: `${Text2ImgSchedulerEnum}`
@@ -334,6 +340,49 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 50,
         scheduler: Text2ImgSchedulerEnum.K_EULER,
+      },
+    ],
+  },
+  {
+    name: 'kandinsky-2',
+    version: '601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f',
+    description:
+      'text2img model trained on LAION HighRes and fine-tuned on internal datasets',
+    promptList: [
+      {
+        prompt: 'red cat, 4k photo',
+        prior_cf_scale: 4,
+        prior_steps: 5,
+        width: 512,
+        height: 512,
+        guidance_scale: 4,
+        num_inference_steps: 100,
+        batch_size: 1,
+        scheduler: Text2ImgSchedulerEnum.p_sampler,
+      },
+      {
+        prompt:
+          'a film still of a cute bird in a tree from a 2.5d animated movie, sharp focus',
+        prior_cf_scale: 4,
+        prior_steps: 5,
+        width: 512,
+        height: 512,
+        guidance_scale: 4,
+        num_inference_steps: 100,
+        batch_size: 1,
+        scheduler: Text2ImgSchedulerEnum.p_sampler,
+      },
+      {
+        prompt:
+          'a beautiful landscape photo, epic, dawn light, 8k, mountains, river, dramatic, award winning',
+        prior_cf_scale: 4,
+        prior_steps: 5,
+        width: 512,
+        height: 512,
+        guidance_scale: 4,
+        num_inference_steps: 100,
+        batch_size: 1,
+        scheduler: Text2ImgSchedulerEnum.p_sampler,
       },
     ],
   },
