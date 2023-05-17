@@ -1,5 +1,13 @@
-import { TrashIcon, SaveIcon } from 'lucide-react'
-import React from 'react'
+import {
+  TrashIcon,
+  SaveIcon,
+  ToggleLeftIcon,
+  ToggleRight,
+  ToggleRightIcon,
+  LucideToggleLeft,
+  LucideToggleRight,
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 export default function InputMessage({
   input,
@@ -8,6 +16,8 @@ export default function InputMessage({
   handleSave,
   isChatting,
   saving,
+  isWebSearch,
+  setIsWebSearch,
   clearHistory,
   handleStop,
 }: {
@@ -17,6 +27,8 @@ export default function InputMessage({
   handleSave: any
   isChatting: boolean
   saving: boolean
+  isWebSearch: boolean
+  setIsWebSearch: any
   clearHistory: any
   handleStop: any
 }) {
@@ -29,7 +41,15 @@ export default function InputMessage({
         <button className=" btn-xs btn" onClick={handleSave}>
           <SaveIcon className="text-slate-7 float-right h-4 w-4 hover:fill-black " />
         </button>
+
+        <button
+          className={`${isWebSearch ? '' : 'btn-outline'}  btn-xs btn `}
+          onClick={() => setIsWebSearch(!isWebSearch)}
+        >
+          {isWebSearch ? '查询网页on' : '查询网页off'}
+        </button>
       </div>
+
       <div className="flex w-full gap-1">
         <textarea
           value={input}

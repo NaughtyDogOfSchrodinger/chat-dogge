@@ -26,6 +26,12 @@ import {
 } from 'openai'
 import { PassThrough } from 'stream'
 import * as process from 'process'
+import {
+  SearchRequest,
+  SearchResult,
+  webSearch,
+} from '@/pages/api/chat/search/web_search'
+import { compilePrompt } from '@/pages/api/chat/search/promptManager'
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing Environment Variable OPENAI_API_KEY')
 }
@@ -48,9 +54,10 @@ export default async function handler(
     stream.destroy()
   })
   try {
-    const { chatOrModelId, prompt } = req.body as {
+    const { chatOrModelId, prompt, isWebSearch } = req.body as {
       prompt: ChatItemType[]
       chatOrModelId: string
+      isWebSearch: boolean
     }
     if (!chatOrModelId || !prompt || prompt.length == 0) {
       throw new Error('缺少参数')
@@ -60,7 +67,7 @@ export default async function handler(
 
     const { authorization } = req.headers
     const isPay = true
-    let prompts: ChatItemType[], model: ModelSchema
+    let prompts: ChatItemType[], model: ModelSchema, query
     // 登录用户
     if (authorization) {
       // 获取 chat 数据
@@ -75,6 +82,7 @@ export default async function handler(
         return Promise.reject('模型不存在')
       }
       model = chat.modelId
+      query = prompt[0]?.value
       prompts = [...chat.content, prompt[0]] as ChatItemType[]
     } else {
       const modelResult = await Model.findById(chatOrModelId)
@@ -97,6 +105,7 @@ export default async function handler(
         service: modelResult.service,
         security: modelResult.security,
       } as ModelSchema
+      query = prompt[prompt.length - 1]?.value
       prompts = prompt
     }
 
@@ -220,30 +229,62 @@ export default async function handler(
       })
     )
 
+    let chatResponse
     // 计算温度
     const temperature =
       modelConstantsData.maxTemperature * (model.temperature / 10)
-    // 发出请求
-    const chatResponse = await chatAPI.createChatCompletion(
-      {
-        model: model.service.chatModel,
-        temperature: temperature,
-        // max_tokens: modelConstantsData.maxToken,
-        messages: formatPrompts,
-        frequency_penalty: 0.5, // 越大，重复内容越少
-        presence_penalty: -0.5, // 越大，越容易出现新内容
-        stream: true,
-        stop: ['.!?。'],
-      },
-      {
-        timeout: 5000,
-        responseType: 'stream',
-        httpsAgent: httpsAgent(true),
+    if (isWebSearch && query) {
+      const searchRequest: SearchRequest = {
+        query,
+        timerange: '',
+        region: 'wt-wt',
       }
-    )
+      const results = await webSearch(searchRequest, 3)
 
-    console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
-
+      const prompts = [
+        {
+          role: ChatCompletionRequestMessageRoleEnum.User,
+          content: compilePrompt(results, query),
+        } as ChatCompletionRequestMessage,
+      ]
+      chatResponse = await chatAPI.createChatCompletion(
+        {
+          model: model.service.chatModel,
+          temperature: temperature,
+          // max_tokens: modelConstantsData.maxToken,
+          messages: prompts,
+          frequency_penalty: 0.5, // 越大，重复内容越少
+          presence_penalty: -0.5, // 越大，越容易出现新内容
+          stream: true,
+          stop: ['.!?。'],
+        },
+        {
+          timeout: 5000,
+          responseType: 'stream',
+          httpsAgent: httpsAgent(true),
+        }
+      )
+    } else {
+      // 发出请求
+      chatResponse = await chatAPI.createChatCompletion(
+        {
+          model: model.service.chatModel,
+          temperature: temperature,
+          // max_tokens: modelConstantsData.maxToken,
+          messages: formatPrompts,
+          frequency_penalty: 0.5, // 越大，重复内容越少
+          presence_penalty: -0.5, // 越大，越容易出现新内容
+          stream: true,
+          stop: ['.!?。'],
+        },
+        {
+          timeout: 5000,
+          responseType: 'stream',
+          httpsAgent: httpsAgent(true),
+        }
+      )
+      console.log('api response time:', `${(Date.now() - startTime) / 1000}s`)
+    }
     step = 1
 
     const { responseContent } = await gpt35StreamResponse({

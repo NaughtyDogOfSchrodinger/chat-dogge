@@ -88,6 +88,8 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     }, 100)
   }, [])
 
+  const [isWebSearch, setIsWebSearch] = useState(false)
+
   // gpt 对话
   const gptChatPrompt = useCallback(
     async (prompts: ChatSiteItemType) => {
@@ -113,6 +115,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         data: {
           prompt,
           chatOrModelId: chat?.chatId || modelId,
+          isWebSearch,
         },
         onMessage: (text: string) => {
           setChatData((state) => ({
@@ -162,7 +165,7 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
         }),
       }))
     },
-    [chat, chatData, modelId]
+    [chat, chatData, modelId, isWebSearch]
   )
 
   /**
@@ -539,6 +542,8 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
                   handleSave={handleSave}
                   input={inputVal}
                   handleStop={handleStop}
+                  isWebSearch={isWebSearch}
+                  setIsWebSearch={setIsWebSearch}
                   sendPrompt={sendPrompt}
                   textChange={textChange}
                   isChatting={isChatting}
