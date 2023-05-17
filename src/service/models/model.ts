@@ -64,7 +64,7 @@ const ModelSchema = new Schema({
     company: {
       type: String,
       required: true,
-      enum: ['openai'],
+      enum: ['openai', 'stable-diffusion'],
     },
     trainId: {
       // 训练时需要的 ID， 不能训练的模型没有这个值。

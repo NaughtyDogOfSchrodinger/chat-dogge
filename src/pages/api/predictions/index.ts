@@ -88,14 +88,12 @@ export default async function handler(
     // const prompt =
     //   chatResponse?.data?.choices[0]?.message?.content || req.body.prompt
     // req.body.prompt = prompt
+    const version = req.body.version
+    req.body.version = null
     const body = JSON.stringify({
       // Pinned to a specific version of Stable Diffusion, fetched from:
       // https://replicate.com/stability-ai/stable-diffusion
-      version:
-        // 'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
-        // 'e8818682e72a8b25895c7d90e889b712b6edfc5151f145e3606f21c1e85c65bf',
-        // 'afd0956c8dd6a67cbf163411fa9507475e92bd956d473d10751a49b67fb79522',
-        '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
+      version,
       input: req.body,
     })
 

@@ -39,7 +39,6 @@ export default async function handler(
     const userId = await authToken(authorization)
 
     const modelItem = modelList.find((item) => item.model === serviceModelName)
-
     if (!modelItem) {
       throw new Error('模型不存在')
     }

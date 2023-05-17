@@ -91,14 +91,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
   // gpt 对话
   const gptChatPrompt = useCallback(
     async (prompts: ChatSiteItemType) => {
-      const urlMap: Record<string, string> = {
-        [ChatModelNameEnum.GPT35]: '/api/chat/chatGpt',
-        [ChatModelNameEnum.VECTOR_GPT]: '/api/chat/vectorGpt',
-        [ChatModelNameEnum.GPT3]: '/api/chat/gpt3',
-      }
-
-      if (!urlMap[chatData.modelName]) return Promise.reject('找不到模型')
-
       let prompt
       if (chat?.chatId === undefined) {
         // @ts-ignore
@@ -197,7 +189,6 @@ const ChatDogge = ({ modelId }: { modelId: string }) => {
     const innerModel = modelList.find(
       (item) => item.model === chatData.modelName
     )
-
     if (innerModel && val.length >= innerModel.maxToken) {
       toast('单次输入超出 4000 字符', {
         icon: '🔴',

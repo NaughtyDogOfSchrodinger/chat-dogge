@@ -55,7 +55,7 @@ export const modelList: ModelConstantsData[] = [
     name: '图片',
     model: ChatModelNameEnum.IMAGE,
     trainName: 'image',
-    maxToken: -1,
+    maxToken: 4000,
     contextMaxToken: -1,
     maxTemperature: 1,
     price: 20000,
@@ -128,7 +128,7 @@ export type Text2ImgInput = {
   ori_width?: WidthOrHeight
   ori_height?: WidthOrHeight
   prior_cf_scale?: number
-  prior_steps?: number
+  prior_steps?: string
   image_dimensions?: string
   num_outputs?: number
   num_inference_steps?: number
@@ -138,12 +138,14 @@ export type Text2ImgInput = {
   steps?: number
   scheduler?: `${Text2ImgSchedulerEnum}`
   seed?: number
+  version?: string
 }
 
 export type Text2ImgModel = {
   name: string
   version: string
   description: string
+  tag: string
   promptList: Text2ImgInput[]
 }
 
@@ -152,6 +154,7 @@ export const text2ImgModelList: Text2ImgModel[] = [
     name: 'openjourney',
     version: '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
     description: 'Stable Diffusion fine tuned on Midjourney v4 images.',
+    tag: 'Midjourney v4风格的图片',
     promptList: [
       {
         prompt:
@@ -161,6 +164,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         num_outputs: 1,
         guidance_scale: 14,
         num_inference_steps: 50,
+        version:
+          '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
       },
       {
         prompt:
@@ -170,6 +175,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         num_outputs: 1,
         guidance_scale: 7,
         num_inference_steps: 50,
+        version:
+          '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
       },
       {
         prompt:
@@ -180,6 +187,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7,
         num_inference_steps: 50,
         seed: 50490,
+        version:
+          '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
       },
       {
         prompt:
@@ -190,6 +199,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 17,
         num_inference_steps: 80,
         seed: 2913619048,
+        version:
+          '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
       },
       {
         prompt:
@@ -200,6 +211,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 70,
         seed: 55440,
+        version:
+          '9936c2001faa2194a261c01381f90e65261879985476014a0a37a334593a05eb',
       },
     ],
   },
@@ -207,6 +220,7 @@ export const text2ImgModelList: Text2ImgModel[] = [
     name: 'lookbook',
     version: 'afd0956c8dd6a67cbf163411fa9507475e92bd956d473d10751a49b67fb79522',
     description: 'Fashion Diffusion by PromptHero',
+    tag: '人像风格的图片',
     promptList: [
       {
         prompt: 'a close up of a cap weared by a man with stubble beard',
@@ -216,6 +230,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7,
         num_inference_steps: 150,
         scheduler: Text2ImgSchedulerEnum.EULERa,
+        version:
+          'afd0956c8dd6a67cbf163411fa9507475e92bd956d473d10751a49b67fb79522',
       },
       {
         prompt: 'a close up of a person wearing a brown shirt',
@@ -225,6 +241,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7,
         num_inference_steps: 100,
         scheduler: Text2ImgSchedulerEnum.EULERa,
+        version:
+          'afd0956c8dd6a67cbf163411fa9507475e92bd956d473d10751a49b67fb79522',
       },
       {
         prompt:
@@ -235,6 +253,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7,
         num_inference_steps: 150,
         scheduler: Text2ImgSchedulerEnum.EULERa,
+        version:
+          'afd0956c8dd6a67cbf163411fa9507475e92bd956d473d10751a49b67fb79522',
       },
     ],
   },
@@ -242,6 +262,7 @@ export const text2ImgModelList: Text2ImgModel[] = [
     name: 'stable-diffusion-high-resolution',
     version: '231e401da17b34aac8f8b3685f662f7fdad9ce1cf504ec0828ba4aac19f7882f',
     description: 'Detailed, higher-resolution images from Stable Diffusion',
+    tag: '富有细节且高分辨率的图片',
     promptList: [
       {
         prompt:
@@ -250,6 +271,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         ori_height: 512,
         scale: 7.5,
         steps: 10,
+        version:
+          '231e401da17b34aac8f8b3685f662f7fdad9ce1cf504ec0828ba4aac19f7882f',
       },
       {
         prompt:
@@ -258,6 +281,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         ori_height: 512,
         scale: 7.5,
         steps: 100,
+        version:
+          '231e401da17b34aac8f8b3685f662f7fdad9ce1cf504ec0828ba4aac19f7882f',
       },
       {
         prompt:
@@ -266,6 +291,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         ori_height: 768,
         scale: 7.5,
         steps: 100,
+        version:
+          '231e401da17b34aac8f8b3685f662f7fdad9ce1cf504ec0828ba4aac19f7882f',
       },
     ],
   },
@@ -274,6 +301,7 @@ export const text2ImgModelList: Text2ImgModel[] = [
     version: 'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
     description:
       'A latent text-to-image diffusion model capable of generating photo-realistic images given any text input',
+    tag: '写实风格的图片',
     promptList: [
       {
         prompt: 'multicolor hyperspace',
@@ -283,6 +311,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 50,
         scheduler: Text2ImgSchedulerEnum.DPMSolverMultistep,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt: 'a gentleman otter in a 19th century portrait',
@@ -292,6 +322,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 100,
         scheduler: Text2ImgSchedulerEnum.DPMSolverMultistep,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt: 'pencil sketch of robots playing poker',
@@ -301,6 +333,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 100,
         scheduler: Text2ImgSchedulerEnum.DPMSolverMultistep,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt: 'phase shift into an era of human+AI art collab',
@@ -310,6 +344,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 301,
         scheduler: Text2ImgSchedulerEnum.DPMSolverMultistep,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt:
@@ -320,6 +356,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 50,
         scheduler: Text2ImgSchedulerEnum.DPMSolverMultistep,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt:
@@ -330,6 +368,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 30,
         scheduler: Text2ImgSchedulerEnum.K_EULER_ANCESTRAL,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
       {
         prompt:
@@ -340,6 +380,8 @@ export const text2ImgModelList: Text2ImgModel[] = [
         guidance_scale: 7.5,
         num_inference_steps: 50,
         scheduler: Text2ImgSchedulerEnum.K_EULER,
+        version:
+          'db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
       },
     ],
   },
@@ -348,41 +390,48 @@ export const text2ImgModelList: Text2ImgModel[] = [
     version: '601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f',
     description:
       'text2img model trained on LAION HighRes and fine-tuned on internal datasets',
+    tag: '高解析度的图片',
     promptList: [
       {
         prompt: 'red cat, 4k photo',
         prior_cf_scale: 4,
-        prior_steps: 5,
+        prior_steps: '5',
         width: 512,
         height: 512,
         guidance_scale: 4,
         num_inference_steps: 100,
         batch_size: 1,
         scheduler: Text2ImgSchedulerEnum.p_sampler,
+        version:
+          '601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f',
       },
       {
         prompt:
           'a film still of a cute bird in a tree from a 2.5d animated movie, sharp focus',
         prior_cf_scale: 4,
-        prior_steps: 5,
+        prior_steps: '5',
         width: 512,
         height: 512,
         guidance_scale: 4,
         num_inference_steps: 100,
         batch_size: 1,
         scheduler: Text2ImgSchedulerEnum.p_sampler,
+        version:
+          '601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f',
       },
       {
         prompt:
           'a beautiful landscape photo, epic, dawn light, 8k, mountains, river, dramatic, award winning',
         prior_cf_scale: 4,
-        prior_steps: 5,
+        prior_steps: '5',
         width: 512,
         height: 512,
         guidance_scale: 4,
         num_inference_steps: 100,
         batch_size: 1,
         scheduler: Text2ImgSchedulerEnum.p_sampler,
+        version:
+          '601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f',
       },
     ],
   },

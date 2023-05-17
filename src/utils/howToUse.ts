@@ -1,6 +1,10 @@
 import { getOpenAIApi } from '@/service/utils/chat'
 import { ChatCompletionRequestMessage } from 'openai'
-import { ChatModelNameEnum, ModelConstantsData } from '@/constants/model'
+import {
+  ChatModelNameEnum,
+  ModelConstantsData,
+  text2ImgModelList,
+} from '@/constants/model'
 import { httpsAgent } from '@/service/utils/tools'
 import { pushSplitDataBill } from '@/service/events/pushBill'
 import process from 'process'
@@ -89,10 +93,20 @@ export default async function howToUse({
             modelItem.model == ChatModelNameEnum.VECTOR_GPT
               ? modelItem.name +
                 '😊应用需要在编辑页面导入数据，才有更好的使用效果。\n'
+              : modelItem.model == ChatModelNameEnum.IMAGE
+              ? modelItem.name +
+                '可以生成' +
+                text2ImgModelList
+                  .map((item) => '\n```\n' + item.tag + '\n```\n')
+                  .join('') +
+                '\n请问你想要生成哪种风格的图片?'
               : ''
           }
-你可以这样问它：
-${questions}
+${
+  modelItem.model != ChatModelNameEnum.IMAGE
+    ? '你可以这样问它：\n' + questions
+    : ''
+}
               `
   } catch (err) {
     questions = '```\n你可以做什么？\n``` \n```\n我要如何使用你？\n```'

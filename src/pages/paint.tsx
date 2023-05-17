@@ -21,25 +21,24 @@ export interface GetImage {
   prompt: string
   init_image: any
   mask: any
+  version: string
 }
 export default function Home() {
   const [predictions, setPredictions] = useState([])
   const [error, setError] = useState(null)
   const [maskImage, setMaskImage] = useState(null)
   const [userUploadedImage, setUserUploadedImage] = useState(null)
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-
+  const [input, setInput] = useState<Text2ImgInput>()
+  const callback = (e: Text2ImgInput) => setInput(e)
+  const handleSubmit = async (input: Text2ImgInput) => {
     const prevPrediction = predictions[predictions.length - 1]
     // @ts-ignore
     const prevPredictionOutput = prevPrediction?.output
       ? // @ts-ignore
         prevPrediction.output[prevPrediction.output.length - 1]
       : null
-
+    console.log(`${JSON.stringify(input)}`)
     const body = {
-      prompt: e.target.prompt.value,
       init_image: userUploadedImage
         ? await readAsDataURL(userUploadedImage)
         : // only use previous prediction as init image if there's a mask
@@ -82,9 +81,6 @@ export default function Home() {
     setMaskImage(null)
     setUserUploadedImage(null)
   }
-
-  const [input, setInput] = useState<Text2ImgInput>()
-
   return (
     <div>
       <NextSeo
@@ -108,10 +104,32 @@ export default function Home() {
             userUploadedImage={userUploadedImage}
           />
           <div
-            className="relative flex max-h-[512px] w-full items-stretch bg-white"
+            className={`w-${
+              input?.ori_width ||
+              (input?.width
+                ? input?.width
+                : input?.image_dimensions?.split('x')[0])
+            } h-${
+              input?.ori_height ||
+              (input?.ori_height
+                ? input?.height
+                : input?.image_dimensions?.split('x')[1])
+            } relative flex w-full items-stretch bg-white`}
             // style={{ height: 0, paddingBottom: '100%' }}
           >
             <Canvas
+              width={
+                input?.ori_width ||
+                (!input?.width
+                  ? Number(input?.image_dimensions?.split('x')[0])
+                  : input?.width)
+              }
+              height={
+                input?.ori_height ||
+                (!input?.height
+                  ? Number(input?.image_dimensions?.split('x')[1])
+                  : input?.height)
+              }
               predictions={predictions}
               userUploadedImage={userUploadedImage}
               onDraw={setMaskImage}
@@ -120,7 +138,11 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-[512px]">
-          <PromptForm onSubmit={handleSubmit} setInput={setInput} />
+          <PromptForm
+            callback={handleSubmit}
+            setInput={callback}
+            input={input}
+          />
 
           <div className="text-center">
             {((predictions.length > 0 && // @ts-ignore

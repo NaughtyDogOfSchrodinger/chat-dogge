@@ -7,6 +7,8 @@ interface CanvasProps {
   predictions: never[]
   userUploadedImage: any
   onDraw: any
+  width?: number
+  height?: number
 }
 export default class Canvas extends React.Component<CanvasProps> {
   // @ts-ignore
@@ -53,7 +55,9 @@ export default class Canvas extends React.Component<CanvasProps> {
               <Image
                 alt={'prediction' + index}
                 key={'prediction' + index}
-                layout="fill"
+                // layout="fill"
+                width={this.props.width}
+                height={this.props.height}
                 className="absolute animate-in fade-in"
                 style={{ zIndex: index }}
                 // @ts-ignore
@@ -66,7 +70,8 @@ export default class Canvas extends React.Component<CanvasProps> {
           <Image
             src={URL.createObjectURL(this.props.userUploadedImage)}
             alt="preview image"
-            layout="fill"
+            width={this.props.width}
+            height={this.props.height}
           />
         )}
 
