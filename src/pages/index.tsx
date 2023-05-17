@@ -72,9 +72,9 @@ const Home = () => {
     [filterArgs, getAllModels]
   )
   const { isLoading } = useQuery(['loadModels'], () => getAllModels(filterArgs))
-  useQuery([''], () => {
-    cron()
-  })
+  // useQuery([''], () => {
+  //   cron()
+  // })
   const list = allModels!.filter((app) => {
     return searchValue != ''
       ? app.name.includes(searchValue) || app.intro.includes(searchValue)
