@@ -241,10 +241,12 @@ export default async function handler(
       }
       const results = await webSearch(searchRequest, 3)
 
+      const content = compilePrompt(results, query)
+      console.log(content)
       const prompts = [
         {
           role: ChatCompletionRequestMessageRoleEnum.User,
-          content: compilePrompt(results, query),
+          content,
         } as ChatCompletionRequestMessage,
       ]
       chatResponse = await chatAPI.createChatCompletion(

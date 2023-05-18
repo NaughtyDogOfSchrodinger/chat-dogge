@@ -35,7 +35,7 @@ export async function getHtml({
   })
   const url = `${BASE_URL}?${params.toString()}`
   const response = await axios
-    .get(`${BASE_URL}?${params.toString()}`, {
+    .get(url, {
       httpsAgent: httpsAgent(true),
     })
     .then((res) => res)

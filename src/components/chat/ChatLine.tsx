@@ -72,6 +72,9 @@ export function ChatLine({
           linkTarget="_blank"
           remarkPlugins={[remarkGfm]}
           components={{
+            a: ({ node, ...props }) => (
+              <a className="text-[#3290EE]" {...props} />
+            ),
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '')
               return !inline ? (
