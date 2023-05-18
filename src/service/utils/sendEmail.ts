@@ -40,6 +40,32 @@ const template = (code: string, expire_min: string, action: string) => {
 </html>`
 }
 
+const newFeatureTemplate = () => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatDogge 验证码</title>
+  <meta charset="utf-8">
+</head>
+<body>
+<div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; background-color: #f5f5f5; padding: 20px;">
+  <img src="https://www.chatdogge.xyz/favicon.svg" width="40" height="40" alt="chatdogge">
+  <p>尊敬的用户：</p>
+  <p>您好！</p>
+  <p><a class="link link-hover" href="https://www.chatdogge.xyz/">ChatDogge</a> 已上线查询网页功能，使用此功能，你可以用聊天的方式进行"百度"，"google"
+  <p>功能入口聊天界面左下角的查询网页开关，欢迎各位免费试用</p>
+  <p>祝您使用愉快！</p>
+  <p style="margin-top: 50px;">ChatDogge 团队</p>
+  <p style="margin-top: 50px;">Copyright © 2023 - All right reserved by <a href="https://blog.chatdogge.xyz/">NaughtyDog</a> Industries Ltd</p>
+
+</div>
+<div>
+</div>
+</body>
+</html>`
+}
+
 const createTemplate = (action: string, model: ModelPopulate) => {
   return `
 <!DOCTYPE html>
@@ -171,6 +197,25 @@ export const notifyRegister = (
       to: 'a15174027322@icloud.com',
       subject: emailMap[type]?.subject,
       html: registerTemplate(emailMap[type]?.name, user),
+    }
+    mailTransport.sendMail(options, function (err: any) {
+      if (err) {
+        console.log('send email error->', err)
+        reject('邮箱异常')
+      } else {
+        resolve('')
+      }
+    })
+  })
+}
+
+export const notifyNewFeature = (to: string) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      from: `"ChatDogge" ${myEmail}`,
+      to,
+      subject: '新特性上线',
+      html: newFeatureTemplate(),
     }
     mailTransport.sendMail(options, function (err: any) {
       if (err) {
