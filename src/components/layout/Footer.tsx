@@ -13,6 +13,12 @@ export function Footer() {
         <div className="flex flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
           <div className="flex gap-x-6">
             <Link
+              href="http://beian.miit.gov.cn/"
+              className="text-slate-500 hover:text-slate-700"
+            >
+              浙ICP备2023010243号
+            </Link>
+            <Link
               href="https://github.com/NaughtyDogOfSchrodinger/chat-dogge.git"
               className="group"
               aria-label="GitHub"
