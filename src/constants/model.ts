@@ -3,7 +3,7 @@ import type { RedisModelDataItemType } from '@/types/redis'
 import { SortOrder } from 'mongoose'
 
 export enum ChatModelNameEnum {
-  GPT35 = 'gpt-3.5-turbo',
+  GPT35 = 'gpt-3.5-turbo-16k-0613',
   VECTOR_GPT = 'VECTOR_GPT',
   GPT3 = 'text-davinci-003',
   VECTOR = 'text-embedding-ada-002',
@@ -11,8 +11,8 @@ export enum ChatModelNameEnum {
 }
 
 export const ChatModelNameMap = {
-  [ChatModelNameEnum.GPT35]: 'gpt-3.5-turbo',
-  [ChatModelNameEnum.VECTOR_GPT]: 'gpt-3.5-turbo',
+  [ChatModelNameEnum.GPT35]: 'gpt-3.5-turbo-16k-0613',
+  [ChatModelNameEnum.VECTOR_GPT]: 'gpt-3.5-turbo-16k-0613',
   [ChatModelNameEnum.GPT3]: 'text-davinci-003',
   [ChatModelNameEnum.VECTOR]: 'text-embedding-ada-002',
   [ChatModelNameEnum.IMAGE]: 'stable-diffusion',
